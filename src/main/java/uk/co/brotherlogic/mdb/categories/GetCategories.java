@@ -35,7 +35,6 @@ public class GetCategories
 
 	public int addCategory(Category in) throws SQLException
 	{
-
 		// Add the category
 		insertQuery.setString(1, in.getCatName());
 		insertQuery.setInt(2, in.getMp3Number());
@@ -109,7 +108,7 @@ public class GetCategories
 
 	public Category getCategory(String name, int mp3Number) throws SQLException
 	{
-		if (categories.size() == 0)
+		if (categories == null || categories.size() == 0)
 			execute();
 
 		if (exists(name))

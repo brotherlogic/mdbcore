@@ -89,10 +89,12 @@ public class Category implements Comparable<Category>
 	/**
 	 * Save method
 	 */
-	public final void save() throws SQLException
+	public final int save() throws SQLException
 	{
 		if (catNumber == -1)
 			catNumber = GetCategories.build().addCategory(this);
+
+		return catNumber;
 	}
 
 	@Override
