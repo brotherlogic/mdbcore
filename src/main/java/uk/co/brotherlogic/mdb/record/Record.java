@@ -232,6 +232,11 @@ public class Record implements Comparable<Record>
 		return discogsNum;
 	}
 
+	public String getDisplayTitle()
+	{
+		return author + " - " + title;
+	}
+
 	public Format getFormat()
 	{
 		return format;
@@ -361,7 +366,7 @@ public class Record implements Comparable<Record>
 		return score;
 	}
 
-	public int getShelfPos()
+	public Integer getShelfPos()
 	{
 		return shelfpos;
 	}

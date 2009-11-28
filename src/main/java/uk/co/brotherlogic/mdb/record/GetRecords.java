@@ -57,6 +57,8 @@ public class GetRecords
 
 	private static final int UNRANKED = 3;
 
+	public static final int SHELVED = 1;
+
 	private GetRecords() throws SQLException
 	{
 		// Create the records
@@ -410,6 +412,25 @@ public class GetRecords
 
 		// Return the collection
 		return titleSet;
+	}
+
+	public Collection<Record> getRecords(int status, String format) throws SQLException
+	{
+		Collection<Record> records = new LinkedList<Record>();
+
+		if (status == SHELVED)
+		{
+			PreparedStatement s = Connect.getConnection().getPreparedStatement(
+					"SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos > 0 AND boxed = 0");
+			s.setString(1, format);
+			ResultSet rs = s.executeQuery();
+			while (rs.next())
+				records.add(getRecord(rs.getInt(1)));
+			rs.close();
+			s.close();
+		}
+
+		return records;
 	}
 
 	public List<Record> getRecords(String title) throws SQLException
