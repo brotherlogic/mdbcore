@@ -12,6 +12,20 @@ import java.sql.SQLException;
  */
 public final class Connect
 {
+	/**
+	 * Static constructor
+	 * 
+	 * @return A suitable db connection
+	 * @throws SQLException
+	 *             if a db connection cannot be established
+	 */
+	public static Connect getConnection() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new Connect();
+		return singleton;
+	}
+
 	/** The connection to the local DB */
 	private Connection locDB;
 
@@ -54,8 +68,7 @@ public final class Connect
 	 * @throws SQLException
 	 *             If the construction fails
 	 */
-	public PreparedStatement getPreparedStatement(final String sql)
-			throws SQLException
+	public PreparedStatement getPreparedStatement(final String sql) throws SQLException
 	{
 		// Create the statement
 		PreparedStatement ps = locDB.prepareStatement(sql);
@@ -75,8 +88,7 @@ public final class Connect
 		{
 			// Load all the drivers and initialise the database connection
 			Class.forName("org.postgresql.Driver");
-			locDB = DriverManager
-					.getConnection("jdbc:postgresql://hancock/music?user=music");
+			locDB = DriverManager.getConnection("jdbc:postgresql://192.168.1.104/music?user=music");
 
 			// Switch off auto commit
 			locDB.setAutoCommit(false);
@@ -85,20 +97,6 @@ public final class Connect
 		{
 			throw new SQLException(e);
 		}
-	}
-
-	/**
-	 * Static constructor
-	 * 
-	 * @return A suitable db connection
-	 * @throws SQLException
-	 *             if a db connection cannot be established
-	 */
-	public static Connect getConnection() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new Connect();
-		return singleton;
 	}
 
 }
