@@ -114,6 +114,22 @@ public class GetFormats
 		return toReturn;
 	}
 
+	public Format getFormat(String formatName) throws SQLException
+	{
+		// Get a statement and run the query
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT formatnumber,baseformat FROM Formats WHERE formatname = ?");
+		s.setString(1, formatName);
+		ResultSet rs = s.executeQuery();
+
+		Format toReturn = null;
+		if (rs.next())
+			toReturn = new Format(rs.getInt(1), formatName, rs.getString(2));
+
+		rs.close();
+		return toReturn;
+	}
+
 	public Collection<Format> getFormats()
 	{
 		try

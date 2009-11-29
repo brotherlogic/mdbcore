@@ -68,7 +68,6 @@ public class CategoryTest extends TestCase
 
 			//Retrieve it
 			Category cat2 = GetCategories.build().getCategory("test-category-saveandretmp3");
-			System.err.println("Cat Number = " + cat2);
 
 			assert (cat2.getMp3Number() == 12);
 		}

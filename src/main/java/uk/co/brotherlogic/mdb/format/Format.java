@@ -41,10 +41,10 @@ public class Format implements Comparable<Format>
 		baseFormat = base;
 	}
 
-	public Format(int num, String sIn, String base, Format categoryCopy)
+	public Format(String sIn, String base)
 	{
 		name = sIn;
-		formatNumber = num;
+		formatNumber = -1;
 		baseFormat = base;
 	}
 
@@ -91,7 +91,6 @@ public class Format implements Comparable<Format>
 
 	public int save() throws SQLException
 	{
-		System.out.println(formatNumber + " => " + formatUpdated);
 		if (formatNumber == -1 || formatUpdated)
 			formatNumber = GetFormats.create().save(this);
 
