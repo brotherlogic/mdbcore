@@ -30,6 +30,18 @@ public class Category implements Comparable<Category>
 
 	/**
 	 * Constructor
+	 * @param name The name of the category
+	 * @param mp3 The mp3 number
+	 */
+	public Category(final String name, final int mp3)
+	{
+		catName = name;
+		mp3Number = mp3;
+		catNumber = -1;
+	}
+
+	/**
+	 * Constructor
 	 * 
 	 * @param name
 	 *            The name of the category
@@ -88,6 +100,8 @@ public class Category implements Comparable<Category>
 
 	/**
 	 * Save method
+	 * @return the id number
+	 * @throws SQLException if a db error occurs
 	 */
 	public final int save() throws SQLException
 	{

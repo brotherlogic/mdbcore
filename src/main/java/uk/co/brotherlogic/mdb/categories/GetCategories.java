@@ -18,19 +18,31 @@ import uk.co.brotherlogic.mdb.Connect;
 
 public class GetCategories
 {
+	public static GetCategories build() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetCategories();
+		return singleton;
+	}
+
 	// Maps category number to category
 	Map<String, Category> categories;
 	// Stores the insert query
 	PreparedStatement insertQuery;
+
 	PreparedStatement collectQuery;
 
 	private static GetCategories singleton;
 
+	private boolean refresh = true;
+
 	private GetCategories() throws SQLException
 	{
-		insertQuery = Connect.getConnection().getPreparedStatement("INSERT INTO Categories(CategoryName,MP3Category) VALUES (?,?)");
+		insertQuery = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO Categories(CategoryName,MP3Category) VALUES (?,?)");
 
-		collectQuery = Connect.getConnection().getPreparedStatement("SELECT CategoryNumber FROM Categories WHERE CategoryName = ?");
+		collectQuery = Connect.getConnection().getPreparedStatement(
+				"SELECT CategoryNumber FROM Categories WHERE CategoryName = ?");
 	}
 
 	public int addCategory(Category in) throws SQLException
@@ -48,6 +60,9 @@ public class GetCategories
 		rs.next();
 		int catNum = rs.getInt(1);
 
+		//Mark that the categories need to be recreated
+		refresh = true;
+
 		return catNum;
 	}
 
@@ -62,7 +77,8 @@ public class GetCategories
 		categories = new TreeMap<String, Category>();
 
 		// Get a statement and run the query
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT * FROM Categories");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT categorynumber,categoryname,mp3category FROM Categories");
 		ResultSet rs = s.executeQuery();
 
 		// Extract the information
@@ -82,6 +98,9 @@ public class GetCategories
 		// Close the statements
 		rs.close();
 		s.close();
+
+		//Mark that we've refreshed
+		refresh = false;
 	}
 
 	public boolean exists(String name)
@@ -106,27 +125,20 @@ public class GetCategories
 		return ret;
 	}
 
-	public Category getCategory(String name, int mp3Number) throws SQLException
+	public Category getCategory(String name) throws SQLException
 	{
-		if (categories == null || categories.size() == 0)
+		if (refresh)
 			execute();
 
 		if (exists(name))
 			return categories.get(name);
 		else
-			return new Category(name, -1, mp3Number);
+			return null;
 	}
 
 	public String toString()
 	{
 		return "Categories";
-	}
-
-	public static GetCategories build() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetCategories();
-		return singleton;
 	}
 
 }

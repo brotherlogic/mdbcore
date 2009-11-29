@@ -20,8 +20,16 @@ import uk.co.brotherlogic.mdb.categories.GetCategories;
 
 public class GetFormats
 {
+	public static GetFormats create() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetFormats();
+		return singleton;
+	}
+
 	// Maps format name to format
 	Collection<Format> formats;
+
 	Set<String> baseFormats;
 
 	private static GetFormats singleton;
@@ -84,7 +92,7 @@ public class GetFormats
 		ResultSet rs = s.executeQuery();
 
 		while (rs.next())
-			ret.add(GetCategories.build().getCategory(rs.getString(1), rs.getInt(2)));
+			ret.add(GetCategories.build().getCategory(rs.getString(1)));
 
 		rs.close();
 		return ret;
@@ -144,12 +152,5 @@ public class GetFormats
 
 		return val;
 
-	}
-
-	public static GetFormats create() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetFormats();
-		return singleton;
 	}
 }

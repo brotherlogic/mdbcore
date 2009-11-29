@@ -35,6 +35,18 @@ import uk.co.brotherlogic.mdb.label.Label;
 
 public class GetRecords
 {
+	public static GetRecords create() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetRecords();
+		return singleton;
+	}
+
+	public static void main(String[] args) throws Exception
+	{
+		System.out.println(GetRecords.create().getRecordsWithTrack("Summertime"));
+	}
+
 	PreparedStatement addRecord;
 
 	PreparedStatement getRecord;
@@ -43,12 +55,12 @@ public class GetRecords
 
 	// Flag indicating overlap of record titles
 	boolean nonOver;
-
 	Map<Integer, Record> numberToRecords;
-
 	Collection<Record> records;
 	PreparedStatement updateTrack;
+
 	PreparedStatement updateRecord;
+
 	PreparedStatement getPersonnel;
 
 	private static GetRecords singleton;
@@ -65,15 +77,20 @@ public class GetRecords
 		records = new Vector<Record>();
 		numberToRecords = new TreeMap<Integer, Record>();
 
-		getTracks = Connect.getConnection().getPreparedStatement("SELECT TrackRefNumber FROM Tracks WHERE RecordNumber = ? AND TrackNumber = ?");
+		getTracks = Connect.getConnection().getPreparedStatement(
+				"SELECT TrackRefNumber FROM Tracks WHERE RecordNumber = ? AND TrackNumber = ?");
 		addRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
 						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
-		getRecord = Connect.getConnection().getPreparedStatement(
-				"SELECT RecordNumber FROM Records WHERE Title = ? AND BoughtDate = ? AND Format = ? AND Notes = ? ORDER BY RecordNumber DESC");
-		updateTrack = Connect.getConnection().getPreparedStatement(
-				"UPDATE TRACKS SET TrackName = ?, Length = ? WHERE RecordNumber = ? AND TrackNumber = ?");
+		getRecord = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT RecordNumber FROM Records WHERE Title = ? AND BoughtDate = ? AND Format = ? AND Notes = ? ORDER BY RecordNumber DESC");
+		updateTrack = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"UPDATE TRACKS SET TrackName = ?, Length = ? WHERE RecordNumber = ? AND TrackNumber = ?");
 		updateRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -92,7 +109,8 @@ public class GetRecords
 		int[] artNums = GetArtists.create().addArtists(toAdd.getPersonnel());
 
 		// Add the entries in the personnel table
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement("INSERT INTO Personnel (ArtistNumber,TrackNumber) VALUES (?,?)");
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO Personnel (ArtistNumber,TrackNumber) VALUES (?,?)");
 		for (int artNum : artNums)
 		{
 			ps.setInt(1, artNum);
@@ -116,7 +134,8 @@ public class GetRecords
 		int lineUpNum = lineup.getLineUpNumber();
 
 		// Now add the groop into the line up set
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement("INSERT INTO LineUpSet (TrackNumber, LineUpNumber) VALUES (?,?)");
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO LineUpSet (TrackNumber, LineUpNumber) VALUES (?,?)");
 		ps.setInt(1, trackNumber);
 		ps.setInt(2, lineUpNum);
 		ps.execute();
@@ -167,7 +186,8 @@ public class GetRecords
 		for (int labNum : labNums)
 		{
 			// Add the numbers to the label set
-			PreparedStatement ps = Connect.getConnection().getPreparedStatement("INSERT INTO LabelSet (RecordNumber,LabelNumber) VALUES (?,?)");
+			PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+					"INSERT INTO LabelSet (RecordNumber,LabelNumber) VALUES (?,?)");
 			ps.setInt(1, recordNumber);
 			ps.setInt(2, labNum);
 			ps.execute();
@@ -178,7 +198,8 @@ public class GetRecords
 		while (cIt.hasNext())
 		{
 			String catNo = cIt.next();
-			PreparedStatement ps = Connect.getConnection().getPreparedStatement("INSERT INTO CatNoSet (RecordNumber,CatNo) VALUES (?,?)");
+			PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+					"INSERT INTO CatNoSet (RecordNumber,CatNo) VALUES (?,?)");
 			ps.setInt(1, recordNumber);
 			ps.setString(2, catNo);
 			ps.execute();
@@ -248,7 +269,8 @@ public class GetRecords
 
 	public Set<String> getCatNos(int recNumber) throws SQLException
 	{
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT CatNo FROM CatNoSet WHERE RecordNumber = ?");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT CatNo FROM CatNoSet WHERE RecordNumber = ?");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -274,8 +296,10 @@ public class GetRecords
 
 	public Set<Label> getLabels(int recNumber) throws SQLException
 	{
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT LabelName FROM Labels,LabelSet WHERE Labels.LabelNumber = LabelSet.LabelNumber AND RecordNumber = ?");
+		PreparedStatement s = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT LabelName FROM Labels,LabelSet WHERE Labels.LabelNumber = LabelSet.LabelNumber AND RecordNumber = ?");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -386,7 +410,8 @@ public class GetRecords
 		Set<Integer> titleSet = new TreeSet<Integer>();
 
 		// Collect the titles
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT RecordNumber FROM Records");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT RecordNumber FROM Records");
 		ResultSet rs = s.executeQuery();
 		while (rs.next())
 			titleSet.add(rs.getInt(1));
@@ -403,7 +428,8 @@ public class GetRecords
 		Set<Integer> titleSet = new TreeSet<Integer>();
 
 		// Collect the titles
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT RecordNumber FROM Records WHERE Author is null");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT RecordNumber FROM Records WHERE Author is null");
 		ResultSet rs = s.executeQuery();
 		while (rs.next())
 			titleSet.add(rs.getInt(1));
@@ -420,8 +446,10 @@ public class GetRecords
 
 		if (status == SHELVED)
 		{
-			PreparedStatement s = Connect.getConnection().getPreparedStatement(
-					"SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos > 0 AND boxed = 0");
+			PreparedStatement s = Connect
+					.getConnection()
+					.getPreparedStatement(
+							"SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos > 0 AND boxed = 0");
 			s.setString(1, format);
 			ResultSet rs = s.executeQuery();
 			while (rs.next())
@@ -439,7 +467,8 @@ public class GetRecords
 		List<Record> records = new Vector<Record>();
 
 		// First generate a list of all the record numbers with this title
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT RecordNumber FROM Records WHERE Title = ?");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT RecordNumber FROM Records WHERE Title = ?");
 		s.setString(1, title);
 		ResultSet rs = s.executeQuery();
 		while (rs.next())
@@ -454,7 +483,8 @@ public class GetRecords
 		return records;
 	}
 
-	public Collection<Record> getRecordsFeaturingGroop(String groopName, int groopNumber) throws SQLException
+	public Collection<Record> getRecordsFeaturingGroop(String groopName, int groopNumber)
+			throws SQLException
 	{
 		List<Record> featuring = new LinkedList<Record>();
 
@@ -476,8 +506,10 @@ public class GetRecords
 	{
 		List<Record> rankedRecords = new LinkedList<Record>();
 
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
-				"SELECT recordnumber from records,score_table where recordnumber = record_id AND state = ? ORDER BY simon_rank DESC");
+		PreparedStatement ps = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT recordnumber from records,score_table where recordnumber = record_id AND state = ? ORDER BY simon_rank DESC");
 		ps.setInt(1, Record.RANKED);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
@@ -557,7 +589,8 @@ public class GetRecords
 		Set<String> titleSet = new TreeSet<String>();
 
 		// Collect the titles
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT Title FROM Records");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT Title FROM Records");
 		ResultSet rs = s.executeQuery();
 		while (rs.next())
 			titleSet.add(rs.getString(1));
@@ -610,7 +643,7 @@ public class GetRecords
 			currRec.setOwner(own);
 			currRec.setPrice(price);
 
-			currRec.setCategory(GetCategories.build().getCategory(category, -1));
+			currRec.setCategory(GetCategories.build().getCategory(category));
 
 			// Return this record
 			return currRec;
@@ -625,8 +658,10 @@ public class GetRecords
 		Set<Track> retSet = new TreeSet<Track>();
 
 		// First Build the bare track details
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT TrackRefNumber, TrackName, Length, TrackNumber FROM Tracks  WHERE RecordNumber = ? ORDER BY TrackNumber");
+		PreparedStatement s = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT TrackRefNumber, TrackName, Length, TrackNumber FROM Tracks  WHERE RecordNumber = ? ORDER BY TrackNumber");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 		// Naive approach to check for spped
@@ -643,7 +678,8 @@ public class GetRecords
 			int len = rs.getInt(3);
 			int refNum = rs.getInt(1);
 
-			currTrack = new Track(name, len, getLineUps(refNum), getPersonnel(refNum), trckNum, refNum);
+			currTrack = new Track(name, len, getLineUps(refNum), getPersonnel(refNum), trckNum,
+					refNum);
 
 			retSet.add(currTrack);
 		}
@@ -659,7 +695,8 @@ public class GetRecords
 		List<String> lis = new LinkedList<String>();
 
 		// Set the parameter
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT DISTINCT TrackName FROM Tracks");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement(
+				"SELECT DISTINCT TrackName FROM Tracks");
 		ResultSet rs = s.executeQuery();
 
 		while (rs.next())
@@ -727,7 +764,8 @@ public class GetRecords
 		int recordNumber = in.getNumber();
 
 		// Delete the label numbers
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement("DELETE FROM LabelSet WHERE RecordNumber = ?");
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+				"DELETE FROM LabelSet WHERE RecordNumber = ?");
 		ps.setInt(1, recordNumber);
 		ps.execute();
 
@@ -740,14 +778,16 @@ public class GetRecords
 		for (int labNum : labNums)
 		{
 			// Add the numbers to the label set
-			PreparedStatement lps = Connect.getConnection().getPreparedStatement("INSERT INTO LabelSet (RecordNumber,LabelNumber) VALUES (?,?)");
+			PreparedStatement lps = Connect.getConnection().getPreparedStatement(
+					"INSERT INTO LabelSet (RecordNumber,LabelNumber) VALUES (?,?)");
 			lps.setInt(1, recordNumber);
 			lps.setInt(2, labNum);
 			lps.execute();
 		}
 
 		// Delete the catalogue numbers
-		PreparedStatement lps = Connect.getConnection().getPreparedStatement("DELETE FROM CatNoSet WHERE RecordNumber = ?");
+		PreparedStatement lps = Connect.getConnection().getPreparedStatement(
+				"DELETE FROM CatNoSet WHERE RecordNumber = ?");
 		ps.setInt(1, recordNumber);
 		ps.execute();
 
@@ -756,7 +796,8 @@ public class GetRecords
 		while (cIt.hasNext())
 		{
 			String catNo = cIt.next();
-			PreparedStatement llps = Connect.getConnection().getPreparedStatement("INSERT INTO CatNoSet (RecordNumber,CatNo) VALUES (?,?)");
+			PreparedStatement llps = Connect.getConnection().getPreparedStatement(
+					"INSERT INTO CatNoSet (RecordNumber,CatNo) VALUES (?,?)");
 			llps.setInt(1, recordNumber);
 			llps.setString(2, catNo);
 			llps.execute();
@@ -837,28 +878,18 @@ public class GetRecords
 		s.close();
 
 		// Now update the groops and personnel - just delete these
-		PreparedStatement pps = Connect.getConnection().getPreparedStatement("DELETE FROM Personnel WHERE TrackNumber = ?");
+		PreparedStatement pps = Connect.getConnection().getPreparedStatement(
+				"DELETE FROM Personnel WHERE TrackNumber = ?");
 		pps.setInt(1, refNum);
 		pps.execute();
-		PreparedStatement lps = Connect.getConnection().getPreparedStatement("DELETE FROM LineUpSet WHERE TrackNumber = ?");
+		PreparedStatement lps = Connect.getConnection().getPreparedStatement(
+				"DELETE FROM LineUpSet WHERE TrackNumber = ?");
 		lps.setInt(1, refNum);
 		lps.execute();
 
 		// Now add the new data
 		addGroopsAndPersonnel(refNum, newTrack);
 
-	}
-
-	public static GetRecords create() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetRecords();
-		return singleton;
-	}
-
-	public static void main(String[] args) throws Exception
-	{
-		System.out.println(GetRecords.create().getRecordsWithTrack("Summertime"));
 	}
 
 }
