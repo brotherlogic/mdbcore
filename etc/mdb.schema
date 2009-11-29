@@ -1,0 +1,525 @@
+--
+-- PostgreSQL database dump
+--
+
+SET client_encoding = 'SQL_ASCII';
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA public IS 'Standard public schema';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = true;
+
+--
+-- Name: aliases; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE aliases (
+    artistnumber integer,
+    aliasnumber integer
+);
+
+
+ALTER TABLE public.aliases OWNER TO music;
+
+--
+-- Name: artists; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE artists (
+    artist_id serial NOT NULL,
+    sort_name character varying(100),
+    show_name character varying(100)
+);
+
+
+ALTER TABLE public.artists OWNER TO music;
+
+--
+-- Name: categories; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE categories (
+    categorynumber serial NOT NULL,
+    categoryname character varying(50),
+    mp3category integer,
+    sortorder integer
+);
+
+
+ALTER TABLE public.categories OWNER TO music;
+
+--
+-- Name: catnoset; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE catnoset (
+    recordnumber integer,
+    catno character varying(50)
+);
+
+
+ALTER TABLE public.catnoset OWNER TO music;
+
+--
+-- Name: compiler; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE compiler (
+    record_id integer NOT NULL,
+    artist_id integer NOT NULL
+);
+
+
+ALTER TABLE public.compiler OWNER TO music;
+
+--
+-- Name: exceptions; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE exceptions (
+    exception character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.exceptions OWNER TO music;
+
+--
+-- Name: formats; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE formats (
+    formatnumber serial NOT NULL,
+    formatname character varying(50),
+    baseformat character varying(10)
+);
+
+
+ALTER TABLE public.formats OWNER TO music;
+
+--
+-- Name: groops; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE groops (
+    groopnumber serial NOT NULL,
+    sort_name character varying(100),
+    show_name character varying(100)
+);
+
+
+ALTER TABLE public.groops OWNER TO music;
+
+--
+-- Name: labels; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE labels (
+    labelnumber serial NOT NULL,
+    labelname character varying(50)
+);
+
+
+ALTER TABLE public.labels OWNER TO music;
+
+--
+-- Name: labelset; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE labelset (
+    recordnumber integer,
+    labelnumber integer,
+    sort_label boolean
+);
+
+
+ALTER TABLE public.labelset OWNER TO music;
+
+--
+-- Name: lineup; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE lineup (
+    lineupnumber serial NOT NULL,
+    groopnumber integer
+);
+
+
+ALTER TABLE public.lineup OWNER TO music;
+
+--
+-- Name: lineupdetails; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE lineupdetails (
+    lineupnumber integer,
+    artistnumber integer
+);
+
+
+ALTER TABLE public.lineupdetails OWNER TO music;
+
+--
+-- Name: lineupset; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE lineupset (
+    lineupnumber integer,
+    tracknumber integer
+);
+
+
+ALTER TABLE public.lineupset OWNER TO music;
+
+--
+-- Name: personnel; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE personnel (
+    artistnumber integer,
+    tracknumber integer
+);
+
+
+ALTER TABLE public.personnel OWNER TO music;
+
+--
+-- Name: records; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE records (
+    recordnumber serial NOT NULL,
+    title character varying(100),
+    boughtdate date,
+    format integer,
+    notes character varying(255),
+    releaseyear integer,
+    category integer,
+    author character varying(255),
+    releasemonth integer,
+    releasetype integer,
+    modified timestamp without time zone,
+    "owner" integer,
+    purchase_price numeric(6,2),
+    state integer DEFAULT 0,
+    shelfpos integer,
+    boxed integer DEFAULT 0,
+    salepricepence integer DEFAULT -1
+);
+
+
+ALTER TABLE public.records OWNER TO music;
+
+--
+-- Name: score_table; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE score_table (
+    record_id integer NOT NULL,
+    jeanette_rank double precision,
+    jeanette_score integer,
+    jeanette_rank_date timestamp without time zone,
+    jeanette_score_date timestamp without time zone,
+    simon_rank double precision,
+    simon_score integer,
+    simon_score_date timestamp without time zone,
+    simon_rank_date timestamp without time zone
+);
+
+
+ALTER TABLE public.score_table OWNER TO music;
+
+--
+-- Name: tracks; Type: TABLE; Schema: public; Owner: music; Tablespace: 
+--
+
+CREATE TABLE tracks (
+    recordnumber integer,
+    tracknumber integer,
+    trackname character varying(200),
+    length integer,
+    trackrefnumber serial NOT NULL
+);
+
+
+ALTER TABLE public.tracks OWNER TO music;
+
+--
+-- Name: artists_artistname_key; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY artists
+    ADD CONSTRAINT artists_artistname_key UNIQUE (sort_name);
+
+
+--
+-- Name: artists_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY artists
+    ADD CONSTRAINT artists_pkey PRIMARY KEY (artist_id);
+
+
+--
+-- Name: categories_categoryname_key; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY categories
+    ADD CONSTRAINT categories_categoryname_key UNIQUE (categoryname);
+
+
+--
+-- Name: categories_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY categories
+    ADD CONSTRAINT categories_pkey PRIMARY KEY (categorynumber);
+
+
+--
+-- Name: compiler_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY compiler
+    ADD CONSTRAINT compiler_pkey PRIMARY KEY (record_id, artist_id);
+
+
+--
+-- Name: exceptions_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY exceptions
+    ADD CONSTRAINT exceptions_pkey PRIMARY KEY (exception);
+
+
+--
+-- Name: formats_formatname_key; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY formats
+    ADD CONSTRAINT formats_formatname_key UNIQUE (formatname);
+
+
+--
+-- Name: formats_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY formats
+    ADD CONSTRAINT formats_pkey PRIMARY KEY (formatnumber);
+
+
+--
+-- Name: groops_groopname_key; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY groops
+    ADD CONSTRAINT groops_groopname_key UNIQUE (sort_name);
+
+
+--
+-- Name: groops_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY groops
+    ADD CONSTRAINT groops_pkey PRIMARY KEY (groopnumber);
+
+
+--
+-- Name: labels_labelname_key; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY labels
+    ADD CONSTRAINT labels_labelname_key UNIQUE (labelname);
+
+
+--
+-- Name: labels_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY labels
+    ADD CONSTRAINT labels_pkey PRIMARY KEY (labelnumber);
+
+
+--
+-- Name: lineup_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY lineup
+    ADD CONSTRAINT lineup_pkey PRIMARY KEY (lineupnumber);
+
+
+--
+-- Name: records_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY records
+    ADD CONSTRAINT records_pkey PRIMARY KEY (recordnumber);
+
+
+--
+-- Name: score_table_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY score_table
+    ADD CONSTRAINT score_table_pkey PRIMARY KEY (record_id);
+
+
+--
+-- Name: tracks_pkey; Type: CONSTRAINT; Schema: public; Owner: music; Tablespace: 
+--
+
+ALTER TABLE ONLY tracks
+    ADD CONSTRAINT tracks_pkey PRIMARY KEY (trackrefnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY aliases
+    ADD CONSTRAINT "$1" FOREIGN KEY (artistnumber) REFERENCES artists(artist_id);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY records
+    ADD CONSTRAINT "$1" FOREIGN KEY (format) REFERENCES formats(formatnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY catnoset
+    ADD CONSTRAINT "$1" FOREIGN KEY (recordnumber) REFERENCES records(recordnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY labelset
+    ADD CONSTRAINT "$1" FOREIGN KEY (recordnumber) REFERENCES records(recordnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY lineup
+    ADD CONSTRAINT "$1" FOREIGN KEY (groopnumber) REFERENCES groops(groopnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY lineupdetails
+    ADD CONSTRAINT "$1" FOREIGN KEY (lineupnumber) REFERENCES lineup(lineupnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY tracks
+    ADD CONSTRAINT "$1" FOREIGN KEY (recordnumber) REFERENCES records(recordnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY lineupset
+    ADD CONSTRAINT "$1" FOREIGN KEY (lineupnumber) REFERENCES lineup(lineupnumber);
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY personnel
+    ADD CONSTRAINT "$1" FOREIGN KEY (artistnumber) REFERENCES artists(artist_id);
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY aliases
+    ADD CONSTRAINT "$2" FOREIGN KEY (aliasnumber) REFERENCES artists(artist_id);
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY records
+    ADD CONSTRAINT "$2" FOREIGN KEY (category) REFERENCES categories(categorynumber);
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY labelset
+    ADD CONSTRAINT "$2" FOREIGN KEY (labelnumber) REFERENCES labels(labelnumber);
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY lineupdetails
+    ADD CONSTRAINT "$2" FOREIGN KEY (artistnumber) REFERENCES artists(artist_id);
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY lineupset
+    ADD CONSTRAINT "$2" FOREIGN KEY (tracknumber) REFERENCES tracks(trackrefnumber);
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY personnel
+    ADD CONSTRAINT "$2" FOREIGN KEY (tracknumber) REFERENCES tracks(trackrefnumber);
+
+
+--
+-- Name: score_table_FK_1; Type: FK CONSTRAINT; Schema: public; Owner: music
+--
+
+ALTER TABLE ONLY score_table
+    ADD CONSTRAINT "score_table_FK_1" FOREIGN KEY (record_id) REFERENCES records(recordnumber);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
