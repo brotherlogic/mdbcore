@@ -18,17 +18,25 @@ import uk.co.brotherlogic.mdb.Utils;
 
 public class GetArtists
 {
+	public static GetArtists create() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetArtists();
+
+		return singleton;
+	}
+
 	// Map of name --> artist
 	private final Map<String, Artist> artists;
 
 	private final Map<String, Artist> tempStore;
-
 	// Prepared Statements to use
 	private final PreparedStatement insertQuery;
 	private final PreparedStatement collectQuery;
-	private final PreparedStatement collectQueryShowName;
 
+	private final PreparedStatement collectQueryShowName;
 	private boolean executed = false;
+
 	private static GetArtists singleton;
 
 	private GetArtists() throws SQLException
@@ -226,13 +234,5 @@ public class GetArtists
 		rs.close();
 
 		return newID;
-	}
-
-	public static GetArtists create() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetArtists();
-
-		return singleton;
 	}
 }

@@ -12,6 +12,15 @@ import java.sql.SQLException;
  */
 public final class Connect
 {
+	/** enum of modes */
+	private enum mode
+	{
+		DEVELOPMENT, PRODUCTION
+	}
+
+	/** Current mode of operation */
+	private static mode operationMode = mode.DEVELOPMENT;
+
 	/**
 	 * Static constructor
 	 * 
@@ -22,19 +31,24 @@ public final class Connect
 	public static Connect getConnection() throws SQLException
 	{
 		if (singleton == null)
-			singleton = new Connect();
+			singleton = new Connect(operationMode);
 		return singleton;
 	}
 
+	public static void setForProduction()
+	{
+		operationMode = mode.PRODUCTION;
+	}
+
 	/** The connection to the local DB */
-	private Connection locDB;
+	private Connection locDB;;
 
 	/** Singleton instance */
 	private static Connect singleton;
 
-	private Connect() throws SQLException
+	private Connect(mode operationMode) throws SQLException
 	{
-		makeConnection();
+		makeConnection(operationMode);
 	}
 
 	/**
@@ -82,13 +96,24 @@ public final class Connect
 	 * @throws SQLException
 	 *             if something fails
 	 */
-	private void makeConnection() throws SQLException
+	private void makeConnection(mode operationMode) throws SQLException
 	{
 		try
 		{
 			// Load all the drivers and initialise the database connection
 			Class.forName("org.postgresql.Driver");
-			locDB = DriverManager.getConnection("jdbc:postgresql://192.168.1.103/music?user=music");
+
+			if (operationMode == mode.PRODUCTION)
+			{
+				System.err.println("Connecting to production database");
+				locDB = DriverManager
+						.getConnection("jdbc:postgresql://192.168.1.103/music?user=music");
+			}
+			else
+			{
+				System.err.println("Connection to development database");
+				locDB = DriverManager.getConnection("jdbc:postgresql://localhost/music?user=music");
+			}
 
 			// Switch off auto commit
 			locDB.setAutoCommit(false);

@@ -81,7 +81,12 @@ public class Artist implements Comparable<Artist>
 	public final boolean equals(final Object o)
 	{
 		if (o instanceof Artist)
-			return this.compareTo((Artist) o) == 0;
+		{
+			if (((Artist) o).getId() > 0 && id > 0)
+				return ((Artist) o).getId() == id;
+			else
+				return this.compareTo((Artist) o) == 0;
+		}
 		else
 			return false;
 	}
