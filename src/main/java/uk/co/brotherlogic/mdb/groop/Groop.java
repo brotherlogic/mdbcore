@@ -56,8 +56,7 @@ public class Groop implements Comparable<Groop>
 		groopNumber = num;
 	}
 
-	public Groop(String sortName, String showName, int num,
-			Collection<LineUp> lineUps)
+	public Groop(String sortName, String showName, int num, Collection<LineUp> lineUps)
 	{
 		// Set the variables
 		this.sortName = sortName;
@@ -105,8 +104,7 @@ public class Groop implements Comparable<Groop>
 	{
 		try
 		{
-			this.lineUps = GetGroops.build().getSingleGroop(this.groopNumber)
-					.getLineUps();
+			this.lineUps = GetGroops.build().getSingleGroop(this.groopNumber).getLineUps();
 		}
 		catch (SQLException e)
 		{
@@ -156,7 +154,7 @@ public class Groop implements Comparable<Groop>
 
 	public LineUp getLineUp(int in)
 	{
-		if (lineUps == null)
+		if (lineUps == null || lineUps.size() == 0)
 			fillLineUp();
 
 		LineUp ret = null;
@@ -178,7 +176,7 @@ public class Groop implements Comparable<Groop>
 
 	public Collection<LineUp> getLineUps()
 	{
-		if (lineUps == null)
+		if (lineUps == null || lineUps.size() == 0)
 			fillLineUp();
 		return lineUps;
 	}
@@ -221,8 +219,7 @@ public class Groop implements Comparable<Groop>
 
 	public Collection<Record> getUnauthoredRecords() throws SQLException
 	{
-		return GetRecords.create().getRecordsFeaturingGroop(this.showName,
-				this.groopNumber);
+		return GetRecords.create().getRecordsFeaturingGroop(this.showName, this.groopNumber);
 	}
 
 	@Override

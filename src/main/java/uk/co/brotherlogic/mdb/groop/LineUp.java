@@ -40,6 +40,17 @@ public class LineUp implements Comparable<LineUp>
 	}
 
 	/**
+	 * Constrcutor
+	 * @param grp The groop of which this is a line up
+	 */
+	public LineUp(Groop grp)
+	{
+		lineUpNumber = -1;
+		this.grp = grp;
+		artists = new LinkedList<Artist>();
+	}
+
+	/**
 	 * Constructor
 	 * 
 	 * @param number
@@ -49,8 +60,7 @@ public class LineUp implements Comparable<LineUp>
 	 * @param groop
 	 *            The groop for the lineup
 	 */
-	public LineUp(final int number, final Collection<Artist> arts,
-			final Groop groop)
+	public LineUp(final int number, final Collection<Artist> arts, final Groop groop)
 	{
 		grp = groop;
 		lineUpNumber = number;

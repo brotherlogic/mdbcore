@@ -23,6 +23,47 @@ import uk.co.brotherlogic.mdb.artist.GetArtists;
 public class GetGroops
 {
 	private static Map<Integer, Groop> groopMap = new TreeMap<Integer, Groop>();
+
+	public static GetGroops build() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetGroops();
+
+		return singleton;
+	}
+
+	public static void main(String[] args)
+	{
+		try
+		{
+			Map<String, Groop> gMap = GetGroops.build().getGroopMap();
+			int count = 0;
+			for (Groop grp : gMap.values())
+				if (grp.getShowName() == null || grp.getShowName().equals("null"))
+				{
+					System.err.println("GROOP = " + grp.getNumber());
+					System.err.println("SHOW = " + grp.getShowName());
+					System.err.println("SORT = " + grp.getSortName());
+
+					grp.setShowName(Utils.flipString(grp.getSortName()));
+
+					System.err.println("SHOW = " + grp.getShowName());
+					System.err.println("SORT = " + grp.getSortName());
+
+					grp.save();
+					System.err.println(grp);
+					count++;
+
+				}
+
+			System.err.println("Done " + count);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	// Maps groopnumber to Groop
 	Map<String, Groop> groops;
 
@@ -169,8 +210,6 @@ public class GetGroops
 
 	public Groop getGroop(String groopName)
 	{
-		System.err.println("GETTING GROOP: " + groopName);
-
 		if (groops.containsKey(groopName))
 			return groops.get(groopName);
 		else
@@ -264,6 +303,8 @@ public class GetGroops
 
 	public int saveLineUp(LineUp lup) throws SQLException
 	{
+		System.err.println("Adding lineup");
+
 		// Initialise the return value
 		int ret = 0;
 
@@ -363,45 +404,5 @@ public class GetGroops
 	public String toString()
 	{
 		return "Groops";
-	}
-
-	public static GetGroops build() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetGroops();
-
-		return singleton;
-	}
-
-	public static void main(String[] args)
-	{
-		try
-		{
-			Map<String, Groop> gMap = GetGroops.build().getGroopMap();
-			int count = 0;
-			for (Groop grp : gMap.values())
-				if (grp.getShowName() == null || grp.getShowName().equals("null"))
-				{
-					System.err.println("GROOP = " + grp.getNumber());
-					System.err.println("SHOW = " + grp.getShowName());
-					System.err.println("SORT = " + grp.getSortName());
-
-					grp.setShowName(Utils.flipString(grp.getSortName()));
-
-					System.err.println("SHOW = " + grp.getShowName());
-					System.err.println("SORT = " + grp.getSortName());
-
-					grp.save();
-					System.err.println(grp);
-					count++;
-
-				}
-
-			System.err.println("Done " + count);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 }
