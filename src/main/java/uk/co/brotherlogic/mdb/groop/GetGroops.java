@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.Utils;
@@ -112,44 +111,18 @@ public class GetGroops
 		Groop in = lineup.getGroop();
 		// Get the groop number
 		int groopNumber = in.getNumber();
-		if (groopNumber < 1 && groops.containsKey(in.getSortName()))
-			groopNumber = (groops.get(in.getSortName())).getNumber();
-		if (!(groopNumber > 0))
-			if (tempStore.containsKey(in.getSortName()))
-				groopNumber = (tempStore.get(in.getSortName())).getNumber();
-			else
-			{
-				// Add the groop name and get the number
-				PreparedStatement ps = Connect.getConnection().getPreparedStatement(
-						"INSERT INTO Groops (sort_name,show_name) VALUES (?,?)");
-				ps.setString(1, in.getSortName());
-				ps.setString(2, in.getShowName());
-				ps.execute();
-
-				// Now get the group number
-				PreparedStatement s = Connect.getConnection().getPreparedStatement(
-						"SELECT GroopNumber FROM Groops WHERE sort_name = ?");
-				s.setString(1, in.getSortName());
-				ResultSet rs = s.executeQuery();
-				rs.next();
-
-				// Set the groop number
-				groopNumber = rs.getInt(1);
-				rs.close();
-				s.close();
-			}
-
-		// Set the number in the groop
-		in.setNumber(groopNumber);
+		if (groopNumber < 1)
+		{
+			//Save the groop
+			in.save();
+			groopNumber = in.getNumber();
+		}
 
 		// Get the lineup number
-		int lineupNum = -1;
 		if (lineup.getLineUpNumber() == -1)
-			lineupNum = saveLineUp(lineup);
+			return saveLineUp(lineup);
 		else
-			lineupNum = lineup.getLineUpNumber();
-
-		return lineupNum;
+			return lineup.getLineUpNumber();
 
 	}
 
@@ -309,7 +282,6 @@ public class GetGroops
 		currGroop.addLineUp(currLineUp);
 
 		groopMap.put(currGroop.getNumber(), currGroop);
-
 		return currGroop;
 	}
 
@@ -326,98 +298,39 @@ public class GetGroops
 	{
 		// Initialise the return value
 		int ret = 0;
-
 		Groop grp = lup.getGroop();
-		// Get the line ups for this groop
-		Collection<LineUp> lineups = new Vector<LineUp>();
 
-		if (GetGroops.build().getGroop(grp.getSortName()) != null)
-			lineups = GetGroops.build().getGroop(grp.getSortName()).getLineUps();
+		// Check to see if this lineup already exists
+		Collection<LineUp> currentLineups = grp.getLineUps();
+		for (LineUp lineUp : currentLineups)
+			if (lineUp.equals(lup))
+				return lineUp.getLineUpNumber();
 
-		// Work through each line up
-		Iterator<LineUp> lIt = lineups.iterator();
-		while (lIt.hasNext())
+		//Add the lineup - step 1, add the lineup to get the lineup number
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO lineup (groopnumber) VALUES (?)");
+		ps.setInt(1, grp.getNumber());
+		ps.execute();
+
+		PreparedStatement psg = Connect.getConnection().getPreparedStatement(
+				"SELECT lineupnumber FROM lineup ORDER BY lineup DESC LIMIT 1");
+		ResultSet rs = psg.executeQuery();
+
+		if (!rs.next())
+			return -1;
+		int lineupNumber = rs.getInt(1);
+
+		//Now add the details
+		PreparedStatement psa = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO lineupdetails(lineupnumber,artistnumber) VALUE (?,?)");
+		for (Artist art : lup.getArtists())
 		{
-			// Compare the two artist sets
-			LineUp tempLineUp = lIt.next();
-			Collection<Artist> arts = tempLineUp.getArtists();
-
-			if (arts.containsAll(lup.getArtists()) && lup.getArtists().containsAll(arts))
-				ret = tempLineUp.getLineUpNumber();
-		}
-
-		// Search the temporary store if we haven't found the value yet
-		if (tempStore.containsKey(grp.getSortName()) && ret < 1)
-		{
-
-			Groop tempGroop = tempStore.get(grp.getSortName());
-
-			Iterator<LineUp> tLupIt = tempGroop.getLineUps().iterator();
-			while (tLupIt.hasNext())
-			{
-				// Compare the two artist sets
-				LineUp tempLineUp = tLupIt.next();
-				Collection<Artist> arts = tempLineUp.getArtists();
-
-				if (arts.containsAll(lup.getArtists()) && lup.getArtists().containsAll(arts))
-					ret = tempLineUp.getLineUpNumber();
-			}
-		}
-
-		// If we haven't seen this line up before
-		if (ret < 1)
-		{
-			// Add the line up
-
-			// First register the new line up and retrieve the number
-			PreparedStatement ps = Connect.getConnection().getPreparedStatement(
-					"INSERT INTO LineUp (GroopNumber) VALUES (?)");
-			ps.setInt(1, grp.getNumber());
-			ps.execute();
-
-			// Now select the lineup ID which has a line up containing zero
-			// artists (i.e....)
-			PreparedStatement s = Connect
-					.getConnection()
-					.getPreparedStatement(
-							"SELECT DISTINCT LineUp.LineUpNumber FROM LineUp LEFT JOIN LineUpDetails ON LineUp.LineUpNumber = LineUpDetails.LineUpNumber WHERE (((LineUpDetails.LineUpNumber) Is Null))");
-			ResultSet rs = s.executeQuery();
-
-			// Grab the first entry
-			rs.next();
-			ret = rs.getInt(1);
-
-			// Close the statements
-			rs.close();
-			s.close();
-
-			// Now add the artists
-			int[] artNums = GetArtists.create().addArtists(lup.getArtists());
-
-			for (int artNum : artNums)
-			{
-				PreparedStatement lps = Connect.getConnection().getPreparedStatement(
-						"INSERT INTO LineUpDetails (LineUpNumber,ArtistNumber) VALUES (?,?)");
-				lps.setInt(1, ret);
-				lps.setInt(2, artNum);
-				lps.execute();
-			}
-
-			// Construct the new full groop if required
-			if (!tempStore.containsKey(grp.getSortName()))
-			{
-				Groop newGrp = new Groop(grp.getSortName(), grp.getShowName(), grp.getNumber(),
-						new Vector<LineUp>());
-				tempStore.put(newGrp.getSortName(), newGrp);
-			}
-
-			// Add the new lineup
-			Groop tempGrp = tempStore.get(grp.getSortName());
-			tempGrp.addLineUp(new LineUp(ret, lup.getArtists(), tempGrp));
+			psa.setInt(1, lineupNumber);
+			psa.setInt(2, art.getId());
+			psa.execute();
 		}
 
 		return ret;
-
 	}
 
 	public String toString()
