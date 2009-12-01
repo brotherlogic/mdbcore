@@ -27,13 +27,10 @@ public class LineUpTest extends TestCase
 			lineup.addArtist(a2);
 
 			g.save();
-			System.err.println("Saved Groop: " + g);
 			lineup.save();
 
 			//Retrieve the groop
-			System.err.println("Getting groops");
 			Groop g2 = GetGroops.build().getGroop("lutgroop");
-			System.err.println(g2.getLineUps().size());
 			LinkedList<LineUp> lineups = new LinkedList<LineUp>(g2.getLineUps());
 			assert (lineups.size() == 1);
 
@@ -45,7 +42,6 @@ public class LineUpTest extends TestCase
 		}
 		catch (SQLException e)
 		{
-			System.err.println("Exception aghoy!");
 			e.printStackTrace();
 		}
 	}

@@ -104,7 +104,7 @@ public class Groop implements Comparable<Groop>
 	{
 		try
 		{
-			this.lineUps = GetGroops.build().getSingleGroop(this.groopNumber).getLineUps();
+			this.lineUps = GetGroops.build().getLineUps(this);
 		}
 		catch (SQLException e)
 		{
