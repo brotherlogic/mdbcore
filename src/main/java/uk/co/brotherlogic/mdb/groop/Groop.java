@@ -230,7 +230,9 @@ public class Groop implements Comparable<Groop>
 
 	public void save() throws SQLException
 	{
-		if (updated)
+		if (groopNumber == -1)
+			groopNumber = GetGroops.build().addGroop(this);
+		else if (updated)
 			GetGroops.build().save(this);
 	}
 

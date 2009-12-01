@@ -27,6 +27,7 @@ public class LineUpTest extends TestCase
 			lineup.addArtist(a2);
 
 			g.save();
+			System.err.println("Saved Groop: " + g);
 			lineup.save();
 
 			//Retrieve the groop
@@ -44,6 +45,7 @@ public class LineUpTest extends TestCase
 		}
 		catch (SQLException e)
 		{
+			System.err.println("Exception aghoy!");
 			e.printStackTrace();
 		}
 	}

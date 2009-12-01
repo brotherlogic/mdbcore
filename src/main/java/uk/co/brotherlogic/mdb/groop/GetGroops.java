@@ -71,6 +71,8 @@ public class GetGroops
 	Map<String, Groop> tempStore;
 
 	PreparedStatement updateState;
+	PreparedStatement addGroop;
+	PreparedStatement getGroop;
 
 	private static GetGroops singleton = null;
 
@@ -82,6 +84,27 @@ public class GetGroops
 
 		updateState = Connect.getConnection().getPreparedStatement(
 				"UPDATE groops SET sort_name = ?, show_name = ? WHERE groopnumber = ?");
+		addGroop = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO groops (show_name,sort_name) VALUES (?,?)");
+		getGroop = Connect.getConnection().getPreparedStatement(
+				"SELECT groopnumber FROM groops WHERE show_name = ? AND sort_name = ?");
+	}
+
+	public int addGroop(Groop grp) throws SQLException
+	{
+		addGroop.setString(1, grp.getShowName());
+		addGroop.setString(2, grp.getSortName());
+		addGroop.execute();
+
+		getGroop.setString(1, grp.getShowName());
+		getGroop.setString(2, grp.getSortName());
+		ResultSet rs = getGroop.executeQuery();
+
+		int grpNumber = -1;
+		if (rs.next())
+			grpNumber = rs.getInt(1);
+
+		return grpNumber;
 	}
 
 	public int addLineUp(LineUp lineup) throws SQLException
@@ -297,21 +320,17 @@ public class GetGroops
 		updateState.setInt(3, g.getNumber());
 
 		updateState.execute();
-
-		Connect.getConnection().commitTrans();
 	}
 
 	public int saveLineUp(LineUp lup) throws SQLException
 	{
-		System.err.println("Adding lineup");
-
 		// Initialise the return value
 		int ret = 0;
 
 		Groop grp = lup.getGroop();
-
 		// Get the line ups for this groop
 		Collection<LineUp> lineups = new Vector<LineUp>();
+
 		if (GetGroops.build().getGroop(grp.getSortName()) != null)
 			lineups = GetGroops.build().getGroop(grp.getSortName()).getLineUps();
 
