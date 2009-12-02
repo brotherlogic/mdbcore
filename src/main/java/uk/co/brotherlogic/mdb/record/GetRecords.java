@@ -141,7 +141,7 @@ public class GetRecords
 		ps.execute();
 	}
 
-	public void addRecord(Record in) throws SQLException
+	public int addRecord(Record in) throws SQLException
 	{
 		// First get the format number
 		int formatNumber = in.getFormat().save();
@@ -210,10 +210,7 @@ public class GetRecords
 		while (tIt.hasNext())
 			addTrack(recordNumber, tIt.next());
 
-		// save the record
-		in.save();
-
-		commitRecord(in);
+		return recordNumber;
 	}
 
 	public void addTrack(int recordNumber, Track toAdd) throws SQLException
@@ -244,27 +241,6 @@ public class GetRecords
 		rs.close();
 
 		addGroopsAndPersonnel(trackNumber, toAdd);
-	}
-
-	public void commitRecord(Record in) throws SQLException
-	{
-		// Commit the label
-		for (Label label : in.getLabels())
-			label.save();
-
-		// Commit the artists
-		GetArtists.create().commitArtists();
-
-		// Commit each lineup
-		GetGroops.build().commitGroops();
-
-		// Commit the record
-		records.add(in);
-		numberToRecords.put(in.getNumber(), in);
-
-		// Commit the transaction
-		Connect.getConnection().commitTrans();
-
 	}
 
 	public Set<String> getCatNos(int recNumber) throws SQLException
@@ -847,8 +823,6 @@ public class GetRecords
 				updateTrack(recordNumber, tIt.next());
 		}
 
-		in.save();
-		commitRecord(in);
 	}
 
 	public void updateTrack(int recordNumber, Track newTrack) throws SQLException

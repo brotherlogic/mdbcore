@@ -8,7 +8,6 @@ package uk.co.brotherlogic.mdb.record;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -48,7 +47,7 @@ public class Record implements Comparable<Record>
 
 	String notes;
 
-	int number;
+	int number = -1;
 
 	int owner;
 
@@ -85,6 +84,7 @@ public class Record implements Comparable<Record>
 		boughtDate = Calendar.getInstance();
 		labels = new LinkedList<Label>();
 		tracks = new LinkedList<Track>();
+		catnos = new LinkedList<String>();
 
 		price = 0.0;
 	}
@@ -155,7 +155,8 @@ public class Record implements Comparable<Record>
 
 	public int compareTo(Record o)
 	{
-		return (title.toLowerCase() + number).compareTo(o.getTitle().toLowerCase() + (o.getNumber()));
+		return (title.toLowerCase() + number).compareTo(o.getTitle().toLowerCase()
+				+ (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks)
@@ -438,7 +439,8 @@ public class Record implements Comparable<Record>
 
 	public void save() throws SQLException
 	{
-		GetRecords.create().saveCompilers(this);
+		if (number == -1)
+			number = GetRecords.create().addRecord(this);
 
 		if (stateUpdated)
 		{
@@ -486,7 +488,7 @@ public class Record implements Comparable<Record>
 		this.compilers = new LinkedList<Artist>(compilers);
 	}
 
-	public void setDate(Date dat) throws ParseException
+	public void setDate(Date dat)
 	{
 		boughtDate.setTime(dat);
 	}
