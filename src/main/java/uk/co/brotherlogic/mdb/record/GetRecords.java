@@ -128,10 +128,7 @@ public class GetRecords
 	public void addLineUp(int trackNumber, LineUp lineup) throws SQLException
 	{
 		// First get the groop number
-		GetGroops.build().addLineUp(lineup);
-
-		// Get the lineup number
-		int lineUpNum = lineup.getLineUpNumber();
+		int lineUpNum = GetGroops.build().addLineUp(lineup);
 
 		// Now add the groop into the line up set
 		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
@@ -225,14 +222,8 @@ public class GetRecords
 		ps.execute();
 
 		// Now get that track number
-		// Statement s = p.getConnection().getStatement();
 		getTracks.setInt(1, recordNumber);
 		getTracks.setInt(2, toAdd.getTrackNumber());
-		/*
-		 * ResultSet rs = s.executeQuery( "SELECT TrackRefNum FROM Tracks WHERE
-		 * RecordNumber = " + recordNumber + " AND TrackNumber = " +
-		 * toAdd.getTrackNumber());
-		 */
 		ResultSet rs = getTracks.executeQuery();
 
 		rs.next();
@@ -369,7 +360,6 @@ public class GetRecords
 
 				// Add this to the map
 				numberToRecords.put(recNumber, rec);
-				// rec = getSingleRecord2(recNumber);
 			}
 		}
 		catch (ParseException e)
@@ -640,9 +630,9 @@ public class GetRecords
 						"SELECT TrackRefNumber, TrackName, Length, TrackNumber FROM Tracks  WHERE RecordNumber = ? ORDER BY TrackNumber");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
+
 		// Naive approach to check for spped
 		Track currTrack;
-		long cTime = 0;
 		while (rs.next())
 		{
 			int trckNum = rs.getInt(4);
@@ -656,13 +646,11 @@ public class GetRecords
 
 			currTrack = new Track(name, len, getLineUps(refNum), getPersonnel(refNum), trckNum,
 					refNum);
-
 			retSet.add(currTrack);
 		}
 		rs.close();
 		s.close();
 
-		System.err.println("TIME = " + cTime / 1000.0);
 		return retSet;
 	}
 
@@ -799,16 +787,6 @@ public class GetRecords
 		}
 		else if (otherTracks.size() > in.getTracks().size())
 		{
-
-			// First delete the tracks
-			Iterator<Track> otIt = otherTracks.iterator();
-			/*
-			 * while (otIt.hasNext())Track currTrack = otIt.next(); if
-			 * (currTrack.getTrackNumber() > in.getTracks().size())
-			 * deleteTrack(in.getNumber(), currTrack.getTrackNumber(),
-			 * currTrack.getTrackRefNumber());
-			 */
-
 			// Update the rest
 			Iterator<Track> tIt = in.getTracks().iterator();
 			while (tIt.hasNext())

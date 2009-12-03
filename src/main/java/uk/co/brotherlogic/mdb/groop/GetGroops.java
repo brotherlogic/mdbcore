@@ -320,7 +320,6 @@ public class GetGroops
 	public int saveLineUp(LineUp lup) throws SQLException
 	{
 		// Initialise the return value
-		int ret = 0;
 		Groop grp = lup.getGroop();
 
 		// Check to see if this lineup already exists
@@ -356,7 +355,7 @@ public class GetGroops
 			psa.execute();
 		}
 
-		return ret;
+		return lineupNumber;
 	}
 
 	public String toString()

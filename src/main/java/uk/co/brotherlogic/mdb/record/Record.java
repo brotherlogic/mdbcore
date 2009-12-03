@@ -5,7 +5,6 @@ package uk.co.brotherlogic.mdb.record;
  * @author Simon Tucker
  */
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -18,7 +17,6 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.Map.Entry;
 
-import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.artist.Artist;
 import uk.co.brotherlogic.mdb.categories.Category;
 import uk.co.brotherlogic.mdb.format.Format;
@@ -46,6 +44,8 @@ public class Record implements Comparable<Record>
 	Collection<Label> labels;
 
 	String notes;
+
+	boolean updated = false;
 
 	int number = -1;
 
@@ -119,6 +119,7 @@ public class Record implements Comparable<Record>
 
 	public void addTrack(Track trk)
 	{
+		updated = true;
 		tracks.add(trk);
 	}
 
@@ -403,7 +404,7 @@ public class Record implements Comparable<Record>
 
 	public Collection<Track> getTracks() throws SQLException
 	{
-		if (tracks == null)
+		if (tracks == null || tracks.size() == 0)
 			tracks = GetRecords.create().getTracks(number);
 
 		return tracks;
@@ -440,15 +441,10 @@ public class Record implements Comparable<Record>
 	{
 		if (number == -1)
 			number = GetRecords.create().addRecord(this);
-
-		if (stateUpdated)
+		else if (updated)
 		{
-			String sql = "UPDATE records set state = ? WHERE recordnumber = ?";
-			PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
-			ps.setInt(1, state);
-			ps.setInt(2, number);
-			ps.execute();
-			ps.close();
+			GetRecords.create().updateRecord(this);
+			updated = false;
 		}
 	}
 

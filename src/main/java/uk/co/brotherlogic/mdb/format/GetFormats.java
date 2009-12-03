@@ -147,20 +147,29 @@ public class GetFormats
 
 	public int save(Format in) throws SQLException
 	{
-		// Add the new format and commit the update
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
-				"INSERT INTO formats (formatname, baseformat) VALUES (?,?)");
-		ps.setString(1, in.getName());
-		ps.setString(2, in.getBaseFormat());
-		ps.execute();
-
 		// Get the new format number
 		PreparedStatement ps2 = Connect.getConnection().getPreparedStatement(
 				"SELECT FormatNumber FROM Formats WHERE FormatName = ?");
 		ps2.setString(1, in.getName());
 		ResultSet rs = ps2.executeQuery();
-		rs.next();
 
+		//If this format doesn't already exist - then add it
+		if (!rs.next())
+		{
+			// Add the new format and commit the update
+			PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+					"INSERT INTO formats (formatname, baseformat) VALUES (?,?)");
+			ps.setString(1, in.getName());
+			ps.setString(2, in.getBaseFormat());
+			ps.execute();
+
+			// Get the new format number
+			ps2.setString(1, in.getName());
+			rs = ps2.executeQuery();
+			rs.next();
+		}
+
+		//Get the format number
 		int val = rs.getInt(1);
 
 		// Close the database objects

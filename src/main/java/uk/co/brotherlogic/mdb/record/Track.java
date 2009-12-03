@@ -89,6 +89,11 @@ public class Track implements Comparable<Track>
 		groops.add(lineup);
 	}
 
+	public final void addPersonnel(final Artist person)
+	{
+		personnel.add(person);
+	}
+
 	/**
 	 * Adds the given personnel to the track
 	 * 
