@@ -20,7 +20,6 @@ public class RecordTest extends TestCase
 		r.setAuthor("fake-author");
 		r.setCategory(new Category("fake-cat", 12));
 		r.setCatNo("fake-cat-no");
-		System.err.println("HERE");
 		r.setDate(new Date());
 		r.setDiscogsNum(12);
 		r.setFormat(new Format("fake-format", "12"));

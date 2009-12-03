@@ -432,7 +432,6 @@ public class Record implements Comparable<Record>
 
 	private void resetShelfPos()
 	{
-		System.err.println("RESETTING SHELF POS: " + shelfpos);
 		if (shelfpos > 0)
 			shelfpos = 0;
 	}
