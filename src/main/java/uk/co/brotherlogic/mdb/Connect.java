@@ -41,9 +41,7 @@ public final class Connect
 	}
 
 	/** The connection to the local DB */
-	private Connection locDB;;
-
-	/** Singleton instance */
+	private Connection locDB;
 	private static Connect singleton;
 
 	private Connect(mode operationMode) throws SQLException

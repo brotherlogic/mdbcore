@@ -29,7 +29,6 @@ public class GetCategories
 	Map<String, Category> categories;
 	// Stores the insert query
 	PreparedStatement insertQuery;
-
 	PreparedStatement collectQuery;
 
 	private static GetCategories singleton;

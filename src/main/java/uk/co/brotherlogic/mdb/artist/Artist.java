@@ -149,4 +149,5 @@ public class Artist implements Comparable<Artist>
 	{
 		return sortName;
 	}
+
 }

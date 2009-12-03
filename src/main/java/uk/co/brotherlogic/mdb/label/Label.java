@@ -45,7 +45,6 @@ public class Label implements Comparable<Label>
 		labNo = number;
 	}
 
-	@Override
 	public final int compareTo(final Label o)
 	{
 		return -labelName.toLowerCase().compareTo(o.labelName.toLowerCase());

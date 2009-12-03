@@ -71,10 +71,8 @@ public class Track implements Comparable<Track>
 	 * @param trackRefNumber
 	 *            The track reference number
 	 */
-	public Track(final String titleIn, final int lengthIn,
-			final Collection<LineUp> groopsIn,
-			final Collection<Artist> personnelIn, final int trackNumberIn,
-			final int trackRefNumber)
+	public Track(final String titleIn, final int lengthIn, final Collection<LineUp> groopsIn,
+			final Collection<Artist> personnelIn, final int trackNumberIn, final int trackRefNumber)
 	{
 		title = titleIn;
 		lengthInSeconds = lengthIn;
@@ -102,7 +100,6 @@ public class Track implements Comparable<Track>
 		personnel.addAll(personnelIn);
 	}
 
-	@Override
 	public final int compareTo(final Track in)
 	{
 		int otherNum = in.getTrackNumber();
