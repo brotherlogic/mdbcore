@@ -19,11 +19,18 @@ import uk.co.brotherlogic.mdb.record.Record;
 
 public class GetLabels
 {
+	public static GetLabels create() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetLabels();
+		return singleton;
+	}
+
 	// Map of labelName --> Label
 	Map<String, Label> labels;
-
 	PreparedStatement insertQuery;
 	PreparedStatement collectQuery;
+
 	PreparedStatement getQuery;
 
 	private static GetLabels singleton;
@@ -45,14 +52,19 @@ public class GetLabels
 	{
 		int retNumber = 0;
 
-		// Add the new label
-		insertQuery.setString(1, currLabel.getName());
-		insertQuery.execute();
-
-		// Get the number
 		collectQuery.setString(1, currLabel.getName());
 		ResultSet rs = collectQuery.executeQuery();
-		rs.next();
+		if (!rs.next())
+		{
+			// Add the new label
+			insertQuery.setString(1, currLabel.getName());
+			insertQuery.execute();
+
+			// Get the number
+			collectQuery.setString(1, currLabel.getName());
+			rs = collectQuery.executeQuery();
+			rs.next();
+		}
 
 		retNumber = rs.getInt(1);
 		rs.close();
@@ -104,25 +116,21 @@ public class GetLabels
 
 	public Label getLabel(String name) throws SQLException
 	{
-		if (labels.containsKey(name))
-			return labels.get(name);
+
+		// Try to manually retrieve the label
+		collectQuery.setString(1, name);
+		ResultSet rs = collectQuery.executeQuery();
+
+		if (rs.next())
+		{
+			Label temp = new Label(name, rs.getInt(1));
+			rs.close();
+			return temp;
+		}
 		else
 		{
-			// Try to manually retrieve the label
-			collectQuery.setString(1, name);
-			ResultSet rs = collectQuery.executeQuery();
-
-			if (rs.next())
-			{
-				Label temp = new Label(name, rs.getInt(1));
-				rs.close();
-				return temp;
-			}
-			else
-			{
-				rs.close();
-				return new Label(name, -1);
-			}
+			rs.close();
+			return new Label(name, -1);
 		}
 	}
 
@@ -152,13 +160,6 @@ public class GetLabels
 			records.add(GetRecords.create().getRecord(rs.getInt(1)));
 
 		return records;
-	}
-
-	public static GetLabels create() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetLabels();
-		return singleton;
 	}
 
 }

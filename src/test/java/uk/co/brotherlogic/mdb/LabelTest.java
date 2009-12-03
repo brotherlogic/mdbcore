@@ -23,8 +23,15 @@ public class LabelTest extends TestCase
 
 			//Retrieve
 			Label lab2 = GetLabels.create().getLabel("test-label");
-
 			assert (lab2.equals(lab));
+
+			//Build again and add
+			Label lab3 = new Label("test-label");
+			lab3.save();
+			Label lab4 = GetLabels.create().getLabel("test-label");
+			assert (lab4.equals(lab3));
+			assert (lab4.equals(lab2));
+
 		}
 		catch (SQLException e)
 		{
