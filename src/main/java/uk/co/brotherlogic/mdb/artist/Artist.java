@@ -14,32 +14,22 @@ import uk.co.brotherlogic.mdb.record.Record;
  */
 public class Artist implements Comparable<Artist>
 {
-	/**
-	 * Static builder method given a comma'd name
-	 * 
-	 * @param name
-	 *            the Name with a comma (e.g. "Turner, Ike")
-	 * @return A valid artist for the given name
-	 */
-	public static Artist build(final String name)
-	{
-		return new Artist(name, Utils.flipString(name), -1);
-	}
-
 	/** The id number of the artist */
 	private int id;
 
 	/** The sort name */
-	private String sortName;
+	private final String sortName;
 
 	/** The show name */
-	private String showName;
+	private final String showName;
 
 	/**
 	 * Empty constructor
 	 */
-	public Artist()
+	public Artist(final String sort)
 	{
+		sortName = sort;
+		showName = Utils.flipString(sort);
 		id = -1;
 	}
 

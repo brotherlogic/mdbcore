@@ -19,8 +19,8 @@ public class LineUpTest extends TestCase
 			Groop g = new Groop("lutgroop", "lutgroop");
 
 			//Create some artists
-			Artist a1 = Artist.build("artist1");
-			Artist a2 = Artist.build("artist2");
+			Artist a1 = new Artist("artist1");
+			Artist a2 = new Artist("artist2");
 
 			LineUp lineup = new LineUp(g);
 			lineup.addArtist(a1);

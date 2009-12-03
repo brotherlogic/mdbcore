@@ -14,7 +14,7 @@ public class ArtistTest extends TestCase
 		try
 		{
 			//Create an artist
-			Artist art = Artist.build("Test Artist");
+			Artist art = new Artist("Test Artist");
 
 			//Persist it
 			art.save();
@@ -24,6 +24,14 @@ public class ArtistTest extends TestCase
 
 			assert (art.equals(art2));
 			assert (art.getId() > 0);
+
+			//Try saving it again
+			Artist art3 = new Artist("Test Artist");
+			art3.save();
+			Artist art4 = GetArtists.create().getArtist("Test Artist");
+
+			assert (art4.equals(art3));
+			assert (art4.equals(art));
 
 		}
 		catch (SQLException e)

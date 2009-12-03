@@ -41,14 +41,14 @@ public class TrackTest extends TestCase
 		{
 			r.save();
 
-			Artist g1 = Artist.build("DonkeyMan");
-			Artist g2 = Artist.build("Goat Man");
+			Artist g1 = new Artist("DonkeyMan");
+			Artist g2 = new Artist("Goat Man");
 			Groop g3 = new Groop("Animals");
 			LineUp lu = new LineUp(g3);
 			lu.addArtist(g1);
 			lu.addArtist(g2);
 
-			Artist p1 = Artist.build("Bunny Producer");
+			Artist p1 = new Artist("Bunny Producer");
 
 			Track t1 = new Track(1);
 			t1.setLengthInSeconds(100);

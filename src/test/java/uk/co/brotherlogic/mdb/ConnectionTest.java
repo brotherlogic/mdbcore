@@ -12,6 +12,9 @@ public class ConnectionTest extends TestCase
 		try
 		{
 			Connect con = Connect.getConnection();
+
+			//We should be able to reach this point
+			assertTrue(con != null);
 		}
 		catch (SQLException e)
 		{

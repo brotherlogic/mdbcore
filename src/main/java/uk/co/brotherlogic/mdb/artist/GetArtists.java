@@ -220,16 +220,22 @@ public class GetArtists
 	{
 		int newID = -1;
 
-		// Add this new artist
-		insertQuery.setString(1, art.getSortName());
-		insertQuery.setString(2, art.getShowName());
-		insertQuery.execute();
-
-		// Get the new number
+		// Check this artist doesn't already exist
 		collectQuery.setString(1, art.getSortName());
 		ResultSet rs = collectQuery.executeQuery();
+		if (!rs.next())
+		{
+			// Add this new artist
+			insertQuery.setString(1, art.getSortName());
+			insertQuery.setString(2, art.getShowName());
+			insertQuery.execute();
 
-		rs.next();
+			// Get the new number
+			collectQuery.setString(1, art.getSortName());
+			rs = collectQuery.executeQuery();
+			rs.next();
+		}
+
 		newID = rs.getInt(1);
 		rs.close();
 
