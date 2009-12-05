@@ -201,7 +201,7 @@ public class Record implements Comparable<Record>
 
 	public Collection<String> getCatNos() throws SQLException
 	{
-		if (catnos == null)
+		if (catnos == null || catnos.size() == 0)
 			catnos = GetRecords.create().getCatNos(number);
 
 		return catnos;

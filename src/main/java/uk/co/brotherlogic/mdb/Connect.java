@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import uk.co.brotherlogic.mdb.record.GetRecords;
+import uk.co.brotherlogic.mdb.record.Record;
+
 /**
  * Class to deal with database connection
  * 
@@ -43,6 +46,14 @@ public final class Connect
 	/** The connection to the local DB */
 	private Connection locDB;
 	private static Connect singleton;
+
+	public static void main(String[] args) throws Exception
+	{
+		Connect.setForProduction();
+		Record r = GetRecords.create().getRecord(9914);
+		System.err.println(r.getAuthor() + " - " + r.getTitle());
+		System.err.println(r.getCatNos());
+	}
 
 	private Connect(mode operationMode) throws SQLException
 	{

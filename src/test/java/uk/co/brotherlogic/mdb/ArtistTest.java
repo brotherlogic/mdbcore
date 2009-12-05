@@ -13,6 +13,7 @@ public class ArtistTest extends TestCase
 	{
 		try
 		{
+
 			//Create an artist
 			Artist art = new Artist("Test Artist");
 

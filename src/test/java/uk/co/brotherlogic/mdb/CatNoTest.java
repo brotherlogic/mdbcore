@@ -2,20 +2,17 @@ package uk.co.brotherlogic.mdb;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 
-import junit.framework.TestCase;
 import uk.co.brotherlogic.mdb.categories.Category;
 import uk.co.brotherlogic.mdb.format.Format;
 import uk.co.brotherlogic.mdb.label.Label;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
-public class RecordTest extends TestCase
+public class CatNoTest
 {
-	public void testRecord()
+	public void testCatNo()
 	{
-		//Create
 		Record r = new Record();
 		r.setAuthor("fake-author");
 		r.setCategory(new Category("fake-cat", 12));
@@ -30,30 +27,21 @@ public class RecordTest extends TestCase
 		r.setReleaseMonth(12);
 		r.setReleaseType(1);
 		r.setState(2);
-		r.setTitle("fake-title");
+		r.setTitle("catno-test");
 		r.setYear(2000);
+
+		r.addCatNo("Donkey");
 
 		try
 		{
-			//Persist
 			r.save();
-
-			//Retrieve
-			List<Record> recs = GetRecords.create().getRecords("fake-title");
-			assert (recs.size() == 1);
-
-			r.setAuthor("New Fake Author");
-			r.save();
-			assert (true);
-			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
-			assert (nrec.getAuthor().equals("New Fake Author"));
-
-			assert (nrec.getCatNos().size() == 1);
-			assert (nrec.getCatNoString().equals("fake-cat-no"));
+			Record r2 = GetRecords.create().getRecords("catno-test").get(0);
+			assert (r2.getCatNos().size() == 2);
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			assert (false);
 		}
 	}
 }
