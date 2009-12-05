@@ -41,6 +41,12 @@ public class RecordTest extends TestCase
 			//Retrieve
 			List<Record> recs = GetRecords.create().getRecords("fake-title");
 			assert (recs.size() == 1);
+
+			r.setAuthor("New Fake Author");
+			r.save();
+			assert (true);
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec.getAuthor().equals("New Fake Author"));
 		}
 		catch (SQLException e)
 		{

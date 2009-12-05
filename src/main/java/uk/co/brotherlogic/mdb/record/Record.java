@@ -457,6 +457,7 @@ public class Record implements Comparable<Record>
 	public final void setAuthor(final String in)
 	{
 		author = in;
+		updated = true;
 	}
 
 	public void setCategory(Category cat)

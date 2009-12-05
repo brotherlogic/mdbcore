@@ -698,7 +698,6 @@ public class GetRecords
 		}
 
 		aps.executeBatch();
-		System.err.println("Saved compilers");
 	}
 
 	public void updateRecord(Record in) throws SQLException
@@ -801,6 +800,8 @@ public class GetRecords
 				updateTrack(recordNumber, tIt.next());
 		}
 
+		//Store this in the cache
+		numberToRecords.put(in.getNumber(), in);
 	}
 
 	public void updateTrack(int recordNumber, Track newTrack) throws SQLException
