@@ -46,21 +46,28 @@ public class GetCategories
 
 	public int addCategory(Category in) throws SQLException
 	{
-		// Add the category
-		insertQuery.setString(1, in.getCatName());
-		insertQuery.setInt(2, in.getMp3Number());
-		insertQuery.execute();
-
 		collectQuery.setString(1, in.getCatName());
 		ResultSet rs = collectQuery.executeQuery();
 
-		// Move the cursor one step onewards and then choose the
-		// categorynumber
-		rs.next();
-		int catNum = rs.getInt(1);
+		//Add this category if it has not already been added
+		if (!rs.next())
+		{
+			// Add the category
+			insertQuery.setString(1, in.getCatName());
+			insertQuery.setInt(2, in.getMp3Number());
+			insertQuery.execute();
 
-		//Mark that the categories need to be recreated
-		refresh = true;
+			collectQuery.setString(1, in.getCatName());
+			rs = collectQuery.executeQuery();
+
+			//Mark that the categories need to be recreated
+			refresh = true;
+
+			// Move the cursor one step onewards and then choose the
+			// categorynumber
+			rs.next();
+		}
+		int catNum = rs.getInt(1);
 
 		return catNum;
 	}

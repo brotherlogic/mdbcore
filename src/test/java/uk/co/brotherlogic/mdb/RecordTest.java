@@ -1,13 +1,22 @@
 package uk.co.brotherlogic.mdb;
 
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+
 import junit.framework.TestCase;
+import uk.co.brotherlogic.mdb.categories.Category;
+import uk.co.brotherlogic.mdb.format.Format;
+import uk.co.brotherlogic.mdb.label.Label;
+import uk.co.brotherlogic.mdb.record.GetRecords;
+import uk.co.brotherlogic.mdb.record.Record;
 
 public class RecordTest extends TestCase
 {
 	public void testRecord()
 	{
 		//Create
-		/*Record r = new Record();
+		Record r = new Record();
 		r.setAuthor("fake-author");
 		r.setCategory(new Category("fake-cat", 12));
 		r.setCatNo("fake-cat-no");
@@ -36,6 +45,6 @@ public class RecordTest extends TestCase
 		catch (SQLException e)
 		{
 			e.printStackTrace();
-		}*/
+		}
 	}
 }
