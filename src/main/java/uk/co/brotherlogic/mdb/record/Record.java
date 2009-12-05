@@ -320,11 +320,6 @@ public class Record implements Comparable<Record>
 		return notes;
 	}
 
-	public int getNoTracks()
-	{
-		return tracks.size();
-	}
-
 	public int getNumber()
 	{
 		return number;

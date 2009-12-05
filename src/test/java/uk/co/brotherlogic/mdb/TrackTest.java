@@ -56,12 +56,19 @@ public class TrackTest extends TestCase
 			t1.addLineUp(lu);
 			t1.addPersonnel(p1);
 
+			Track t2 = new Track(2);
+			t2.setLengthInSeconds(120);
+			t2.setTitle("Help");
+			t2.addLineUp(lu);
+			t2.addPersonnel(p1);
+
 			//This should cause the record to update
 			r.addTrack(t1);
+			r.addTrack(t2);
 			r.save();
 
 			Record r2 = GetRecords.create().getRecords("fake-titles").get(0);
-			assert (r2.getTracks().size() == 1);
+			assert (r2.getTracks().size() == 2);
 		}
 		catch (SQLException e)
 		{
