@@ -326,7 +326,7 @@ public class GetGroops
 		Collection<LineUp> currentLineups = grp.getLineUps();
 
 		for (LineUp lineUp : currentLineups)
-			if (lineUp.equals(lup))
+			if (lineUp.equals(lup) && lineUp.getLineUpNumber() >= 0)
 				return lineUp.getLineUpNumber();
 
 		//Add the lineup - step 1, add the lineup to get the lineup number

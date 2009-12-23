@@ -1,5 +1,6 @@
 package uk.co.brotherlogic.mdb.record;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -174,6 +175,14 @@ public class Track implements Comparable<Track>
 	public int hashCode()
 	{
 		return title.hashCode() + refNumber;
+	}
+
+	public void save(int recordNumber) throws SQLException
+	{
+		if (refNumber == -1)
+			GetRecords.create().addTrack(recordNumber, this);
+		else
+			GetRecords.create().updateTrack(recordNumber, this);
 	}
 
 	public void setLengthInSeconds(int lengthInSeconds)

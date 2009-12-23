@@ -50,6 +50,8 @@ public class RecordTest extends TestCase
 
 			assert (nrec.getCatNos().size() == 1);
 			assert (nrec.getCatNoString().equals("fake-cat-no"));
+			assert (nrec.getLabels().size() == 1);
+			assert (nrec.getLabels().iterator().next().getName().equals("fake-label"));
 		}
 		catch (SQLException e)
 		{

@@ -78,7 +78,6 @@ public class LineUp implements Comparable<LineUp>
 		artists.add(art);
 	}
 
-	@Override
 	public final int compareTo(final LineUp o)
 	{
 		return this.toString().compareTo(o.toString());

@@ -72,6 +72,7 @@ public class TrackTest extends TestCase
 		}
 		catch (SQLException e)
 		{
+			System.err.println("Exception");
 			e.printStackTrace();
 		}
 	}

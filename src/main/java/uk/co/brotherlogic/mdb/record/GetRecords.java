@@ -212,6 +212,7 @@ public class GetRecords
 
 	public void addTrack(int recordNumber, Track toAdd) throws SQLException
 	{
+
 		// First add the track data and get the track number
 		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
 				"INSERT INTO Tracks (RecordNumber,TrackNumber,TrackName,Length) VALUES (?,?,?,?)");
@@ -226,9 +227,10 @@ public class GetRecords
 		getTracks.setInt(2, toAdd.getTrackNumber());
 		ResultSet rs = getTracks.executeQuery();
 
-		rs.next();
-		int trackNumber = rs.getInt(1);
+		if (!rs.next())
+			throw new SQLException("Unable to add track");
 
+		int trackNumber = rs.getInt(1);
 		rs.close();
 
 		addGroopsAndPersonnel(trackNumber, toAdd);
@@ -751,8 +753,8 @@ public class GetRecords
 		// Delete the catalogue numbers
 		PreparedStatement lps = Connect.getConnection().getPreparedStatement(
 				"DELETE FROM CatNoSet WHERE RecordNumber = ?");
-		ps.setInt(1, recordNumber);
-		ps.execute();
+		lps.setInt(1, recordNumber);
+		lps.execute();
 
 		// Add the catalogue numbers
 		Iterator<String> cIt = in.getCatNos().iterator();
@@ -766,39 +768,16 @@ public class GetRecords
 			llps.execute();
 		}
 
-		// Get the other number of tracks
-		Collection<Track> otherTracks = getTracks(in.getNumber());
+		//Deal with the tracks
+		for (Track t : in.getTracks())
+			t.save(in.getNumber());
 
-		if (otherTracks.size() < in.getTracks().size())
-		{
-			// We need to add tracks here
-			Iterator<Track> tIt = in.getTracks().iterator();
-			while (tIt.hasNext())
-			{
-				Track toDeal = tIt.next();
-
-				if (toDeal.getTrackNumber() > otherTracks.size())
-					addTrack(in.getNumber(), toDeal);
-				else
-					updateTrack(in.getNumber(), toDeal);
-			}
-
-		}
-		else if (otherTracks.size() > in.getTracks().size())
-		{
-			// Update the rest
-			Iterator<Track> tIt = in.getTracks().iterator();
-			while (tIt.hasNext())
-				updateTrack(recordNumber, tIt.next());
-
-		}
-		else
-		{
-			// Just add the tracks
-			Iterator<Track> tIt = in.getTracks().iterator();
-			while (tIt.hasNext())
-				updateTrack(recordNumber, tIt.next());
-		}
+		//Delete any miscreant tracks
+		PreparedStatement dps = Connect.getConnection().getPreparedStatement(
+				"DELETE FROM Tracks WHERE recordnumber = ? AND tracknumber > ?");
+		dps.setInt(1, in.getNumber());
+		dps.setInt(2, in.getTracks().size());
+		dps.execute();
 
 		//Store this in the cache
 		numberToRecords.put(in.getNumber(), in);
