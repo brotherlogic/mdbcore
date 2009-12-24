@@ -59,17 +59,24 @@ public class GetGroops
 
 	public int addGroop(Groop grp) throws SQLException
 	{
-		addGroop.setString(1, grp.getShowName());
-		addGroop.setString(2, grp.getSortName());
-		addGroop.execute();
-
 		getGroop.setString(1, grp.getShowName());
 		getGroop.setString(2, grp.getSortName());
 		ResultSet rs = getGroop.executeQuery();
 
+		if (!rs.next())
+		{
+			addGroop.setString(1, grp.getShowName());
+			addGroop.setString(2, grp.getSortName());
+			addGroop.execute();
+
+			getGroop.setString(1, grp.getShowName());
+			getGroop.setString(2, grp.getSortName());
+			rs = getGroop.executeQuery();
+			rs.next();
+		}
+
 		int grpNumber = -1;
-		if (rs.next())
-			grpNumber = rs.getInt(1);
+		grpNumber = rs.getInt(1);
 
 		return grpNumber;
 	}

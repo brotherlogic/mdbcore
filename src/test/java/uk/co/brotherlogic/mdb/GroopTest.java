@@ -23,6 +23,15 @@ public class GroopTest extends TestCase
 
 			//Test
 			assert (g2.equals(g));
+
+			//Make a new groop and test for collisions
+			Groop g3 = new Groop("TestGroop", "TestGroop");
+			g3.save();
+			Groop g4 = GetGroops.build().getGroop("TestGroop");
+
+			//Check
+			assert (g3.equals(g4));
+			assert (g3.equals(g2));
 		}
 		catch (SQLException e)
 		{

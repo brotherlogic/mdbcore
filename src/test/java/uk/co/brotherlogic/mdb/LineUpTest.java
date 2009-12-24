@@ -39,6 +39,18 @@ public class LineUpTest extends TestCase
 			assert (artists.size() == 2);
 			assert (artists.get(0).equals(a1) || artists.get(0).equals(a2));
 			assert (artists.get(0).equals(a1) || artists.get(0).equals(a2));
+
+			Artist a3 = new Artist("artist1");
+			Artist a4 = new Artist("artist2");
+
+			Groop g3 = new Groop("lutgroop");
+
+			LineUp lineup3 = new LineUp(g);
+			lineup3.addArtist(a3);
+			lineup3.addArtist(a4);
+
+			g3.save();
+			lineup3.save();
 		}
 		catch (SQLException e)
 		{
