@@ -19,7 +19,7 @@ public class TrackTest extends TestCase
 
 	public void testTrack()
 	{
-		//Create
+		// Create
 		Record r = new Record();
 		r.setAuthor("fake-author");
 		r.setCategory(new Category("fake-cat", 12));
@@ -62,13 +62,14 @@ public class TrackTest extends TestCase
 			t2.addLineUp(lu);
 			t2.addPersonnel(p1);
 
-			//This should cause the record to update
+			// This should cause the record to update
 			r.addTrack(t1);
 			r.addTrack(t2);
 			r.save();
 
 			Record r2 = GetRecords.create().getRecords("fake-titles").get(0);
 			assert (r2.getTracks().size() == 2);
+			assert (r2.getTracks().iterator().next().getPersonnel().size() == 1);
 		}
 		catch (SQLException e)
 		{

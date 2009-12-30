@@ -15,7 +15,7 @@ public class RecordTest extends TestCase
 {
 	public void testRecord()
 	{
-		//Create
+		// Create
 		Record r = new Record();
 		r.setAuthor("fake-author");
 		r.setCategory(new Category("fake-cat", 12));
@@ -35,10 +35,10 @@ public class RecordTest extends TestCase
 
 		try
 		{
-			//Persist
+			// Persist
 			r.save();
 
-			//Retrieve
+			// Retrieve
 			List<Record> recs = GetRecords.create().getRecords("fake-title");
 			assert (recs.size() == 1);
 

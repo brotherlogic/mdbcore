@@ -12,26 +12,40 @@ public class FormatTest extends TestCase
 	{
 		try
 		{
-			//Create
+			// Create
 			Format form = new Format("TestFormat", "12");
 
-			//Persist
+			// Persist
 			form.save();
 
-			//Retrieve
+			// Retrieve
 			Format form2 = GetFormats.create().getFormat("TestFormat");
 
 			assert (form.equals(form2));
 			assert (form2.getBaseFormat().equals("12"));
 
-			//Try re-adding the same format
+			// Try re-adding the same format
 			Format form3 = new Format("TestFormat", "12");
 			form3.save();
 
-			//Retrieve and check
+			// Retrieve and check
 			Format form4 = GetFormats.create().getFormat("TestFormat");
 			assert (form4.equals(form3));
 			assert (form4.equals(form));
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testRetrieveFormats()
+	{
+		// Clear the database
+		try
+		{
+			GetFormats.create().getFormats();
 		}
 		catch (SQLException e)
 		{

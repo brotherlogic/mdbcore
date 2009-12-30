@@ -81,7 +81,7 @@ public class GetRecords
 		getPersonnel = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"SELECT Personnel.TrackNumber, Artists.sort_name FROM Artists INNER JOIN Personnel ON Artists.artist_id = Personnel.ArtistNumber WHERE (((Personnel.TrackNumber)=?))");
+						"SELECT Personnel.TrackNumber, Artist.sort_name FROM Artist INNER JOIN Personnel ON Artist.artist_id = Personnel.ArtistNumber WHERE (((Personnel.TrackNumber)=?))");
 
 	}
 
