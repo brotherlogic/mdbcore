@@ -16,9 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -44,8 +42,6 @@ public class GetRecords
 	// Flag indicating overlap of record titles
 	boolean nonOver;
 
-	Map<Integer, Record> numberToRecords;
-
 	Collection<Record> records;
 	PreparedStatement updateTrack;
 	PreparedStatement updateRecord;
@@ -63,7 +59,6 @@ public class GetRecords
 	{
 		// Create the records
 		records = new Vector<Record>();
-		numberToRecords = new TreeMap<Integer, Record>();
 
 		getTracks = Connect.getConnection().getPreparedStatement("SELECT TrackRefNumber FROM Track WHERE RecordNumber = ? AND TrackNumber = ?");
 		addRecord = Connect
@@ -246,6 +241,7 @@ public class GetRecords
 		PreparedStatement s = Connect.getConnection().getPreparedStatement(
 				"SELECT LabelName FROM Labels,LabelSet WHERE Labels.LabelNumber = LabelSet.LabelNumber AND RecordNumber = ?");
 		s.setInt(1, recNumber);
+		System.err.println(s);
 		ResultSet rs = s.executeQuery();
 
 		Set<Label> retSet = new TreeSet<Label>();
@@ -279,11 +275,6 @@ public class GetRecords
 		}
 
 		return retSet;
-	}
-
-	public Map<Integer, Record> getMap()
-	{
-		return numberToRecords;
 	}
 
 	public boolean getMyState()
@@ -329,16 +320,8 @@ public class GetRecords
 		Record rec = null;
 		try
 		{
-			if (numberToRecords.keySet().contains(recNumber))
-				rec = numberToRecords.get(recNumber);
-			else
-			{
-				// Get the single record
-				rec = getSingleRecord(recNumber);
-
-				// Add this to the map
-				numberToRecords.put(recNumber, rec);
-			}
+			// Get the single record
+			rec = getSingleRecord(recNumber);
 		}
 		catch (ParseException e)
 		{
@@ -737,8 +720,6 @@ public class GetRecords
 		dps.setInt(2, in.getTracks().size());
 		dps.execute();
 
-		// Store this in the cache
-		numberToRecords.put(in.getNumber(), in);
 	}
 
 	public void updateTrack(int recordNumber, Track newTrack) throws SQLException

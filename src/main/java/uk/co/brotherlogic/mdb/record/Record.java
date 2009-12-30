@@ -156,8 +156,7 @@ public class Record implements Comparable<Record>
 
 	public int compareTo(Record o)
 	{
-		return (title.toLowerCase() + number).compareTo(o.getTitle().toLowerCase()
-				+ (o.getNumber()));
+		return (title.toLowerCase() + number).compareTo(o.getTitle().toLowerCase() + (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks)
@@ -426,12 +425,6 @@ public class Record implements Comparable<Record>
 		return number;
 	}
 
-	private void resetShelfPos()
-	{
-		if (shelfpos > 0)
-			shelfpos = 0;
-	}
-
 	public void save() throws SQLException
 	{
 		if (number == -1)
@@ -633,5 +626,11 @@ public class Record implements Comparable<Record>
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	private void resetShelfPos()
+	{
+		if (shelfpos > 0)
+			shelfpos = 0;
 	}
 }
