@@ -269,7 +269,7 @@ public class Record implements Comparable<Record>
 
 	public Collection<Label> getLabels() throws SQLException
 	{
-		if (labels == null)
+		if (labels == null || labels.size() == 0)
 			labels = GetRecords.create().getLabels(number);
 
 		return labels;

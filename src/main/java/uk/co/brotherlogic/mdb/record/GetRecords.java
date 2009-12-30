@@ -241,7 +241,6 @@ public class GetRecords
 		PreparedStatement s = Connect.getConnection().getPreparedStatement(
 				"SELECT LabelName FROM Labels,LabelSet WHERE Labels.LabelNumber = LabelSet.LabelNumber AND RecordNumber = ?");
 		s.setInt(1, recNumber);
-		System.err.println(s);
 		ResultSet rs = s.executeQuery();
 
 		Set<Label> retSet = new TreeSet<Label>();
