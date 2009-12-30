@@ -18,25 +18,17 @@ import uk.co.brotherlogic.mdb.Utils;
 
 public class GetArtists
 {
-	public static GetArtists create() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetArtists();
-
-		return singleton;
-	}
-
 	// Map of name --> artist
 	private final Map<String, Artist> artists;
 
 	private final Map<String, Artist> tempStore;
+
 	// Prepared Statements to use
 	private final PreparedStatement insertQuery;
 	private final PreparedStatement collectQuery;
-
 	private final PreparedStatement collectQueryShowName;
-	private boolean executed = false;
 
+	private boolean executed = false;
 	private static GetArtists singleton;
 
 	private GetArtists() throws SQLException
@@ -48,12 +40,9 @@ public class GetArtists
 		artists = new TreeMap<String, Artist>();
 
 		// Build the set
-		insertQuery = Connect.getConnection().getPreparedStatement(
-				"INSERT INTO Artists (sort_name, show_name) VALUES (?,?)");
-		collectQuery = Connect.getConnection().getPreparedStatement(
-				"SELECT artist_id,show_name FROM Artists WHERE sort_name = ?");
-		collectQueryShowName = Connect.getConnection().getPreparedStatement(
-				"SELECT artist_id,sort_name FROM Artists WHERE show_name = ?");
+		insertQuery = Connect.getConnection().getPreparedStatement("INSERT INTO Artist (sort_name, show_name) VALUES (?,?)");
+		collectQuery = Connect.getConnection().getPreparedStatement("SELECT artist_id,show_name FROM Artist WHERE sort_name = ?");
+		collectQueryShowName = Connect.getConnection().getPreparedStatement("SELECT artist_id,sort_name FROM Artist WHERE show_name = ?");
 	}
 
 	public int[] addArtists(Collection<Artist> art) throws SQLException
@@ -90,8 +79,7 @@ public class GetArtists
 	public void execute() throws SQLException
 	{
 		// Get a statement and run the query
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT sort_name,artist_id,show_name FROM Artists");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT sort_name,artist_id,show_name FROM Artist");
 		ResultSet rs = s.executeQuery();
 
 		// Fill the set
@@ -118,8 +106,7 @@ public class GetArtists
 
 	public Artist getArtist(int num) throws SQLException
 	{
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT sort_name, show_name FROM Artists WHERE artist_id = ?");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT sort_name, show_name FROM Artist WHERE artist_id = ?");
 		s.setInt(1, num);
 		ResultSet rs = s.executeQuery();
 
@@ -240,5 +227,13 @@ public class GetArtists
 		rs.close();
 
 		return newID;
+	}
+
+	public static GetArtists create() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetArtists();
+
+		return singleton;
 	}
 }

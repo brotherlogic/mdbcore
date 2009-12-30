@@ -23,14 +23,6 @@ public class GetGroops
 {
 	private static Map<Integer, Groop> groopMap = new TreeMap<Integer, Groop>();
 
-	public static GetGroops build() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetGroops();
-
-		return singleton;
-	}
-
 	// Maps groopnumber to Groop
 	Map<String, Groop> groops;
 
@@ -38,9 +30,9 @@ public class GetGroops
 	Map<String, Groop> tempStore;
 
 	PreparedStatement updateState;
+
 	PreparedStatement addGroop;
 	PreparedStatement getGroop;
-
 	private static GetGroops singleton = null;
 
 	private GetGroops() throws SQLException
@@ -49,12 +41,9 @@ public class GetGroops
 		tempStore = new TreeMap<String, Groop>();
 		groops = new TreeMap<String, Groop>();
 
-		updateState = Connect.getConnection().getPreparedStatement(
-				"UPDATE groops SET sort_name = ?, show_name = ? WHERE groopnumber = ?");
-		addGroop = Connect.getConnection().getPreparedStatement(
-				"INSERT INTO groops (show_name,sort_name) VALUES (?,?)");
-		getGroop = Connect.getConnection().getPreparedStatement(
-				"SELECT groopnumber FROM groops WHERE show_name = ? AND sort_name = ?");
+		updateState = Connect.getConnection().getPreparedStatement("UPDATE groops SET sort_name = ?, show_name = ? WHERE groopnumber = ?");
+		addGroop = Connect.getConnection().getPreparedStatement("INSERT INTO groops (show_name,sort_name) VALUES (?,?)");
+		getGroop = Connect.getConnection().getPreparedStatement("SELECT groopnumber FROM groops WHERE show_name = ? AND sort_name = ?");
 	}
 
 	public int addGroop(Groop grp) throws SQLException
@@ -89,7 +78,7 @@ public class GetGroops
 		int groopNumber = in.getNumber();
 		if (groopNumber < 1)
 		{
-			//Save the groop
+			// Save the groop
 			in.save();
 			groopNumber = in.getNumber();
 		}
@@ -127,8 +116,7 @@ public class GetGroops
 
 	public void execute() throws SQLException
 	{
-		PreparedStatement ss = Connect.getConnection().getPreparedStatement(
-				"Select Count(sort_name) FROM Groops");
+		PreparedStatement ss = Connect.getConnection().getPreparedStatement("Select Count(sort_name) FROM Groops");
 		ResultSet rss = ss.executeQuery();
 		rss.next();
 		rss.close();
@@ -161,8 +149,7 @@ public class GetGroops
 	public Groop getGroop(int num) throws SQLException
 	{
 		// Get the groop name
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT sort_name, show_name FROM Groops WHERE GroopNumber = ?");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT sort_name, show_name FROM Groops WHERE GroopNumber = ?");
 		s.setInt(1, num);
 		ResultSet rs = s.executeQuery();
 
@@ -183,8 +170,7 @@ public class GetGroops
 	public Groop getGroop(String sortName) throws SQLException
 	{
 		// Get the groop name
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT groopnumber, show_name FROM Groops WHERE sort_name = ?");
+		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT groopnumber, show_name FROM Groops WHERE sort_name = ?");
 		s.setString(1, sortName);
 		ResultSet rs = s.executeQuery();
 
@@ -336,23 +322,20 @@ public class GetGroops
 			if (lineUp.equals(lup) && lineUp.getLineUpNumber() >= 0)
 				return lineUp.getLineUpNumber();
 
-		//Add the lineup - step 1, add the lineup to get the lineup number
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
-				"INSERT INTO lineup (groopnumber) VALUES (?)");
+		// Add the lineup - step 1, add the lineup to get the lineup number
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement("INSERT INTO lineup (groopnumber) VALUES (?)");
 		ps.setInt(1, grp.getNumber());
 		ps.execute();
 
-		PreparedStatement psg = Connect.getConnection().getPreparedStatement(
-				"SELECT lineupnumber FROM lineup ORDER BY lineup DESC LIMIT 1");
+		PreparedStatement psg = Connect.getConnection().getPreparedStatement("SELECT lineupnumber FROM lineup ORDER BY lineupnumber DESC LIMIT 1");
 		ResultSet rs = psg.executeQuery();
 
 		if (!rs.next())
 			return -1;
 		int lineupNumber = rs.getInt(1);
 
-		//Now add the details
-		PreparedStatement psa = Connect.getConnection().getPreparedStatement(
-				"INSERT INTO lineupdetails(lineupnumber,artistnumber) VALUES (?,?)");
+		// Now add the details
+		PreparedStatement psa = Connect.getConnection().getPreparedStatement("INSERT INTO lineupdetails(lineupnumber,artistnumber) VALUES (?,?)");
 		for (Artist art : lup.getArtists())
 		{
 			art.save();
@@ -368,5 +351,13 @@ public class GetGroops
 	public String toString()
 	{
 		return "Groops";
+	}
+
+	public static GetGroops build() throws SQLException
+	{
+		if (singleton == null)
+			singleton = new GetGroops();
+
+		return singleton;
 	}
 }
