@@ -86,7 +86,7 @@ public final class Connect
 			if (operationMode == mode.PRODUCTION)
 			{
 				System.err.println("Connecting to production database");
-				locDB = DriverManager.getConnection("jdbc:postgresql://192.168.1.103/music?user=music");
+				locDB = DriverManager.getConnection("jdbc:postgresql://192.168.1.100/music?user=music");
 			}
 			else
 			{
