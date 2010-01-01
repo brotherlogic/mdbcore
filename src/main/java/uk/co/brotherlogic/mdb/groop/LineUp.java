@@ -5,6 +5,7 @@ package uk.co.brotherlogic.mdb.groop;
  * @author Simon Tucker
  */
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -18,8 +19,13 @@ import uk.co.brotherlogic.mdb.artist.Artist;
  * @author sat
  * 
  */
-public class LineUp implements Comparable<LineUp>
+public class LineUp implements Comparable<LineUp>, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8855282752905330770L;
+
 	/** The number of this lineup */
 	private int lineUpNumber;
 

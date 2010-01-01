@@ -1,5 +1,6 @@
 package uk.co.brotherlogic.mdb.record;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,7 +14,7 @@ import uk.co.brotherlogic.mdb.groop.LineUp;
  * 
  * @author Simon Tucker
  */
-public class Track implements Comparable<Track>
+public class Track implements Comparable<Track>, Serializable
 {
 	/** The track number of this track */
 	private int trackNumber;

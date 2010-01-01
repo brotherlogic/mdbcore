@@ -1,5 +1,6 @@
 package uk.co.brotherlogic.mdb.label;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -10,7 +11,7 @@ import uk.co.brotherlogic.mdb.record.Record;
  * 
  * @author Simon Tucker
  */
-public class Label implements Comparable<Label>
+public class Label implements Comparable<Label>, Serializable
 {
 	/**
 	 * The label name

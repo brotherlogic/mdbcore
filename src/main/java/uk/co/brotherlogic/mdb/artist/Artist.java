@@ -1,5 +1,6 @@
 package uk.co.brotherlogic.mdb.artist;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -12,8 +13,13 @@ import uk.co.brotherlogic.mdb.record.Record;
  * 
  * @author Simon Tucker
  */
-public class Artist implements Comparable<Artist>
+public class Artist implements Comparable<Artist>, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3058167016487618030L;
+
 	/** The id number of the artist */
 	private int id;
 

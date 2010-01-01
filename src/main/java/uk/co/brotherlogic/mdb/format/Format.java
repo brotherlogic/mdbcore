@@ -5,6 +5,7 @@ package uk.co.brotherlogic.mdb.format;
  * @author Simon Tucker
  */
 
+import java.io.Serializable;
 import java.sql.SQLException;
 
 /**
@@ -13,8 +14,13 @@ import java.sql.SQLException;
  * @author sat
  * 
  */
-public class Format implements Comparable<Format>
+public class Format implements Comparable<Format>, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6289435509572186386L;
+
 	/** The name of the format */
 	private final String name;
 

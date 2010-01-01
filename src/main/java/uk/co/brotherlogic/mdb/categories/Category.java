@@ -1,5 +1,6 @@
 package uk.co.brotherlogic.mdb.categories;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 
 /**
@@ -7,8 +8,13 @@ import java.sql.SQLException;
  * 
  * @author Simon Tucker
  */
-public class Category implements Comparable<Category>
+public class Category implements Comparable<Category>, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -710632723811722777L;
+
 	/** The name of the category */
 	private final String catName;
 

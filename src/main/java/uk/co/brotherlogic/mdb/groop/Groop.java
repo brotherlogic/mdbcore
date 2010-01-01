@@ -5,6 +5,7 @@ package uk.co.brotherlogic.mdb.groop;
  * @author Simon Tucker
  */
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,8 +21,12 @@ import uk.co.brotherlogic.mdb.artist.GetArtists;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
-public class Groop implements Comparable<Groop>
+public class Groop implements Comparable<Groop>, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6634379623430065530L;
 	// Groop properties
 	private String sortName = "";
 	private String showName = "";

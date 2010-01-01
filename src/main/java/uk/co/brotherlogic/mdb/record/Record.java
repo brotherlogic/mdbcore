@@ -5,6 +5,7 @@ package uk.co.brotherlogic.mdb.record;
  * @author Simon Tucker
  */
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -24,8 +25,13 @@ import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.Label;
 
-public class Record implements Comparable<Record>
+public class Record implements Comparable<Record>, Serializable
 {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5625039435654063418L;
 
 	private static final double GROOP_RATIO = 0.8;
 
@@ -156,7 +162,8 @@ public class Record implements Comparable<Record>
 
 	public int compareTo(Record o)
 	{
-		return (title.toLowerCase() + number).compareTo(o.getTitle().toLowerCase() + (o.getNumber()));
+		return (title.toLowerCase() + number).compareTo(o.getTitle().toLowerCase()
+				+ (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks)
@@ -425,6 +432,12 @@ public class Record implements Comparable<Record>
 		return number;
 	}
 
+	private void resetShelfPos()
+	{
+		if (shelfpos > 0)
+			shelfpos = 0;
+	}
+
 	public void save() throws SQLException
 	{
 		if (number == -1)
@@ -626,11 +639,5 @@ public class Record implements Comparable<Record>
 			e.printStackTrace();
 		}
 		return ret;
-	}
-
-	private void resetShelfPos()
-	{
-		if (shelfpos > 0)
-			shelfpos = 0;
 	}
 }
