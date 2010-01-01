@@ -8,48 +8,34 @@ import uk.co.brotherlogic.mdb.Connect;
 
 public class RecordUtils
 {
-	private static Record getNewRecord(String baseformat)
+	private static Record getNewRecord(String baseformat) throws SQLException
 	{
-		try
-		{
-			String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber AND baseformat = ? AND simon_score IS NULL";
-			PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
-			ps.setString(1, baseformat);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-				return GetRecords.create().getRecord(rs.getInt(1));
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
+		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber AND baseformat = ? AND simon_score IS NULL";
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		ps.setString(1, baseformat);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next())
+			return GetRecords.create().getRecord(rs.getInt(1));
 		return null;
 	}
 
 	private static Record getRecord(String baseformat, int listenCount, int months)
+			throws SQLException
 	{
-		try
-		{
-			String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber AND baseformat = ? AND simon_rank_count = ? AND boughtdate < 'today'::date - "
-					+ months
-					+ "*'1 month'::interval AND simon_score > 5  ORDER BY boughtdate DESC LIMIT 1";
-			PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
-			ps.setString(1, baseformat);
-			ps.setInt(2, listenCount);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-				return GetRecords.create().getRecord(rs.getInt(1));
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber AND baseformat = ? AND simon_rank_count = ? AND boughtdate < 'today'::date - "
+				+ months
+				+ "*'1 month'::interval AND simon_score > 5  ORDER BY boughtdate DESC LIMIT 1";
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		ps.setString(1, baseformat);
+		ps.setInt(2, listenCount);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next())
+			return GetRecords.create().getRecord(rs.getInt(1));
 
 		return null;
 	}
 
-	public static Record getRecordToListenTo(String baseformat)
+	public static Record getRecordToListenTo(String baseformat) throws SQLException
 	{
 		Record r = getNewRecord(baseformat);
 		if (r == null)
@@ -59,7 +45,7 @@ public class RecordUtils
 		return r;
 	}
 
-	public static Record getRecordToListenTo(String[] baseformats)
+	public static Record getRecordToListenTo(String[] baseformats) throws SQLException
 	{
 		Record toRet = null;
 
@@ -73,7 +59,7 @@ public class RecordUtils
 		return toRet;
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws SQLException
 	{
 		Connect.setForProduction();
 		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7", "12", "10" }));
