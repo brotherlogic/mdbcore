@@ -8,33 +8,6 @@ import uk.co.brotherlogic.mdb.Connect;
 
 public class RecordUtils
 {
-	private static Record getNewRecord(String baseformat) throws SQLException
-	{
-		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber AND baseformat = ? AND simon_score IS NULL";
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
-		ps.setString(1, baseformat);
-		ResultSet rs = ps.executeQuery();
-		if (rs.next())
-			return GetRecords.create().getRecord(rs.getInt(1));
-		return null;
-	}
-
-	private static Record getRecord(String baseformat, int listenCount, int months)
-			throws SQLException
-	{
-		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber AND baseformat = ? AND simon_rank_count = ? AND boughtdate < 'today'::date - "
-				+ months
-				+ "*'1 month'::interval AND simon_score > 5  ORDER BY boughtdate DESC LIMIT 1";
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
-		ps.setString(1, baseformat);
-		ps.setInt(2, listenCount);
-		ResultSet rs = ps.executeQuery();
-		if (rs.next())
-			return GetRecords.create().getRecord(rs.getInt(1));
-
-		return null;
-	}
-
 	public static Record getRecordToListenTo(String baseformat) throws SQLException
 	{
 		Record r = getNewRecord(baseformat);
@@ -63,5 +36,42 @@ public class RecordUtils
 	{
 		Connect.setForProduction();
 		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7", "12", "10" }));
+	}
+
+	private static Record getNewRecord(String baseformat) throws SQLException
+	{
+		String cd_extra = "AND ripped = 'true'";
+
+		if (!baseformat.equalsIgnoreCase("cd"))
+			cd_extra = "";
+
+		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber "
+				+ cd_extra + "AND baseformat = ? AND simon_score IS NULL";
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		ps.setString(1, baseformat);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next())
+			return GetRecords.create().getRecord(rs.getInt(1));
+		return null;
+	}
+
+	private static Record getRecord(String baseformat, int listenCount, int months) throws SQLException
+	{
+		String cd_extra = "AND ripped = 'true' AND";
+
+		if (!baseformat.equalsIgnoreCase("cd"))
+			cd_extra = "";
+
+		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber "
+				+ cd_extra + "AND baseformat = ? AND simon_rank_count = ? AND boughtdate < 'today'::date - " + months
+				+ "*'1 month'::interval AND simon_score > 5  ORDER BY boughtdate DESC LIMIT 1";
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		ps.setString(1, baseformat);
+		ps.setInt(2, listenCount);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next())
+			return GetRecords.create().getRecord(rs.getInt(1));
+
+		return null;
 	}
 }
