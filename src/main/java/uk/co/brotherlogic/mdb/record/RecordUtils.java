@@ -32,6 +32,16 @@ public class RecordUtils
 		return toRet;
 	}
 
+	public static Record getRecordToRip() throws SQLException
+	{
+		String sql = "SELECT recordnumber from records,formats WHERE baseformat = 'CD' AND format = formatnumber AND riploc IS NULL";
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next())
+			return GetRecords.create().getRecord(rs.getInt(1));
+		return null;
+	}
+
 	public static void main(String[] args) throws SQLException
 	{
 		Connect.setForProduction();
@@ -72,16 +82,6 @@ public class RecordUtils
 		if (rs.next())
 			return GetRecords.create().getRecord(rs.getInt(1));
 
-		return null;
-	}
-
-	private static Record getRecordToRip() throws SQLException
-	{
-		String sql = "SELECT recordnumber from records,formats WHERE baseformat = 'CD' AND riploc IS NULL";
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
-		ResultSet rs = ps.executeQuery();
-		if (rs.next())
-			return GetRecords.create().getRecord(rs.getInt(1));
 		return null;
 	}
 
