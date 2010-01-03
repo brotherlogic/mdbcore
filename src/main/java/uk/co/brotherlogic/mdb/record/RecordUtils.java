@@ -45,7 +45,9 @@ public class RecordUtils
 	public static void main(String[] args) throws SQLException
 	{
 		Connect.setForProduction();
-		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "CD" }));
+		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7" }));
+		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "12" }));
+		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "10" }));
 	}
 
 	private static Record getNewRecord(String baseformat) throws SQLException
