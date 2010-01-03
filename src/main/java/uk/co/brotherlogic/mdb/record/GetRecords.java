@@ -670,6 +670,8 @@ public class GetRecords
 		updateRecord.setInt(12, in.getShelfPos());
 		updateRecord.setInt(13, in.getNumber());
 
+		System.err.println(updateRecord);
+
 		updateRecord.execute();
 		int recordNumber = in.getNumber();
 

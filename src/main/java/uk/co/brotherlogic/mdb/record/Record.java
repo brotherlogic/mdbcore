@@ -433,6 +433,7 @@ public class Record implements Comparable<Record>, Serializable
 
 	public void save() throws SQLException
 	{
+		System.err.println("Saving: " + number + " and " + updated);
 		if (number == -1)
 			number = GetRecords.create().addRecord(this);
 		else if (updated)
