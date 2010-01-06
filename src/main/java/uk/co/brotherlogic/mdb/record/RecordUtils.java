@@ -50,10 +50,12 @@ public class RecordUtils
 	public static void main(String[] args) throws SQLException
 	{
 		Connect.setForProduction();
-		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7" }));
+		// System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7"
+		// }));
 		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "12" }));
-		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "10" }));
-		System.out.println(getRecordToRip());
+		// System.out.println(RecordUtils.getRecordToListenTo(new String[] {
+		// "10" }));
+		// System.out.println(getRecordToRip());
 	}
 
 	private static Record getNewRecord(String baseformat) throws SQLException
@@ -75,13 +77,15 @@ public class RecordUtils
 
 	private static Record getRecord(String baseformat, int listenCount, int months) throws SQLException
 	{
+		System.err.println("Getting: " + baseformat + " and " + listenCount + " and " + months);
+
 		String cd_extra = "AND riploc IS NOT NULL";
 
 		if (!baseformat.equalsIgnoreCase("cd"))
 			cd_extra = "";
 
 		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber "
-				+ cd_extra + " AND baseformat = ? AND simon_rank_count = ? AND boughtdate < 'today'::date - " + months
+				+ cd_extra + " AND baseformat = ? AND simon_rank_count = ? AND simon_score_date < 'today'::date - " + months
 				+ "*'1 month'::interval AND simon_score > 5  ORDER BY boughtdate DESC LIMIT 1";
 		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
 		ps.setString(1, baseformat);
