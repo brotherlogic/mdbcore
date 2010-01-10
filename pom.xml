@@ -4,7 +4,7 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdbcore</artifactId>
   <packaging>jar</packaging>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
   <name>mdbcore</name>
   <url>http://maven.apache.org</url>
   <dependencies>
@@ -20,6 +20,10 @@
       <artifactId>postgresql</artifactId>
     </dependency>
   </dependencies>
+  <scm>
+   <connection>scm:git:git://github.com/brotherlogic/mdbcore.git</connection>
+   <url>scm:git:git://github.com/brotherlogic/mdbcore.git</url>
+  </scm>
   <build>
     <pluginManagement>
       <plugins>
