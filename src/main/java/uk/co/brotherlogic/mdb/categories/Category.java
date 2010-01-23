@@ -8,8 +8,7 @@ import java.sql.SQLException;
  * 
  * @author Simon Tucker
  */
-public class Category implements Comparable<Category>, Serializable
-{
+public class Category implements Comparable<Category>, Serializable {
 	/**
 	 * 
 	 */
@@ -27,8 +26,7 @@ public class Category implements Comparable<Category>, Serializable
 	/**
 	 * Constructor
 	 */
-	public Category()
-	{
+	public Category() {
 		catName = "";
 		catNumber = -1;
 		mp3Number = -1;
@@ -36,11 +34,13 @@ public class Category implements Comparable<Category>, Serializable
 
 	/**
 	 * Constructor
-	 * @param name The name of the category
-	 * @param mp3 The mp3 number
+	 * 
+	 * @param name
+	 *            The name of the category
+	 * @param mp3
+	 *            The mp3 number
 	 */
-	public Category(final String name, final int mp3)
-	{
+	public Category(final String name, final int mp3) {
 		catName = name;
 		mp3Number = mp3;
 		catNumber = -1;
@@ -56,22 +56,18 @@ public class Category implements Comparable<Category>, Serializable
 	 * @param mp3
 	 *            The MP3 number of the category
 	 */
-	public Category(final String name, final int number, final int mp3)
-	{
+	public Category(final String name, final int number, final int mp3) {
 		catName = name;
 		catNumber = number;
 		mp3Number = mp3;
 	}
 
-	@Override
-	public final int compareTo(final Category o)
-	{
+	public final int compareTo(final Category o) {
 		return this.toString().compareTo(o.toString());
 	}
 
 	@Override
-	public final boolean equals(final Object o)
-	{
+	public final boolean equals(final Object o) {
 		if (o instanceof Category)
 			return this.compareTo((Category) o) == 0;
 		else
@@ -83,8 +79,7 @@ public class Category implements Comparable<Category>, Serializable
 	 * 
 	 * @return {@link String} of the Category name
 	 */
-	public final String getCatName()
-	{
+	public final String getCatName() {
 		return catName;
 	}
 
@@ -93,24 +88,23 @@ public class Category implements Comparable<Category>, Serializable
 	 * 
 	 * @return {@link int} of the category number
 	 */
-	public final int getMp3Number()
-	{
+	public final int getMp3Number() {
 		return mp3Number;
 	}
 
 	@Override
-	public final int hashCode()
-	{
+	public final int hashCode() {
 		return catName.hashCode();
 	}
 
 	/**
 	 * Save method
+	 * 
 	 * @return the id number
-	 * @throws SQLException if a db error occurs
+	 * @throws SQLException
+	 *             if a db error occurs
 	 */
-	public final int save() throws SQLException
-	{
+	public final int save() throws SQLException {
 		if (catNumber == -1)
 			catNumber = GetCategories.build().addCategory(this);
 
@@ -118,8 +112,7 @@ public class Category implements Comparable<Category>, Serializable
 	}
 
 	@Override
-	public final String toString()
-	{
+	public final String toString() {
 		return catName;
 	}
 }

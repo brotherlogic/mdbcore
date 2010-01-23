@@ -17,26 +17,28 @@ import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
-public class GetLabels
-{
-	public static GetLabels create() throws SQLException
-	{
+public class GetLabels {
+	public static GetLabels create() throws SQLException {
 		if (singleton == null)
 			singleton = new GetLabels();
 		return singleton;
 	}
 
+	public static void main(String[] args) throws Exception {
+		System.err.println(GetLabels.create().getLabel(9));
+	}
+
 	// Map of labelName --> Label
 	Map<String, Label> labels;
 	PreparedStatement insertQuery;
+
 	PreparedStatement collectQuery;
 
 	PreparedStatement getQuery;
 
 	private static GetLabels singleton;
 
-	private GetLabels() throws SQLException
-	{
+	private GetLabels() throws SQLException {
 		// Initialise the set
 		labels = new TreeMap<String, Label>();
 		insertQuery = Connect.getConnection().getPreparedStatement(
@@ -48,14 +50,12 @@ public class GetLabels
 
 	}
 
-	public int addLabel(Label currLabel) throws SQLException
-	{
+	public int addLabel(Label currLabel) throws SQLException {
 		int retNumber = 0;
 
 		collectQuery.setString(1, currLabel.getName());
 		ResultSet rs = collectQuery.executeQuery();
-		if (!rs.next())
-		{
+		if (!rs.next()) {
 			// Add the new label
 			insertQuery.setString(1, currLabel.getName());
 			insertQuery.execute();
@@ -72,8 +72,7 @@ public class GetLabels
 		return retNumber;
 	}
 
-	private void execute() throws SQLException
-	{
+	private void execute() throws SQLException {
 		// Get a statement and run the query
 		PreparedStatement s = Connect.getConnection().getPreparedStatement(
 				"SELECT LabelName, LabelNumber FROM Labels");
@@ -83,8 +82,7 @@ public class GetLabels
 		labels = new TreeMap<String, Label>();
 
 		// Fill the set
-		while (rs.next())
-		{
+		while (rs.next()) {
 			String name = rs.getString(1);
 			int number = rs.getInt(2);
 			labels.put(name, new Label(name, number));
@@ -95,63 +93,51 @@ public class GetLabels
 		s.close();
 	}
 
-	public Label getLabel(int number) throws SQLException
-	{
+	public Label getLabel(int number) throws SQLException {
 		// Try to manually retrieve the label
 		getQuery.setInt(1, number);
 		ResultSet rs = getQuery.executeQuery();
 
-		if (rs.next())
-		{
+		if (rs.next()) {
 			Label temp = new Label(rs.getString(1), number);
 			rs.close();
 			return temp;
-		}
-		else
-		{
+		} else {
 			rs.close();
 			return new Label("", -1);
 		}
 	}
 
-	public Label getLabel(String name) throws SQLException
-	{
+	public Label getLabel(String name) throws SQLException {
 
 		// Try to manually retrieve the label
 		collectQuery.setString(1, name);
 		ResultSet rs = collectQuery.executeQuery();
 
-		if (rs.next())
-		{
+		if (rs.next()) {
 			Label temp = new Label(name, rs.getInt(1));
 			rs.close();
 			return temp;
-		}
-		else
-		{
+		} else {
 			rs.close();
 			return new Label(name, -1);
 		}
 	}
 
-	public Collection<Label> getLabels()
-	{
-		try
-		{
+	public Collection<Label> getLabels() {
+		try {
 			if (labels.size() == 0)
 				execute();
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return labels.values();
 	}
 
-	public Collection<Record> getRecords(int labelNumber) throws SQLException
-	{
+	public Collection<Record> getRecords(int labelNumber) throws SQLException {
 		String sql = "SELECT records.recordnumber from records,labels,labelset where labels.labelnumber = ? AND labels.labelnumber = labelset.labelnumber AND records.recordnumber = labelset.recordnumber";
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		PreparedStatement ps = Connect.getConnection()
+				.getPreparedStatement(sql);
 		ps.setInt(1, labelNumber);
 
 		Collection<Record> records = new LinkedList<Record>();
