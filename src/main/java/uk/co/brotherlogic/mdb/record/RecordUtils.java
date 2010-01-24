@@ -9,9 +9,6 @@ import uk.co.brotherlogic.mdb.Connect;
 
 public class RecordUtils {
 	private static Record getNewRecord(String baseformat) throws SQLException {
-
-		Thread.dumpStack();
-
 		String cd_extra = "AND riploc IS NOT NULL";
 
 		if (!baseformat.equalsIgnoreCase("cd"))

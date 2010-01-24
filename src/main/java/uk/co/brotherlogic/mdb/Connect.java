@@ -100,7 +100,6 @@ public final class Connect {
 		// Create the statement
 		PreparedStatement ps = locDB.prepareStatement(sql);
 		sCount++;
-		System.err.println(sql);
 		return ps;
 	}
 
