@@ -19,9 +19,15 @@ import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.artist.Artist;
 import uk.co.brotherlogic.mdb.artist.GetArtists;
 
-public class GetGroops
-{
+public class GetGroops {
 	private static Map<Integer, Groop> groopMap = new TreeMap<Integer, Groop>();
+
+	public static GetGroops build() throws SQLException {
+		if (singleton == null)
+			singleton = new GetGroops();
+
+		return singleton;
+	}
 
 	// Maps groopnumber to Groop
 	Map<String, Groop> groops;
@@ -30,30 +36,34 @@ public class GetGroops
 	Map<String, Groop> tempStore;
 
 	PreparedStatement updateState;
-
 	PreparedStatement addGroop;
 	PreparedStatement getGroop;
+
 	private static GetGroops singleton = null;
 
-	private GetGroops() throws SQLException
-	{
+	private GetGroops() throws SQLException {
 		// Set the required parameters
 		tempStore = new TreeMap<String, Groop>();
 		groops = new TreeMap<String, Groop>();
 
-		updateState = Connect.getConnection().getPreparedStatement("UPDATE groops SET sort_name = ?, show_name = ? WHERE groopnumber = ?");
-		addGroop = Connect.getConnection().getPreparedStatement("INSERT INTO groops (show_name,sort_name) VALUES (?,?)");
-		getGroop = Connect.getConnection().getPreparedStatement("SELECT groopnumber FROM groops WHERE show_name = ? AND sort_name = ?");
+		updateState = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"UPDATE groops SET sort_name = ?, show_name = ? WHERE groopnumber = ?");
+		addGroop = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO groops (show_name,sort_name) VALUES (?,?)");
+		getGroop = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT groopnumber FROM groops WHERE show_name = ? AND sort_name = ?");
 	}
 
-	public int addGroop(Groop grp) throws SQLException
-	{
+	public int addGroop(Groop grp) throws SQLException {
 		getGroop.setString(1, grp.getShowName());
 		getGroop.setString(2, grp.getSortName());
 		ResultSet rs = getGroop.executeQuery();
 
-		if (!rs.next())
-		{
+		if (!rs.next()) {
 			addGroop.setString(1, grp.getShowName());
 			addGroop.setString(2, grp.getSortName());
 			addGroop.execute();
@@ -70,14 +80,12 @@ public class GetGroops
 		return grpNumber;
 	}
 
-	public int addLineUp(LineUp lineup) throws SQLException
-	{
+	public int addLineUp(LineUp lineup) throws SQLException {
 		Groop in = lineup.getGroop();
 
 		// Get the groop number
 		int groopNumber = in.getNumber();
-		if (groopNumber < 1)
-		{
+		if (groopNumber < 1) {
 			// Save the groop
 			in.save();
 			groopNumber = in.getNumber();
@@ -91,16 +99,13 @@ public class GetGroops
 
 	}
 
-	public void cancel()
-	{
+	public void cancel() {
 		// Necessary for this to finish, so just leave in background
 	}
 
-	public void commitGroops()
-	{
+	public void commitGroops() {
 		Iterator<String> kIt = tempStore.keySet().iterator();
-		while (kIt.hasNext())
-		{
+		while (kIt.hasNext()) {
 			// Get the groop name
 			String groopName = kIt.next();
 			Groop grp = tempStore.get(groopName);
@@ -109,14 +114,15 @@ public class GetGroops
 			if (!groops.keySet().contains(groopName))
 				groops.put(groopName, grp);
 			else
-				(groops.get(groopName)).addLineUps((tempStore.get(groopName)).getLineUps());
+				(groops.get(groopName)).addLineUps((tempStore.get(groopName))
+						.getLineUps());
 		}
 		tempStore.clear();
 	}
 
-	public void execute() throws SQLException
-	{
-		PreparedStatement ss = Connect.getConnection().getPreparedStatement("Select Count(sort_name) FROM Groops");
+	public void execute() throws SQLException {
+		PreparedStatement ss = Connect.getConnection().getPreparedStatement(
+				"Select Count(sort_name) FROM Groops");
 		ResultSet rss = ss.executeQuery();
 		rss.next();
 		rss.close();
@@ -127,11 +133,11 @@ public class GetGroops
 
 		// Get the bare bones of the groops
 		String sql = "SELECT sort_name, show_name, GroopNumber from Groops";
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		PreparedStatement ps = Connect.getConnection()
+				.getPreparedStatement(sql);
 		ps.execute();
 		ResultSet rs = ps.getResultSet();
-		while (rs.next())
-		{
+		while (rs.next()) {
 			String sortName = rs.getString(1);
 			String showName = rs.getString(2);
 			int groopNumber = rs.getInt(3);
@@ -141,20 +147,20 @@ public class GetGroops
 		}
 	}
 
-	public Collection<Groop> getData()
-	{
+	public Collection<Groop> getData() {
 		return groops.values();
 	}
 
-	public Groop getGroop(int num) throws SQLException
-	{
+	public Groop getGroop(int num) throws SQLException {
 		// Get the groop name
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT sort_name, show_name FROM Groops WHERE GroopNumber = ?");
+		PreparedStatement s = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT sort_name, show_name FROM Groops WHERE GroopNumber = ?");
 		s.setInt(1, num);
 		ResultSet rs = s.executeQuery();
 
-		if (rs.next())
-		{
+		if (rs.next()) {
 			Groop ret = new Groop(rs.getString(1), rs.getString(2), num);
 			rs.close();
 
@@ -162,20 +168,20 @@ public class GetGroops
 			groopMap.put(ret.getNumber(), ret);
 
 			return ret;
-		}
-		else
+		} else
 			return null;
 	}
 
-	public Groop getGroop(String sortName) throws SQLException
-	{
+	public Groop getGroop(String sortName) throws SQLException {
 		// Get the groop name
-		PreparedStatement s = Connect.getConnection().getPreparedStatement("SELECT groopnumber, show_name FROM Groops WHERE sort_name = ?");
+		PreparedStatement s = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT groopnumber, show_name FROM Groops WHERE sort_name = ?");
 		s.setString(1, sortName);
 		ResultSet rs = s.executeQuery();
 
-		if (rs.next())
-		{
+		if (rs.next()) {
 			Groop ret = new Groop(sortName, rs.getString(2), rs.getInt(1));
 			rs.close();
 
@@ -183,59 +189,75 @@ public class GetGroops
 			groopMap.put(ret.getNumber(), ret);
 
 			return ret;
-		}
-		else
+		} else
 			return null;
 	}
 
-	public Map<String, Groop> getGroopMap()
-	{
+	public Groop getGroopFromShowName(String sortName) throws SQLException {
+		// Get the groop name
+		PreparedStatement s = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT groopnumber, sort_name FROM Groops WHERE show_name = ?");
+		s.setString(1, sortName);
+		ResultSet rs = s.executeQuery();
+
+		if (rs.next()) {
+			Groop ret = new Groop(sortName, rs.getString(2), rs.getInt(1));
+			rs.close();
+
+			// Cache the groop
+			groopMap.put(ret.getNumber(), ret);
+
+			return ret;
+		} else
+			return null;
+	}
+
+	public Map<String, Groop> getGroopMap() {
 		if (groops.size() == 0)
-			try
-			{
+			try {
 				execute();
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		return groops;
 	}
 
-	public Collection<LineUp> getLineUps(Groop grp) throws SQLException
-	{
+	public Collection<LineUp> getLineUps(Groop grp) throws SQLException {
 		Collection<LineUp> lineups = new LinkedList<LineUp>();
 
 		// Get a statement and run the query
 		String sql = "SELECT LineUp.LineUpNumber, ArtistNumber FROM LineUp,LineUpDetails WHERE LineUp.GroopNumber = ? AND LineUp.LineUpNumber = LineUpDetails.LineUpNumber ORDER BY LineUp.LineUpNumber ASC";
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		PreparedStatement ps = Connect.getConnection()
+				.getPreparedStatement(sql);
 		ps.setInt(1, grp.getNumber());
 		ps.execute();
 		ResultSet rs = ps.getResultSet();
 
 		LineUp currLineUp = null;
-		while (rs.next())
-		{
+		while (rs.next()) {
 			// Read the info
 			int lineUpNumber = rs.getInt(1);
 			int artistNumber = rs.getInt(2);
 
-			if (currLineUp == null)
-			{
-				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(), grp);
-				currLineUp.addArtist(GetArtists.create().getArtist(artistNumber));
-			}
-			else if (currLineUp.getLineUpNumber() != lineUpNumber)
-			{
+			if (currLineUp == null) {
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						grp);
+				currLineUp.addArtist(GetArtists.create()
+						.getArtist(artistNumber));
+			} else if (currLineUp.getLineUpNumber() != lineUpNumber) {
 				// Add the line up
 				lineups.add(currLineUp);
 
 				// Construct the new line up
-				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(), grp);
-				currLineUp.addArtist(GetArtists.create().getArtist(artistNumber));
-			}
-			else
-				currLineUp.addArtist(GetArtists.create().getArtist(artistNumber));
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						grp);
+				currLineUp.addArtist(GetArtists.create()
+						.getArtist(artistNumber));
+			} else
+				currLineUp.addArtist(GetArtists.create()
+						.getArtist(artistNumber));
 		}
 		if (currLineUp != null && currLineUp.getArtists().size() > 0)
 			lineups.add(currLineUp);
@@ -243,19 +265,18 @@ public class GetGroops
 		return lineups;
 	}
 
-	public Groop getSingleGroop(int num) throws SQLException
-	{
+	public Groop getSingleGroop(int num) throws SQLException {
 		// Get a statement and run the query
 		String sql = "SELECT Groops.GroopNumber, groops.sort_name, groops.show_name, LineUp.LineUpNumber, ArtistNumber FROM Groops,LineUp,LineUpDetails WHERE Groops.groopnumber = ? AND Groops.GroopNumber = LineUp.GroopNumber AND LineUp.LineUpNumber = LineUpDetails.LineUpNumber ORDER BY sort_name, LineUp.LineUpNumber ASC";
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		PreparedStatement ps = Connect.getConnection()
+				.getPreparedStatement(sql);
 		ps.setInt(1, num);
 		ps.execute();
 		ResultSet rs = ps.getResultSet();
 
 		Groop currGroop = null;
 		LineUp currLineUp = null;
-		while (rs.next())
-		{
+		while (rs.next()) {
 			// Read the info
 			int groopNumber = rs.getInt(1);
 			String sortName = rs.getString(2);
@@ -263,36 +284,39 @@ public class GetGroops
 			int lineUpNumber = rs.getInt(4);
 			int artistNumber = rs.getInt(5);
 
-			if (currGroop == null)
-			{
+			if (currGroop == null) {
 				// Construct the current groop and line up
-				currGroop = new Groop(sortName, showName, groopNumber, new TreeSet<LineUp>());
-				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(), currGroop);
-				currLineUp.addArtist(GetArtists.create().getArtist(artistNumber));
-			}
-			else if (!sortName.equals(currGroop.getSortName()))
-			{
+				currGroop = new Groop(sortName, showName, groopNumber,
+						new TreeSet<LineUp>());
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						currGroop);
+				currLineUp.addArtist(GetArtists.create()
+						.getArtist(artistNumber));
+			} else if (!sortName.equals(currGroop.getSortName())) {
 				// Add the groop and create a new one
 				// Ensure that we add the last lineUp
 				currGroop.addLineUp(currLineUp);
 
 				// Construct the current groop and line up
-				currGroop = new Groop(sortName, showName, groopNumber, new TreeSet<LineUp>());
-				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(), currGroop);
-				currLineUp.addArtist(GetArtists.create().getArtist(artistNumber));
+				currGroop = new Groop(sortName, showName, groopNumber,
+						new TreeSet<LineUp>());
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						currGroop);
+				currLineUp.addArtist(GetArtists.create()
+						.getArtist(artistNumber));
 
-			}
-			else if (currLineUp.getLineUpNumber() != lineUpNumber)
-			{
+			} else if (currLineUp.getLineUpNumber() != lineUpNumber) {
 				// Add the line up
 				currGroop.addLineUp(currLineUp);
 
 				// Construct the new line up
-				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(), currGroop);
-				currLineUp.addArtist(GetArtists.create().getArtist(artistNumber));
-			}
-			else
-				currLineUp.addArtist(GetArtists.create().getArtist(artistNumber));
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						currGroop);
+				currLineUp.addArtist(GetArtists.create()
+						.getArtist(artistNumber));
+			} else
+				currLineUp.addArtist(GetArtists.create()
+						.getArtist(artistNumber));
 		}
 
 		currGroop.addLineUp(currLineUp);
@@ -301,8 +325,7 @@ public class GetGroops
 		return currGroop;
 	}
 
-	public void save(Groop g) throws SQLException
-	{
+	public void save(Groop g) throws SQLException {
 		updateState.setString(1, g.getSortName());
 		updateState.setString(2, g.getShowName());
 		updateState.setInt(3, g.getNumber());
@@ -310,8 +333,7 @@ public class GetGroops
 		updateState.execute();
 	}
 
-	public int saveLineUp(LineUp lup) throws SQLException
-	{
+	public int saveLineUp(LineUp lup) throws SQLException {
 		// Initialise the return value
 		Groop grp = lup.getGroop();
 
@@ -323,11 +345,15 @@ public class GetGroops
 				return lineUp.getLineUpNumber();
 
 		// Add the lineup - step 1, add the lineup to get the lineup number
-		PreparedStatement ps = Connect.getConnection().getPreparedStatement("INSERT INTO lineup (groopnumber) VALUES (?)");
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+				"INSERT INTO lineup (groopnumber) VALUES (?)");
 		ps.setInt(1, grp.getNumber());
 		ps.execute();
 
-		PreparedStatement psg = Connect.getConnection().getPreparedStatement("SELECT lineupnumber FROM lineup ORDER BY lineupnumber DESC LIMIT 1");
+		PreparedStatement psg = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT lineupnumber FROM lineup ORDER BY lineupnumber DESC LIMIT 1");
 		ResultSet rs = psg.executeQuery();
 
 		if (!rs.next())
@@ -335,9 +361,11 @@ public class GetGroops
 		int lineupNumber = rs.getInt(1);
 
 		// Now add the details
-		PreparedStatement psa = Connect.getConnection().getPreparedStatement("INSERT INTO lineupdetails(lineupnumber,artistnumber) VALUES (?,?)");
-		for (Artist art : lup.getArtists())
-		{
+		PreparedStatement psa = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"INSERT INTO lineupdetails(lineupnumber,artistnumber) VALUES (?,?)");
+		for (Artist art : lup.getArtists()) {
 			art.save();
 
 			psa.setInt(1, lineupNumber);
@@ -348,16 +376,7 @@ public class GetGroops
 		return lineupNumber;
 	}
 
-	public String toString()
-	{
+	public String toString() {
 		return "Groops";
-	}
-
-	public static GetGroops build() throws SQLException
-	{
-		if (singleton == null)
-			singleton = new GetGroops();
-
-		return singleton;
 	}
 }
