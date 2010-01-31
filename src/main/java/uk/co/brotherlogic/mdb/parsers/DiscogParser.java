@@ -37,7 +37,7 @@ public class DiscogParser
 	public static void main(String[] args) throws Exception
 	{
 		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(1267607));
+		System.out.println(parser.parseDiscogRelease(1326099));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
@@ -137,6 +137,12 @@ class DiscogXMLParser extends DefaultHandler
 			} else if (inTracks)
 				if (qualName.equals("position"))
 				{
+					if (Character.isLetter(text.charAt(0)))
+					{
+						int offsetCharacter = text.charAt(0) - ('A') + 1;
+						text = (offsetCharacter) + "-" + text.substring(1);
+					}
+
 					if (text.length() > 0)
 						if (text.contains("-"))
 						{

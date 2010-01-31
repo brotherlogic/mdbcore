@@ -48,6 +48,8 @@ class DiscogHandler extends DefaultHandler
 
 	public Map<String, Integer> getReleaseMap(String artist)
 	{
+		System.err.println(releaseMap);
+
 		List<String> toRemove = new LinkedList<String>();
 		for (String key : releaseMap.keySet())
 			if (!key.contains(artist))
@@ -75,8 +77,7 @@ public class DiscogSelector
 	public static void main(String[] args)
 	{
 		DiscogSelector selector = new DiscogSelector();
-		System.out.println(selector.getDiscogID("Stone Breath",
-				"Songs Of Moonlight And Rain"));
+		System.out.println(selector.getDiscogID("Blondie", "Plastic Letters"));
 	}
 
 	String req = "http://www.discogs.com/search?type=all&q=QUERY&f=xml&api_key=67668099b8";
