@@ -104,7 +104,7 @@ public class GetRecords {
 		getPersonnel = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"SELECT Personnel.TrackNumber, Artist.artist_id FROM Artist INNER JOIN Personnel ON Artist.artist_id = Personnel.ArtistNumber WHERE (((Personnel.TrackNumber)=?))");
+						"SELECT Personnel.TrackNumber, Artist.artist_id, Artist.show_name, Artist.sort_name FROM Artist INNER JOIN Personnel ON Artist.artist_id = Personnel.ArtistNumber WHERE (((Personnel.TrackNumber)=?))");
 
 	}
 
@@ -325,7 +325,8 @@ public class GetRecords {
 		ResultSet rs = Connect.getConnection().executeQuery(getPersonnel);
 
 		while (rs.next())
-			retSet.add(GetArtists.create().getArtist(rs.getInt(2)));
+			retSet.add(new Artist(rs.getString(3), rs.getString(4), rs
+					.getInt(2)));
 
 		rs.close();
 

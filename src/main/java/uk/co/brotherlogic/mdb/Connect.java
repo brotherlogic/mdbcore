@@ -45,6 +45,7 @@ public final class Connect {
 	int sCount = 0;
 
 	long longestQueryTime = 0;
+	long totalDBTime = 0;
 
 	String longestQuery = "";
 
@@ -75,15 +76,21 @@ public final class Connect {
 	public ResultSet executeQuery(PreparedStatement ps) throws SQLException {
 
 		System.err.println("RUN: " + ps);
+		sCount++;
 
 		long sTime = System.currentTimeMillis();
 		ResultSet rs = ps.executeQuery();
 		long eTime = System.currentTimeMillis() - sTime;
+		totalDBTime += eTime;
 		if (eTime > longestQueryTime) {
 			longestQueryTime = eTime;
 			longestQuery = ps.toString();
 		}
 		return rs;
+	}
+
+	public long getLQueryTime() {
+		return longestQueryTime;
 	}
 
 	/**
@@ -99,12 +106,15 @@ public final class Connect {
 			throws SQLException {
 		// Create the statement
 		PreparedStatement ps = locDB.prepareStatement(sql);
-		sCount++;
 		return ps;
 	}
 
 	public int getSCount() {
 		return sCount;
+	}
+
+	public long getTQueryTime() {
+		return totalDBTime;
 	}
 
 	/**
@@ -136,6 +146,6 @@ public final class Connect {
 	}
 
 	public void printStats() {
-		System.out.println(longestQueryTime + " => " + longestQuery);
+		System.err.println("SQL: " + longestQueryTime + " => " + longestQuery);
 	}
 }

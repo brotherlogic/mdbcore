@@ -57,7 +57,8 @@ public class RecordUtils {
 		// Only listen to new records on a Sunday!
 		Calendar today = Calendar.getInstance();
 		Record r = null;
-		if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+		if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+				|| today.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 			r = getNewRecord(baseformat);
 		if (r == null)
 			r = getRecord(baseformat, 2, 6);
