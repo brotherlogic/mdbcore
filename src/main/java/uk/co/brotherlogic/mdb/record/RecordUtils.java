@@ -34,6 +34,9 @@ public class RecordUtils
 				+ " and " + months);
 
 		String cd_extra = "AND riploc IS NOT NULL";
+		int min_score = 5;
+		if (months > 3)
+			min_score = 7;
 
 		if (!baseformat.equalsIgnoreCase("cd"))
 			cd_extra = "";
@@ -42,7 +45,8 @@ public class RecordUtils
 				+ cd_extra
 				+ " AND baseformat = ? AND simon_rank_count = ? AND simon_score_date < 'today'::date - "
 				+ months
-				+ "*'1 month'::interval AND simon_score > 5  ORDER BY random() DESC LIMIT 1";
+				+ "*'1 month'::interval AND simon_score > "
+				+ min_score + "  ORDER BY boughtdate ASC LIMIT 1";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
@@ -101,7 +105,7 @@ public class RecordUtils
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7"
 		// }));
 		System.out.println(RecordUtils.getRecordToListenTo(new String[]
-		{ "12" }));
+		{ "CD" }));
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] {
 		// "10" }));
 		// System.out.println(getRecordToRip());
