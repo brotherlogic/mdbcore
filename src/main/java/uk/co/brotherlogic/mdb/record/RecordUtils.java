@@ -51,7 +51,7 @@ public class RecordUtils
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
 		ps.setInt(2, listenCount);
-		ResultSet rs = ps.executeQuery();
+		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		if (rs.next())
 			return GetRecords.create().getRecord(rs.getInt(1));
 
@@ -64,7 +64,8 @@ public class RecordUtils
 		// Only listen to new records on a Sunday!
 		Calendar today = Calendar.getInstance();
 		Record r = null;
-		if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+		if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+				|| today.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 			r = getNewRecord(baseformat);
 		if (r == null)
 			r = getRecord(baseformat, 2, 6);
@@ -110,5 +111,4 @@ public class RecordUtils
 		// "10" }));
 		// System.out.println(getRecordToRip());
 	}
-
 }
