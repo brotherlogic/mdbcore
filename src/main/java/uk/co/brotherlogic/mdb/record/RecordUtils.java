@@ -7,10 +7,8 @@ import java.util.Calendar;
 
 import uk.co.brotherlogic.mdb.Connect;
 
-public class RecordUtils
-{
-	private static Record getNewRecord(String baseformat) throws SQLException
-	{
+public class RecordUtils {
+	private static Record getNewRecord(String baseformat) throws SQLException {
 		String cd_extra = "AND riploc IS NOT NULL";
 
 		if (!baseformat.equalsIgnoreCase("cd"))
@@ -28,8 +26,7 @@ public class RecordUtils
 	}
 
 	private static Record getRecord(String baseformat, int listenCount,
-			int months) throws SQLException
-	{
+			int months) throws SQLException {
 		System.err.println("Getting: " + baseformat + " and " + listenCount
 				+ " and " + months);
 
@@ -59,8 +56,7 @@ public class RecordUtils
 	}
 
 	public static Record getRecordToListenTo(String baseformat)
-			throws SQLException
-	{
+			throws SQLException {
 		// Only listen to new records on a Sunday!
 		Calendar today = Calendar.getInstance();
 		Record r = null;
@@ -75,12 +71,10 @@ public class RecordUtils
 	}
 
 	public static Record getRecordToListenTo(String[] baseformats)
-			throws SQLException
-	{
+			throws SQLException {
 		Record toRet = null;
 
-		for (String string : baseformats)
-		{
+		for (String string : baseformats) {
 			Record r = getRecordToListenTo(string);
 			if (toRet == null || r.getDate().after(toRet.getDate()))
 				toRet = r;
@@ -89,8 +83,7 @@ public class RecordUtils
 		return toRet;
 	}
 
-	public static Record getRecordToRip() throws SQLException
-	{
+	public static Record getRecordToRip() throws SQLException {
 		String sql = "SELECT recordnumber from records,formats WHERE baseformat = 'CD' AND format = formatnumber AND riploc IS NULL ORDER BY owner";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
@@ -100,13 +93,12 @@ public class RecordUtils
 		return null;
 	}
 
-	public static void main(String[] args) throws SQLException
-	{
+	public static void main(String[] args) throws SQLException {
 		Connect.setForProduction();
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7"
 		// }));
-		System.out.println(RecordUtils.getRecordToListenTo(new String[]
-		{ "CD" }));
+		System.out.println(RecordUtils
+				.getRecordToListenTo(new String[] { "12" }));
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] {
 		// "10" }));
 		// System.out.println(getRecordToRip());
