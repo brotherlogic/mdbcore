@@ -43,7 +43,8 @@ public class RecordUtils {
 				+ " AND baseformat = ? AND simon_rank_count = ? AND simon_score_date < 'today'::date - "
 				+ months
 				+ "*'1 month'::interval AND simon_score > "
-				+ min_score + "  ORDER BY boughtdate ASC LIMIT 1";
+				+ min_score
+				+ " AND salepricepence < 0 ORDER BY boughtdate ASC LIMIT 1";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
