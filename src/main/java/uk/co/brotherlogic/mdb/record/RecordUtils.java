@@ -76,7 +76,7 @@ public class RecordUtils {
 
 		for (String string : baseformats) {
 			Record r = getRecordToListenTo(string);
-			if (toRet == null || r.getDate().after(toRet.getDate()))
+			if (toRet == null || r.getDate().before(toRet.getDate()))
 				toRet = r;
 		}
 
@@ -97,8 +97,8 @@ public class RecordUtils {
 		Connect.setForProduction();
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7"
 		// }));
-		System.out.println(RecordUtils
-				.getRecordToListenTo(new String[] { "12" }));
+		System.out.println(RecordUtils.getRecordToListenTo(new String[] { "12",
+				"10" }));
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] {
 		// "10" }));
 		// System.out.println(getRecordToRip());
