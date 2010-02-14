@@ -76,18 +76,29 @@ public class RecordUtils {
 		Record toRet = null;
 		Calendar today = Calendar.getInstance();
 
+		Record newRecord = null;
+		Record currRecord = null;
 		for (String string : baseformats) {
-			Record r = getRecordToListenTo(string);
-			if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
-					|| today.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-				if (toRet == null || r.getDate().after(toRet.getDate()))
-					toRet = r;
-			} else if (toRet == null || r.getDate().before(toRet.getDate()))
-				toRet = r;
-
+			Record tempNew = getNewRecord(string);
+			Record currRec = getRecordToListenTo(string);
+			{
+				if (tempNew != null
+						&& (newRecord == null || tempNew.getDate().after(
+								newRecord.getDate())))
+					newRecord = tempNew;
+				if (currRec != null
+						&& (currRecord == null || currRec.getDate().before(
+								currRecord.getDate())))
+					currRecord = currRec;
+			}
 		}
 
-		return toRet;
+		if ((today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || today
+				.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+				&& newRecord != null)
+			return newRecord;
+
+		return currRecord;
 	}
 
 	public static Record getRecordToRip() throws SQLException {
