@@ -19,7 +19,7 @@ public class RecordUtils {
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
-		ResultSet rs = ps.executeQuery();
+		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		if (rs.next())
 			return GetRecords.create().getRecord(rs.getInt(1));
 		return null;
@@ -27,8 +27,6 @@ public class RecordUtils {
 
 	private static Record getRecord(String baseformat, int listenCount,
 			int months) throws SQLException {
-		System.err.println("Getting: " + baseformat + " and " + listenCount
-				+ " and " + months);
 
 		String cd_extra = "AND riploc IS NOT NULL";
 		int min_score = 5;
@@ -38,7 +36,7 @@ public class RecordUtils {
 		if (!baseformat.equalsIgnoreCase("cd"))
 			cd_extra = "";
 
-		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber "
+		String sql = "SELECT recordnumber from formats,records,score_table WHERE recordnumber = record_id AND format = formatnumber "
 				+ cd_extra
 				+ " AND baseformat = ? AND simon_rank_count = ? AND simon_score_date < 'today'::date - "
 				+ months
@@ -73,7 +71,6 @@ public class RecordUtils {
 
 	public static Record getRecordToListenTo(String[] baseformats)
 			throws SQLException {
-		Record toRet = null;
 		Calendar today = Calendar.getInstance();
 
 		Record newRecord = null;
@@ -120,5 +117,6 @@ public class RecordUtils {
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] {
 		// "10" }));
 		// System.out.println(getRecordToRip());
+		Connect.getConnection().printStats();
 	}
 }
