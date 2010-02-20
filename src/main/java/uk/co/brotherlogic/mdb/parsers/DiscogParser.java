@@ -37,7 +37,7 @@ public class DiscogParser
 	public static void main(String[] args) throws Exception
 	{
 		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(1806896));
+		System.out.println(parser.parseDiscogRelease(808723));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
@@ -47,6 +47,7 @@ public class DiscogParser
 		try
 		{
 			URL url = new URL(base.replace("ID", "" + id));
+			System.err.println("Reading: " + url);
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			DiscogXMLParser handler = new DiscogXMLParser();
 			parser.parse(new GZIPInputStream(url.openStream()), handler);
@@ -125,8 +126,15 @@ class DiscogXMLParser extends DefaultHandler
 					if (text.equals("Album"))
 						rec.setReleaseType(1);
 				} else if (qualName.equals("released"))
-					rec.setYear(Integer.parseInt(text));
-				else if (qualName.equals("genre"))
+				{
+					if (text.contains("-"))
+					{
+						String[] elems = text.split("-");
+						rec.setYear(Integer.parseInt(elems[0]));
+						rec.setReleaseMonth(Integer.parseInt(elems[1]));
+					} else
+						rec.setYear(Integer.parseInt(text));
+				} else if (qualName.equals("genre"))
 				{
 					Category cat = GetCategories.build().getCategory(text);
 					if (text.equals("Rock"))
@@ -171,12 +179,13 @@ class DiscogXMLParser extends DefaultHandler
 				} else if (qualName.equals("title"))
 					currTrack.setTitle(text);
 				else if (qualName.equals("duration"))
-				{
-					String[] elems = text.split(":");
-					int lengthInSeconds = Integer.parseInt(elems[0]) * 60
-							+ Integer.parseInt(elems[1]);
-					currTrack.setLengthInSeconds(lengthInSeconds);
-				}
+					if (text.trim().length() > 0)
+					{
+						String[] elems = text.split(":");
+						int lengthInSeconds = Integer.parseInt(elems[0]) * 60
+								+ Integer.parseInt(elems[1]);
+						currTrack.setLengthInSeconds(lengthInSeconds);
+					}
 
 		} catch (SQLException e)
 		{
