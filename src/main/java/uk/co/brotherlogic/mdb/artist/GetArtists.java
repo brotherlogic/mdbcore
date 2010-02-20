@@ -31,7 +31,7 @@ public class GetArtists
 
 	public static void main(String[] args) throws Exception
 	{
-		System.err.println(GetArtists.create().search("Jean").size());
+		System.err.println(GetArtists.create().search("ampton").size());
 	}
 
 	// Map of name --> artist
@@ -266,9 +266,9 @@ public class GetArtists
 				.getConnection()
 				.getPreparedStatement(
 						"SELECT sort_name,artist_id,show_name FROM artist WHERE show_name like ?");
-		s.setString(1, query.toLowerCase());
+		s.setString(1, "%" + query.toLowerCase() + "%");
 
-		ResultSet rs = s.executeQuery();
+		ResultSet rs = Connect.getConnection().executeQuery(s);
 		while (rs.next())
 		{
 			Artist art = new Artist(rs.getString(1), rs.getString(3), rs
