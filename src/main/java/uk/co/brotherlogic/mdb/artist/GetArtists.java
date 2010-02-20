@@ -265,7 +265,7 @@ public class GetArtists
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"SELECT sort_name,artist_id,show_name FROM artist WHERE show_name like ?");
+						"SELECT sort_name,artist_id,show_name FROM artist WHERE lower(show_name) like ?");
 		s.setString(1, "%" + query.toLowerCase() + "%");
 
 		ResultSet rs = Connect.getConnection().executeQuery(s);
