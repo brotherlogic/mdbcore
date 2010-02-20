@@ -76,10 +76,13 @@ class DiscogXMLParser extends DefaultHandler
 		highest.put(0, 0);
 	}
 
-	boolean inMain = false;
-	boolean inArtists = false;
-	boolean inLabels = false;
-	boolean inTracks = false;
+	private boolean inMain = false;
+	private boolean inArtists = false;
+	private boolean inLabels = false;
+	private boolean inTracks = false;
+	private boolean inFormats = false;
+
+	private int quantity = -1;
 
 	@Override
 	public void characters(char[] ch, int start, int length)
@@ -102,7 +105,20 @@ class DiscogXMLParser extends DefaultHandler
 					inArtists = false;
 				else if (qualName.equals("labels"))
 					inLabels = false;
-				else if (qualName.equals("name") && inArtists)
+				else if (qualName.equals("formats"))
+					inFormats = false;
+				else if (inFormats && qualName.equals("description"))
+				{
+					if (text.equals("LP"))
+						switch (quantity)
+						{
+						case 1:
+							rec
+									.setFormat(GetFormats.create().getFormat(
+											"12\""));
+							break;
+						}
+				} else if (qualName.equals("name") && inArtists)
 				{
 					Groop grp = GetGroops.build().getGroopFromShowName(text);
 					if (grp == null)
@@ -229,6 +245,9 @@ class DiscogXMLParser extends DefaultHandler
 							attributes.getValue("name"));
 					if (form != null)
 						rec.setFormat(form);
+
+					inFormats = true;
+					quantity = Integer.parseInt(attributes.getValue("qty"));
 				}
 
 			if (inTracks)
