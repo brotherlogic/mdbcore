@@ -37,7 +37,7 @@ public class DiscogParser
 	public static void main(String[] args) throws Exception
 	{
 		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(1326099));
+		System.out.println(parser.parseDiscogRelease(1806896));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
