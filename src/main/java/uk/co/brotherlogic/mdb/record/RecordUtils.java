@@ -39,13 +39,13 @@ public class RecordUtils
 		if (!baseformat.equalsIgnoreCase("cd"))
 			cd_extra = "";
 
-		String sql = "SELECT recordnumber from formats,records,score_table WHERE recordnumber = record_id AND format = formatnumber "
+		String sql = "SELECT recordnumber from formats,records,score_table,recrand WHERE recordnumber = recrand.record_id AND recordnumber = score_table.record_id AND format = formatnumber "
 				+ cd_extra
 				+ " AND baseformat = ? AND simon_rank_count = ? AND simon_score_date < 'today'::date - "
 				+ months
 				+ "*'1 month'::interval AND simon_score > "
 				+ min_score
-				+ " AND salepricepence < 0 ORDER BY simon_score DESC, boughtdate ASC LIMIT 1";
+				+ " AND salepricepence < 0 ORDER BY simon_score DESC, randval ASC LIMIT 1";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
@@ -120,7 +120,7 @@ public class RecordUtils
 		// "12",
 		// "10", "7" }));
 		System.out.println(RecordUtils.getRecordToListenTo(new String[]
-		{ "CD" }));
+		{ "12" }));
 		// System.out.println(getRecordToRip());
 		Connect.getConnection().printStats();
 	}
