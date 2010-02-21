@@ -211,6 +211,9 @@ class DiscogXMLParser extends DefaultHandler
 
 	public Record getRecord()
 	{
+		// Set the author
+		rec.setAuthor(rec.getGroopString());
+
 		return rec;
 	}
 
