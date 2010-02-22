@@ -73,8 +73,10 @@ public class Track implements Comparable<Track>, Serializable
 	 * @param trackRefNumber
 	 *            The track reference number
 	 */
-	public Track(final String titleIn, final int lengthIn, final Collection<LineUp> groopsIn,
-			final Collection<Artist> personnelIn, final int trackNumberIn, final int trackRefNumber)
+	public Track(final String titleIn, final int lengthIn,
+			final Collection<LineUp> groopsIn,
+			final Collection<Artist> personnelIn, final int trackNumberIn,
+			final int trackRefNumber)
 	{
 		title = titleIn;
 		lengthInSeconds = lengthIn;
@@ -89,6 +91,11 @@ public class Track implements Comparable<Track>, Serializable
 	public final void addLineUp(final LineUp lineup)
 	{
 		groops.add(lineup);
+	}
+
+	public final void addLineUps(final Collection<LineUp> lineups)
+	{
+		groops.addAll(lineups);
 	}
 
 	public final void addPersonnel(final Artist person)
