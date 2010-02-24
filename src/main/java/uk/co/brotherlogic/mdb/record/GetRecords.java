@@ -41,16 +41,11 @@ public class GetRecords {
 	public static void main(String[] args) throws Exception {
 		Connect.setForProduction();
 
-		long sTime = System.currentTimeMillis();
-		Record rec = GetRecords.create().getRecord(5);
+		Collection<Record> recs = GetRecords.create().getRecordsWithGrpMember(
+				43087);
+		for (Record r : recs)
+			System.out.println(r.getAuthor() + " - " + r.getTitle());
 
-		for (Track track : rec.getTracks())
-			track.getTitle();
-
-		long eTime = System.currentTimeMillis();
-
-		System.out.println(eTime - sTime);
-		System.out.println(Connect.getConnection().getSCount());
 		Connect.getConnection().printStats();
 
 	}
@@ -500,6 +495,23 @@ public class GetRecords {
 
 		return records;
 
+	}
+
+	public Collection<Record> getRecordsWithGrpMember(int persId)
+			throws SQLException {
+		List<Record> featuring = new LinkedList<Record>();
+
+		String sql = "SELECT DISTINCT records.recordnumber from records,track,lineupset,lineupdetails WHERE records.recordnumber = track.recordnumber AND track.trackrefnumber = lineupset.tracknumber AND lineupset.lineupnumber = lineupdetails.lineupnumber AND lineupdetails.artistnumber = ?";
+		PreparedStatement ps = Connect.getConnection()
+				.getPreparedStatement(sql);
+		ps.setInt(1, persId);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Record rec = getRecord(rs.getInt(1));
+			featuring.add(rec);
+		}
+
+		return featuring;
 	}
 
 	public Collection<Record> getRecordsWithPers(int artNumber)
