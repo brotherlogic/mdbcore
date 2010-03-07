@@ -167,6 +167,8 @@ class DiscogXMLParser extends DefaultHandler
 				{
 					if (Character.isLetter(text.charAt(0)))
 					{
+						if (text.trim().length() == 1)
+							text += "1";
 						int offsetCharacter = text.charAt(0) - ('A') + 1;
 						text = (offsetCharacter) + "-" + text.substring(1);
 					}

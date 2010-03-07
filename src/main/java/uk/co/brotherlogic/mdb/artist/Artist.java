@@ -78,6 +78,10 @@ public class Artist implements Comparable<Artist>, Serializable {
 			return false;
 	}
 
+	public Collection<Record> getGroopMemberRecords() throws SQLException {
+		return GetRecords.create().getRecordsWithGrpMember(id);
+	}
+
 	/**
 	 * Get the id number for this artist
 	 * 

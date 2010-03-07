@@ -427,7 +427,7 @@ public class GetRecords
 			PreparedStatement s = Connect
 					.getConnection()
 					.getPreparedStatement(
-							"SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos > 0 AND boxed = 0");
+							"SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos > 0");
 			s.setString(1, format);
 			ResultSet rs = s.executeQuery();
 			while (rs.next())
@@ -529,6 +529,25 @@ public class GetRecords
 
 		return records;
 
+	}
+
+	public Collection<Record> getRecordsWithGrpMember(int persId)
+			throws SQLException
+	{
+		List<Record> featuring = new LinkedList<Record>();
+
+		String sql = "SELECT DISTINCT records.recordnumber from records,track,lineupset,lineupdetails WHERE records.recordnumber = track.recordnumber AND track.trackrefnumber = lineupset.tracknumber AND lineupset.lineupnumber = lineupdetails.lineupnumber AND lineupdetails.artistnumber = ?";
+		PreparedStatement ps = Connect.getConnection()
+				.getPreparedStatement(sql);
+		ps.setInt(1, persId);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+		{
+			Record rec = getRecord(rs.getInt(1));
+			featuring.add(rec);
+		}
+
+		return featuring;
 	}
 
 	public Collection<Record> getRecordsWithPers(int artNumber)
