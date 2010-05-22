@@ -74,7 +74,7 @@ public class GetGroops
 		{
 			addGroop.setString(1, grp.getShowName());
 			addGroop.setString(2, grp.getSortName());
-			addGroop.execute();
+			Connect.getConnection().executeStatement(addGroop);
 
 			getGroop.setString(1, grp.getShowName());
 			getGroop.setString(2, grp.getSortName());

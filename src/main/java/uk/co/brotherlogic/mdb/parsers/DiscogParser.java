@@ -106,6 +106,10 @@ class DiscogXMLParser extends DefaultHandler {
 							break;
 						}
 				} else if (qualName.equals("name") && inArtists) {
+					// Remove the trailing numbers
+					if (text.trim().endsWith(")"))
+						text = text.substring(0, text.lastIndexOf("("));
+
 					Groop grp = GetGroops.build().getGroopFromShowName(text);
 					if (grp == null)
 						grp = new Groop(text);
