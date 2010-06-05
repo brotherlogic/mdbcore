@@ -56,9 +56,8 @@ public class RecordUtils {
 
 	public static Record getRecordToListenTo(String baseformat)
 			throws SQLException {
-		// Only listen to new records on a Sunday!
-		Calendar today = Calendar.getInstance();
-		Record r = null;
+		// Always favour new records
+		Record r = getNewRecord(baseformat);
 		// r = getRecord(baseformat, 2, 6);
 		if (r == null)
 			r = getRecord(baseformat, 1, 3);
