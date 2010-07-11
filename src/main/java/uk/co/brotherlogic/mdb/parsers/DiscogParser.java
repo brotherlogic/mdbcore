@@ -35,7 +35,7 @@ public class DiscogParser {
 
 	public static void main(String[] args) throws Exception {
 		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(2338384));
+		System.out.println(parser.parseDiscogRelease(2108668));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
@@ -160,10 +160,15 @@ class DiscogXMLParser extends DefaultHandler {
 							int discNumber = Integer.parseInt(elems[0]);
 							int trckNumber = Integer.parseInt(elems[1]);
 							int number;
+							System.err
+									.println((highest.get(discNumber - 1) + 1)
+											+ " and " + trckNumber + " given "
+											+ contNum);
 							if (contNum
 									|| highest.get(discNumber - 1) + 1 == trckNumber) {
 								number = trckNumber;
-								contNum = true;
+								if (number > 1)
+									contNum = true;
 							} else
 								number = highest.get(discNumber - 1)
 										+ trckNumber;
