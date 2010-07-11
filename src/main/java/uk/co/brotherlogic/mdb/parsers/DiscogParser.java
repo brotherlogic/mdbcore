@@ -35,7 +35,7 @@ public class DiscogParser {
 
 	public static void main(String[] args) throws Exception {
 		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(2211315));
+		System.out.println(parser.parseDiscogRelease(2338384));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
@@ -75,6 +75,7 @@ class DiscogXMLParser extends DefaultHandler {
 	private boolean inTracks = false;
 	private boolean inFormats = false;
 	private boolean trackGroops = true;
+	private boolean contNum = false;
 
 	private int quantity = -1;
 
@@ -158,8 +159,14 @@ class DiscogXMLParser extends DefaultHandler {
 							String[] elems = text.split("-");
 							int discNumber = Integer.parseInt(elems[0]);
 							int trckNumber = Integer.parseInt(elems[1]);
-							int number = highest.get(discNumber - 1)
-									+ trckNumber;
+							int number;
+							if (contNum
+									|| highest.get(discNumber - 1) + 1 == trckNumber) {
+								number = trckNumber;
+								contNum = true;
+							} else
+								number = highest.get(discNumber - 1)
+										+ trckNumber;
 							currTrack.setTrackNumber(number);
 
 							if (highest.containsKey(discNumber))
