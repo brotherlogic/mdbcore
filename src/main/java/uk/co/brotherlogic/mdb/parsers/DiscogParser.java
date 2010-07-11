@@ -35,7 +35,7 @@ public class DiscogParser {
 
 	public static void main(String[] args) throws Exception {
 		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(2348711));
+		System.out.println(parser.parseDiscogRelease(2211315));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
@@ -74,6 +74,7 @@ class DiscogXMLParser extends DefaultHandler {
 	private boolean inLabels = false;
 	private boolean inTracks = false;
 	private boolean inFormats = false;
+	private boolean trackGroops = true;
 
 	private int quantity = -1;
 
@@ -176,21 +177,31 @@ class DiscogXMLParser extends DefaultHandler {
 						currTrack.addLineUps(overallGroops);
 				} else if (qualName.equals("title"))
 					currTrack.setTitle(text);
+
 				else if (qualName.equals("name")) {
-					Groop grp = GetGroops.build().getGroopFromShowName(text);
-					if (grp == null)
-						grp = new Groop(text);
-					LineUp lup = null;
-					if (grp.getLineUps() == null
-							|| grp.getLineUps().size() == 0) {
+					if (trackGroops) {
+						Groop grp = GetGroops.build()
+								.getGroopFromShowName(text);
+						if (grp == null)
+							grp = new Groop(text);
+						LineUp lup = null;
+						if (grp.getLineUps() == null
+								|| grp.getLineUps().size() == 0) {
+							Artist art = GetArtists.create()
+									.getArtistFromShowName(text);
+							lup = new LineUp(grp);
+							lup.addArtist(art);
+						} else
+							lup = grp.getLineUps().iterator().next();
+
+						currTrack.addLineUp(lup);
+					} else {
 						Artist art = GetArtists.create().getArtistFromShowName(
 								text);
-						lup = new LineUp(grp);
-						lup.addArtist(art);
-					} else
-						lup = grp.getLineUps().iterator().next();
-
-					currTrack.addLineUp(lup);
+						if (art == null)
+							art = new Artist(text);
+						currTrack.addPersonnel(art);
+					}
 				} else if (qualName.equals("duration"))
 					if (text.trim().length() > 0) {
 						String[] elems = text.split(":");
@@ -245,6 +256,10 @@ class DiscogXMLParser extends DefaultHandler {
 			if (inTracks)
 				if (qualName.equals("track"))
 					currTrack = new Track();
+				else if (qualName.equals("artists"))
+					trackGroops = true;
+				else if (qualName.equals("extraartists"))
+					trackGroops = false;
 
 			if (qualName.equals("release")) {
 				rec.setDiscogsNum(Integer.parseInt(attributes.getValue("id")));
