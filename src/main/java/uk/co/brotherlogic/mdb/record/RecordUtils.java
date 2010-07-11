@@ -85,9 +85,7 @@ public class RecordUtils {
 			}
 		}
 
-		if ((today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || today
-				.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-				&& newRecord != null)
+		if (newRecord != null)
 			return newRecord;
 
 		return currRecord;
