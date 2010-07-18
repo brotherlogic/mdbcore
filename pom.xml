@@ -55,4 +55,18 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <configuration>
+          <findbugsXmlOutput>true</findbugsXmlOutput>
+          <xmlOutput>true</xmlOutput>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
 </project>
