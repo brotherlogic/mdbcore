@@ -1,6 +1,7 @@
 package uk.co.brotherlogic.mdb.parsers;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -9,6 +10,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -35,24 +38,42 @@ public class DiscogParser {
 
 	public static void main(String[] args) throws Exception {
 		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(2108668));
+		System.out.println(parser.parseDiscogRelease(27169));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
 
 	public Record parseDiscogRelease(int id) throws IOException {
+		URL url = new URL(base.replace("ID", "" + id));
 		try {
-			URL url = new URL(base.replace("ID", "" + id));
-			System.err.println("Reading: " + url);
+			HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+			uc.addRequestProperty("Accept-Encoding", "gzip");
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			DiscogXMLParser handler = new DiscogXMLParser();
-			parser.parse(new GZIPInputStream(url.openStream()), handler);
+			parser.parse(new GZIPInputStream(uc.getInputStream()), handler);
 			return handler.getRecord();
 		} catch (SAXException e) {
 			throw new IOException(e);
 		} catch (ParserConfigurationException e) {
 			throw new IOException(e);
+		} catch (IOException e) {
+			// Deal with 400 exceptions here (needs discog login)
+			if (e.getMessage().contains("400 for URL")) {
+
+				// Open a browser
+				JFrame framer = new JFrame();
+				JEditorPane htmlPane = new JEditorPane();
+				htmlPane.setPage(url);
+				framer.add(htmlPane);
+				framer.setSize(500, 500);
+				framer.setLocationRelativeTo(null);
+				framer.setVisible(true);
+
+			} else
+				throw (e);
 		}
+
+		return null;
 	}
 }
 
