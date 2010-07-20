@@ -9,10 +9,8 @@ import uk.co.brotherlogic.mdb.label.Label;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
-public class CatNoTest
-{
-	public void testCatNo()
-	{
+public class CatNoTest {
+	public void testCatNo() {
 		Record r = new Record();
 		r.setAuthor("fake-author");
 		r.setCategory(new Category("fake-cat", 12));
@@ -26,20 +24,16 @@ public class CatNoTest
 		r.setPrice(12.65);
 		r.setReleaseMonth(12);
 		r.setReleaseType(1);
-		r.setState(2);
 		r.setTitle("catno-test");
 		r.setYear(2000);
 
 		r.addCatNo("Donkey");
 
-		try
-		{
+		try {
 			r.save();
 			Record r2 = GetRecords.create().getRecords("catno-test").get(0);
 			assert (r2.getCatNos().size() == 2);
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
 		}

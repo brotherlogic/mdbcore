@@ -11,81 +11,11 @@ import uk.co.brotherlogic.mdb.label.Label;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
-public class RecordTest extends TestCase
-{
+public class RecordTest extends TestCase {
 	private static boolean built = false;
 
-	public void testCatNoSize()
-	{
-		try
-		{
-			buildRecord();
-			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
-			assert (nrec.getCatNos().size() == 1);
-			assert (nrec.getCatNoString().equals("fake-cat-no"));
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			assert (false);
-		}
-	}
-
-	public void testLabels()
-	{
-		try
-		{
-			buildRecord();
-			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
-			assert (nrec.getLabels().size() == 1);
-			assert (nrec.getLabels().iterator().next().getName().equals("fake-label"));
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			assert (false);
-		}
-	}
-
-	public void testNewAuthor()
-	{
-		try
-		{
-			buildRecord();
-			Record r = GetRecords.create().getRecords("fake-title").get(0);
-			r.setAuthor("New Fake Author");
-			r.save();
-			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
-			assert (nrec.getAuthor().equals("New Fake Author"));
-
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			assert (false);
-		}
-	}
-
-	public void testRetrieveSize()
-	{
-		try
-		{
-			buildRecord();
-			// Retrieve
-			List<Record> recs = GetRecords.create().getRecords("fake-title");
-			assert (recs.size() == 1);
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			assert (false);
-		}
-	}
-
-	private void buildRecord()
-	{
-		if (!built)
-		{
+	private void buildRecord() {
+		if (!built) {
 			// Create
 			Record r = new Record();
 			r.setAuthor("fake-author");
@@ -100,20 +30,68 @@ public class RecordTest extends TestCase
 			r.setPrice(12.65);
 			r.setReleaseMonth(12);
 			r.setReleaseType(1);
-			r.setState(2);
 			r.setTitle("fake-title");
 			r.setYear(2000);
 
-			try
-			{
+			try {
 				// Persist
 				r.save();
 				built = true;
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public void testCatNoSize() {
+		try {
+			buildRecord();
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec.getCatNos().size() == 1);
+			assert (nrec.getCatNoString().equals("fake-cat-no"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testLabels() {
+		try {
+			buildRecord();
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec.getLabels().size() == 1);
+			assert (nrec.getLabels().iterator().next().getName()
+					.equals("fake-label"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testNewAuthor() {
+		try {
+			buildRecord();
+			Record r = GetRecords.create().getRecords("fake-title").get(0);
+			r.setAuthor("New Fake Author");
+			r.save();
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec.getAuthor().equals("New Fake Author"));
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testRetrieveSize() {
+		try {
+			buildRecord();
+			// Retrieve
+			List<Record> recs = GetRecords.create().getRecords("fake-title");
+			assert (recs.size() == 1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
 		}
 	}
 

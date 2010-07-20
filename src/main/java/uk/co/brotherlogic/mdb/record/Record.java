@@ -492,11 +492,6 @@ public class Record implements Comparable<Record>, Serializable {
 		this.releaseType = releaseType;
 	}
 
-	public void setState(int value) {
-		state = value;
-		stateUpdated = true;
-	}
-
 	public void setTitle(String tit) {
 		title = tit;
 	}
