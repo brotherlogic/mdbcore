@@ -5,7 +5,6 @@ package uk.co.brotherlogic.mdb.record;
  * @author Simon Tucker
  */
 
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -25,7 +24,7 @@ import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.Label;
 
-public class Record implements Comparable<Record>, Serializable {
+public class Record implements Comparable<Record> {
 
 	/**
 	 * 
@@ -190,11 +189,11 @@ public class Record implements Comparable<Record>, Serializable {
 	}
 
 	public String getCatNoString() throws SQLException {
-		String ret = "";
+		StringBuffer ret = new StringBuffer("");
 		for (String catNo : getCatNos())
-			ret += catNo;
+			ret.append(catNo);
 
-		return ret;
+		return ret.toString();
 	}
 
 	public Collection<Artist> getCompilers() throws SQLException {
@@ -228,17 +227,18 @@ public class Record implements Comparable<Record>, Serializable {
 		// Construct the groop string
 		Collection<String> main = getMainGroops();
 		Iterator<String> gIt = main.iterator();
-		String groop = "";
+		StringBuffer groop = new StringBuffer("");
 		while (gIt.hasNext())
-			groop += gIt.next() + " & ";
+			groop.append(gIt.next() + " & ");
 
 		// Remove the trailing & or replace with various
+		String grp = null;
 		if (groop.length() > 0)
-			groop = groop.substring(0, groop.length() - 3);
+			grp = groop.substring(0, groop.length() - 3);
 		else
-			groop = "Various";
+			grp = "Various";
 
-		return groop;
+		return grp;
 
 	}
 
@@ -522,32 +522,32 @@ public class Record implements Comparable<Record>, Serializable {
 
 	@Override
 	public String toString() {
-		String ret = "TITLE: " + getTitle() + "\n";
+		StringBuffer ret = new StringBuffer("TITLE: " + getTitle() + "\n");
 		try {
-			ret += "LABEL: " + getLabels() + "\n";
-			ret += "FORMAT: " + getFormat() + "\n";
-			ret += "TYPE: " + getReleaseType() + "\n";
-			ret += "CATNO: " + getCatNos() + "\n";
+			ret.append("LABEL: " + getLabels() + "\n");
+			ret.append("FORMAT: " + getFormat() + "\n");
+			ret.append("TYPE: " + getReleaseType() + "\n");
+			ret.append("CATNO: " + getCatNos() + "\n");
 			DateFormat df = DateFormat.getDateInstance();
-			ret += "DATE: " + df.format(getDate().getTime()) + "\n";
-			ret += "YEAR: " + getReleaseYear() + "\n";
-			ret += "MONTH: " + getReleaseMonth() + "\n";
-			ret += "CATEGORY: " + getCategory() + "\n";
-			ret += "NOTE: " + getNotes() + "\n";
-			ret += "OWNER: " + getOwner() + "\n";
-			ret += "COMPILER: " + getCompilers() + "\n";
-			ret += "PRICE: " + getPrice() + "\n";
-			ret += "AUTHOR: " + getAuthor() + "\n";
+			ret.append("DATE: " + df.format(getDate().getTime()) + "\n");
+			ret.append("YEAR: " + getReleaseYear() + "\n");
+			ret.append("MONTH: " + getReleaseMonth() + "\n");
+			ret.append("CATEGORY: " + getCategory() + "\n");
+			ret.append("NOTE: " + getNotes() + "\n");
+			ret.append("OWNER: " + getOwner() + "\n");
+			ret.append("COMPILER: " + getCompilers() + "\n");
+			ret.append("PRICE: " + getPrice() + "\n");
+			ret.append("AUTHOR: " + getAuthor() + "\n");
 			for (Track tr : tracks) {
-				ret += "TRACK: " + tr.getTrackNumber() + "\n";
-				ret += "ARTIST: " + tr.getLineUps() + "\n";
-				ret += "TITLE: " + tr.getTitle() + "\n";
-				ret += "PERSONNEL: " + tr.getPersonnel() + "\n";
-				ret += "LENGTH: " + tr.getLengthInSeconds() + "\n";
+				ret.append("TRACK: " + tr.getTrackNumber() + "\n");
+				ret.append("ARTIST: " + tr.getLineUps() + "\n");
+				ret.append("TITLE: " + tr.getTitle() + "\n");
+				ret.append("PERSONNEL: " + tr.getPersonnel() + "\n");
+				ret.append("LENGTH: " + tr.getLengthInSeconds() + "\n");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return ret;
+		return ret.toString();
 	}
 }

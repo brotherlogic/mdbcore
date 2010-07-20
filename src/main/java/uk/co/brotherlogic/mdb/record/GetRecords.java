@@ -58,7 +58,6 @@ public class GetRecords {
 	PreparedStatement getTracks;
 	// Flag indicating overlap of record titles
 	boolean nonOver;
-	Collection<Record> records;
 	PreparedStatement updateTrack;
 
 	PreparedStatement updateRecord;
@@ -73,8 +72,6 @@ public class GetRecords {
 
 	private GetRecords() throws SQLException {
 		// Create the records
-		records = new Vector<Record>();
-
 		getTracks = Connect
 				.getConnection()
 				.getPreparedStatement(

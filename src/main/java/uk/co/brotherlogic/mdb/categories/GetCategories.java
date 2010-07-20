@@ -16,10 +16,8 @@ import java.util.TreeSet;
 
 import uk.co.brotherlogic.mdb.Connect;
 
-public class GetCategories
-{
-	public static GetCategories build() throws SQLException
-	{
+public class GetCategories {
+	public static GetCategories build() throws SQLException {
 		if (singleton == null)
 			singleton = new GetCategories();
 		return singleton;
@@ -35,23 +33,22 @@ public class GetCategories
 
 	private boolean refresh = true;
 
-	private GetCategories() throws SQLException
-	{
-		insertQuery = Connect.getConnection().getPreparedStatement(
-				"INSERT INTO Categories(CategoryName,MP3Category) VALUES (?,?)");
+	private GetCategories() throws SQLException {
+		insertQuery = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"INSERT INTO Categories(CategoryName,MP3Category) VALUES (?,?)");
 
 		collectQuery = Connect.getConnection().getPreparedStatement(
 				"SELECT CategoryNumber FROM Categories WHERE CategoryName = ?");
 	}
 
-	public int addCategory(Category in) throws SQLException
-	{
+	public int addCategory(Category in) throws SQLException {
 		collectQuery.setString(1, in.getCatName());
 		ResultSet rs = collectQuery.executeQuery();
 
-		//Add this category if it has not already been added
-		if (!rs.next())
-		{
+		// Add this category if it has not already been added
+		if (!rs.next()) {
 			// Add the category
 			insertQuery.setString(1, in.getCatName());
 			insertQuery.setInt(2, in.getMp3Number());
@@ -60,7 +57,7 @@ public class GetCategories
 			collectQuery.setString(1, in.getCatName());
 			rs = collectQuery.executeQuery();
 
-			//Mark that the categories need to be recreated
+			// Mark that the categories need to be recreated
 			refresh = true;
 
 			// Move the cursor one step onewards and then choose the
@@ -72,31 +69,31 @@ public class GetCategories
 		return catNum;
 	}
 
-	public void cancel()
-	{
+	public void cancel() {
 		// Necessary for this to finish, so just leave in background
 	}
 
-	public void execute() throws SQLException
-	{
+	public void execute() throws SQLException {
 		// Initialise the groop store
 		categories = new TreeMap<String, Category>();
 
 		// Get a statement and run the query
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT categorynumber,categoryname,mp3category FROM Categories");
+		PreparedStatement s = Connect
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT categorynumber,categoryname,mp3category FROM Categories");
 		ResultSet rs = s.executeQuery();
 
 		// Extract the information
-		while (rs.next())
-		{
+		while (rs.next()) {
 			// Get the information from the result set
 			int categoryNumber = rs.getInt(1);
 			String categoryName = rs.getString(2);
 			int mp3Number = rs.getInt(3);
 
 			// Construct and store the new category
-			Category newCat = new Category(categoryName, categoryNumber, mp3Number);
+			Category newCat = new Category(categoryName, categoryNumber,
+					mp3Number);
 			categories.put(categoryName, newCat);
 
 		}
@@ -105,34 +102,29 @@ public class GetCategories
 		rs.close();
 		s.close();
 
-		//Mark that we've refreshed
+		// Mark that we've refreshed
 		refresh = false;
 	}
 
-	public boolean exists(String name)
-	{
+	public boolean exists(String name) {
 		return categories.keySet().contains(name);
 	}
 
-	public Collection<Category> getCategories()
-	{
+	public Collection<Category> getCategories() {
 		if (categories == null)
-			try
-			{
+			try {
 				execute();
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
 		TreeSet<Category> ret = new TreeSet<Category>();
-		ret.addAll(categories.values());
+		if (categories != null)
+			ret.addAll(categories.values());
 		return ret;
 	}
 
-	public Category getCategory(String name) throws SQLException
-	{
+	public Category getCategory(String name) throws SQLException {
 		if (refresh)
 			execute();
 
@@ -142,8 +134,7 @@ public class GetCategories
 			return null;
 	}
 
-	public String toString()
-	{
+	public String toString() {
 		return "Categories";
 	}
 
