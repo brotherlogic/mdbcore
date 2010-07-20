@@ -75,10 +75,6 @@ public class Record implements Comparable<Record>, Serializable {
 	/** The location of the record on it's respective shelf */
 	private int shelfpos;
 
-	/** The state of the record */
-	private int state;
-	private boolean stateUpdated = false;
-
 	public static final int RANKED = 4;
 
 	public Record() {
@@ -98,9 +94,6 @@ public class Record implements Comparable<Record>, Serializable {
 		this.title = title;
 		this.format = format;
 		this.boughtDate = boughtDate;
-		this.catnos = catnos;
-		this.labels = labels;
-		this.tracks = tracks;
 		this.shelfpos = shelfpos;
 	}
 
