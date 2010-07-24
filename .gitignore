@@ -5,3 +5,5 @@ releaseBackup
 .fbprefs
 .project
 .settings
+.checkstyle
+.project
