@@ -5,54 +5,44 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import uk.co.brotherlogic.mdb.Connect;
+import uk.co.brotherlogic.mdb.User;
 
 public class RecordScore {
-	Record rec;
-
 	boolean[] changed = new boolean[1];
 	private static int SIMON_RANK_CHANGED = 0;
 
-	public static RecordScore get(Record rec) throws SQLException {
-		String sql = "SELECT * from score_table WHERE record_id = ?";
+	public static double get(Record rec, User user) throws SQLException {
+		String sql = "SELECT score_value from score_history WHERE record_id = ? AND user_id = ?";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setInt(1, rec.getNumber());
+		ps.setInt(2, user.getID());
 		ResultSet rs = ps.executeQuery();
+		int count = 0;
+		double sum = 0;
 		if (rs.next()) {
-			RecordScore score = new RecordScore();
-			score.simonRank = rs.getDouble("simon_rank");
-			score.rec = rec;
-			return score;
+			count++;
+			sum += rs.getInt(1);
 		} else
 			throw new SQLException("Record " + rec + " not found!");
+
+		if (count == 0)
+			return -1;
+		else
+			return sum / count;
 	}
 
-	private double simonRank;
-
-	public void save() throws SQLException {
-		if (rec != null) {
-			StringBuffer sql = new StringBuffer("UPDATE score_table ");
-
-			for (int i = 0; i < changed.length; i++)
-				if (changed[i])
-					if (i == 0)
-						sql.append("SET simon_rank = ?");
-
-			sql.append(" WHERE record_id = ?");
+	public static void set(Record rec, User user, int score)
+			throws SQLException {
+		if (rec != null && user != null) {
+			String sql = "INSERT INTO score_table (record_id,user_id,score_date,score_value) VALUES (?,?,now(),?)";
 
 			PreparedStatement ps = Connect.getConnection()
 					.getPreparedStatement(sql.toString());
 
-			int sCount = 1;
-			for (int i = 0; i < changed.length; i++)
-				if (changed[i]) {
-					if (i == 0)
-						ps.setDouble(sCount, simonRank);
-					sCount++;
-				}
-
-			ps.setInt(sCount, rec.getNumber());
-			System.out.println(ps);
+			ps.setInt(1, rec.getNumber());
+			ps.setInt(2, user.getID());
+			ps.setInt(3, score);
 
 			ps.execute();
 			ps.close();
@@ -60,11 +50,5 @@ public class RecordScore {
 			// Update the record to ranked
 			rec.save();
 		}
-	}
-
-	public void setSimonRank(double rank) {
-		System.out.println("Setting rank: " + rank);
-		simonRank = rank;
-		changed[SIMON_RANK_CHANGED] = true;
 	}
 }

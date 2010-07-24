@@ -17,6 +17,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.Map.Entry;
 
+import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
 import uk.co.brotherlogic.mdb.categories.Category;
 import uk.co.brotherlogic.mdb.format.Format;
@@ -32,6 +33,11 @@ public class Record implements Comparable<Record> {
 	private static final long serialVersionUID = -5625039435654063418L;
 
 	private static final double GROOP_RATIO = 0.8;
+
+	public static void main(String[] args) throws SQLException {
+		Record rec = GetRecords.create().getRecord(1562);
+		System.err.println(rec.getScore(User.getUser("Simon")));
+	}
 
 	String author;
 
@@ -66,8 +72,6 @@ public class Record implements Comparable<Record> {
 	int releaseType;
 
 	double price;
-
-	private RecordScore score;
 
 	Collection<Artist> compilers;
 
@@ -317,10 +321,8 @@ public class Record implements Comparable<Record> {
 		return year;
 	}
 
-	public RecordScore getScore() throws SQLException {
-		if (score == null)
-			score = RecordScore.get(this);
-		return score;
+	public double getScore(User user) throws SQLException {
+		return RecordScore.get(this, user);
 	}
 
 	public Integer getShelfPos() {
@@ -490,6 +492,10 @@ public class Record implements Comparable<Record> {
 	 */
 	public void setReleaseType(int releaseType) {
 		this.releaseType = releaseType;
+	}
+
+	public void setScore(User user, int score) throws SQLException {
+		RecordScore.set(this, user, score);
 	}
 
 	public void setTitle(String tit) {

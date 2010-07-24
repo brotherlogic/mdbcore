@@ -10,7 +10,7 @@ import uk.co.brotherlogic.mdb.db.upgrade.Version;
 public class DBUpgrade {
 
 	private static Integer getDBVersion() {
-		String sql = "SELECT version from db_props";
+		String sql = "SELECT version from db_props ORDER BY version DESC LIMIT 1";
 		try {
 			PreparedStatement ps = Connect.getConnection()
 					.getPreparedStatement(sql);
@@ -74,6 +74,7 @@ public class DBUpgrade {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			e.getNextException().printStackTrace();
 		}
 	}
 }
