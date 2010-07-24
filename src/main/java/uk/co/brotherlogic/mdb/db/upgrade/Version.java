@@ -19,7 +19,7 @@ public abstract class Version {
 	public abstract boolean runLocal() throws SQLException;
 
 	public void setVersion(int value) throws SQLException {
-		String sql = "INSERT INTO db_props(version) VALUES (?)";
+		String sql = "UPDATE db_props set version = ?";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setInt(1, value);
