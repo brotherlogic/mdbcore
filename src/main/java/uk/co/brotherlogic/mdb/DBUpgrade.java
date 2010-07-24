@@ -21,6 +21,7 @@ public class DBUpgrade {
 			e.printStackTrace();
 			try {
 				Connect.getConnection().cancelTrans();
+				System.err.println("Cancelled failing version check");
 			} catch (SQLException e2) {
 				System.err.println("Something serious has gone down");
 				e2.printStackTrace();
