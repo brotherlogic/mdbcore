@@ -31,6 +31,11 @@
       <name>edip-releases</name>
       <url>http://edip:8085/artifactory/libs-releases-local</url>
     </repository>
+    <snapshotRepository>
+        <id>edip</id>
+        <name>edip-snapshots</name>
+        <url>http://edip:8085/artifactory/libs-snapshots-local</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <build>
