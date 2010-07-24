@@ -30,8 +30,12 @@ public final class Connect {
 	 *             if a db connection cannot be established
 	 */
 	public static Connect getConnection() throws SQLException {
-		if (singleton == null)
+		if (singleton == null) {
 			singleton = new Connect(operationMode);
+
+			// Upgrade the database ready for use
+			DBUpgrade.upgradeDB();
+		}
 		return singleton;
 	}
 
