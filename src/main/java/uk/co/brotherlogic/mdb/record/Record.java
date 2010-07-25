@@ -13,9 +13,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
@@ -113,6 +113,10 @@ public class Record implements Comparable<Record> {
 		intTrack.addPersonnel(pers);
 	}
 
+	public void addScore(User user, int score) throws SQLException {
+		RecordScore.add(this, user, score);
+	}
+
 	public void addTrack(Track trk) {
 		updated = true;
 		tracks.add(trk);
@@ -148,8 +152,7 @@ public class Record implements Comparable<Record> {
 
 	public int compareTo(Record o) {
 		return (title.toLowerCase() + number).compareTo(o.getTitle()
-				.toLowerCase()
-				+ (o.getNumber()));
+				.toLowerCase() + (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks) {
@@ -492,10 +495,6 @@ public class Record implements Comparable<Record> {
 	 */
 	public void setReleaseType(int releaseType) {
 		this.releaseType = releaseType;
-	}
-
-	public void setScore(User user, int score) throws SQLException {
-		RecordScore.set(this, user, score);
 	}
 
 	public void setTitle(String tit) {
