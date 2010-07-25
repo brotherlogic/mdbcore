@@ -14,7 +14,7 @@ public class RecordScore {
 	public static void add(Record rec, User user, int score)
 			throws SQLException {
 		if (rec != null && user != null) {
-			String sql = "INSERT INTO score_table (record_id,user_id,score_date,score_value) VALUES (?,?,now(),?)";
+			String sql = "INSERT INTO score_history (record_id,user_id,score_date,score_value) VALUES (?,?,now(),?)";
 
 			PreparedStatement ps = Connect.getConnection()
 					.getPreparedStatement(sql.toString());
