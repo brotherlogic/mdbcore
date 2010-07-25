@@ -3,7 +3,6 @@ package uk.co.brotherlogic.mdb.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
 
 import uk.co.brotherlogic.mdb.Connect;
 
@@ -66,7 +65,6 @@ public class RecordUtils {
 
 	public static Record getRecordToListenTo(String[] baseformats)
 			throws SQLException {
-		Calendar today = Calendar.getInstance();
 
 		Record newRecord = null;
 		Record currRecord = null;

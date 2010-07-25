@@ -14,11 +14,9 @@ import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 import uk.co.brotherlogic.mdb.record.Track;
 
-public class TrackTest extends TestCase
-{
+public class TrackTest extends TestCase {
 
-	public void testTrack()
-	{
+	public void testTrack() {
 		// Create
 		Record r = new Record();
 		r.setAuthor("fake-author");
@@ -33,12 +31,10 @@ public class TrackTest extends TestCase
 		r.setPrice(12.65);
 		r.setReleaseMonth(12);
 		r.setReleaseType(1);
-		r.setState(2);
 		r.setTitle("fake-titles");
 		r.setYear(2000);
 
-		try
-		{
+		try {
 			r.save();
 
 			Artist g1 = new Artist("DonkeyMan");
@@ -70,9 +66,7 @@ public class TrackTest extends TestCase
 			Record r2 = GetRecords.create().getRecords("fake-titles").get(0);
 			assert (r2.getTracks().size() == 2);
 			assert (r2.getTracks().iterator().next().getPersonnel().size() == 1);
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			System.err.println("Exception");
 			e.printStackTrace();
 		}

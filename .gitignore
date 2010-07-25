@@ -1,3 +1,9 @@
 .DS_*
 *~
 target
+releaseBackup
+.fbprefs
+.project
+.settings
+.checkstyle
+.project

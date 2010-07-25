@@ -14,8 +14,7 @@ import uk.co.brotherlogic.mdb.groop.LineUp;
  * 
  * @author Simon Tucker
  */
-public class Track implements Comparable<Track>, Serializable
-{
+public class Track implements Comparable<Track>, Serializable {
 	/** The track number of this track */
 	private int trackNumber;
 
@@ -37,8 +36,7 @@ public class Track implements Comparable<Track>, Serializable
 	/**
 	 * Constructor
 	 */
-	public Track()
-	{
+	public Track() {
 		groops = new LinkedList<LineUp>();
 		personnel = new LinkedList<Artist>();
 		title = "";
@@ -47,8 +45,7 @@ public class Track implements Comparable<Track>, Serializable
 		refNumber = -1;
 	}
 
-	public Track(int number)
-	{
+	public Track(int number) {
 		groops = new LinkedList<LineUp>();
 		personnel = new LinkedList<Artist>();
 		title = "";
@@ -76,8 +73,7 @@ public class Track implements Comparable<Track>, Serializable
 	public Track(final String titleIn, final int lengthIn,
 			final Collection<LineUp> groopsIn,
 			final Collection<Artist> personnelIn, final int trackNumberIn,
-			final int trackRefNumber)
-	{
+			final int trackRefNumber) {
 		title = titleIn;
 		lengthInSeconds = lengthIn;
 		groops = new LinkedList<LineUp>();
@@ -88,18 +84,15 @@ public class Track implements Comparable<Track>, Serializable
 		refNumber = trackRefNumber;
 	}
 
-	public final void addLineUp(final LineUp lineup)
-	{
+	public final void addLineUp(final LineUp lineup) {
 		groops.add(lineup);
 	}
 
-	public final void addLineUps(final Collection<LineUp> lineups)
-	{
+	public final void addLineUps(final Collection<LineUp> lineups) {
 		groops.addAll(lineups);
 	}
 
-	public final void addPersonnel(final Artist person)
-	{
+	public final void addPersonnel(final Artist person) {
 		personnel.add(person);
 	}
 
@@ -109,20 +102,17 @@ public class Track implements Comparable<Track>, Serializable
 	 * @param personnelIn
 	 *            A collection of Artists
 	 */
-	public final void addPersonnel(final Collection<Artist> personnelIn)
-	{
+	public final void addPersonnel(final Collection<Artist> personnelIn) {
 		personnel.addAll(personnelIn);
 	}
 
-	public final int compareTo(final Track in)
-	{
+	public final int compareTo(final Track in) {
 		int otherNum = in.getTrackNumber();
 		return trackNumber - otherNum;
 	}
 
 	@Override
-	public final boolean equals(final Object o)
-	{
+	public final boolean equals(final Object o) {
 		if (o instanceof Track)
 			return this.compareTo((Track) o) == 0;
 		else
@@ -134,8 +124,7 @@ public class Track implements Comparable<Track>, Serializable
 	 * 
 	 * @return The length of the track in seconds
 	 */
-	public final int getLengthInSeconds()
-	{
+	public final int getLengthInSeconds() {
 		return lengthInSeconds;
 	}
 
@@ -144,8 +133,7 @@ public class Track implements Comparable<Track>, Serializable
 	 * 
 	 * @return A Collection of LineUps
 	 */
-	public final Collection<LineUp> getLineUps()
-	{
+	public final Collection<LineUp> getLineUps() {
 		return groops;
 	}
 
@@ -154,8 +142,7 @@ public class Track implements Comparable<Track>, Serializable
 	 * 
 	 * @return A collection of artists
 	 */
-	public final Collection<Artist> getPersonnel()
-	{
+	public final Collection<Artist> getPersonnel() {
 		return personnel;
 	}
 
@@ -164,8 +151,7 @@ public class Track implements Comparable<Track>, Serializable
 	 * 
 	 * @return The track title
 	 */
-	public final String getTitle()
-	{
+	public final String getTitle() {
 		return title;
 	}
 
@@ -174,60 +160,53 @@ public class Track implements Comparable<Track>, Serializable
 	 * 
 	 * @return the track number
 	 */
-	public final int getTrackNumber()
-	{
+	public final int getTrackNumber() {
 		return trackNumber;
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return title.hashCode() + refNumber;
 	}
 
-	public void save(int recordNumber) throws SQLException
-	{
+	public void save(int recordNumber) throws SQLException {
 		if (refNumber == -1)
 			GetRecords.create().addTrack(recordNumber, this);
 		else
 			GetRecords.create().updateTrack(recordNumber, this);
 	}
 
-	public void setLengthInSeconds(int lengthInSeconds)
-	{
+	public void setLengthInSeconds(int lengthInSeconds) {
 		this.lengthInSeconds = lengthInSeconds;
 	}
 
-	public void setTitle(String title)
-	{
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public void setTrackNumber(int number)
-	{
+	public void setTrackNumber(int number) {
 		trackNumber = number;
 	}
 
 	@Override
-	public String toString()
-	{
-		String ret = "";
+	public String toString() {
+		StringBuffer ret = new StringBuffer("");
 
 		// Do the static stuff
-		ret += "#T#" + trackNumber + "~" + title + "~" + lengthInSeconds;
+		ret.append("#T#" + trackNumber + "~" + title + "~" + lengthInSeconds);
 
 		// Do the personnel
 		Iterator<Artist> pIt = personnel.iterator();
 		while (pIt.hasNext())
-			ret += "~" + pIt.next();
-		ret += "\n";
+			ret.append("~" + pIt.next());
+		ret.append("\n");
 
 		// Do the groups
 		Iterator<LineUp> gIt = groops.iterator();
 		while (gIt.hasNext())
-			ret += (gIt.next());
+			ret.append(gIt.next());
 
-		return ret;
+		return ret.toString();
 
 	}
 }
