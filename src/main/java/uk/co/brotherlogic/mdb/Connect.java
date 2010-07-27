@@ -47,7 +47,6 @@ public final class Connect {
 	private Connection locDB;
 
 	int sCount = 0;
-
 	long longestQueryTime = 0;
 	long totalDBTime = 0;
 
@@ -79,7 +78,6 @@ public final class Connect {
 
 	public ResultSet executeQuery(PreparedStatement ps) throws SQLException {
 
-		System.err.println("RUN: " + ps);
 		sCount++;
 
 		long sTime = System.currentTimeMillis();
@@ -95,7 +93,6 @@ public final class Connect {
 
 	public void executeStatement(PreparedStatement ps) throws SQLException {
 
-		System.err.println("RUN: " + ps);
 		sCount++;
 
 		long sTime = System.currentTimeMillis();
