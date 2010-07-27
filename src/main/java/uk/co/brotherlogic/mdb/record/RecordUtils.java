@@ -39,28 +39,18 @@ public class RecordUtils {
 		return null;
 	}
 
-	private static Record getRecord(String baseformat, int listenCount,
-			int months) throws SQLException {
+	private static Record getRecord(String baseformat) throws SQLException {
 
 		String cd_extra = "AND riploc IS NOT NULL";
-		int min_score = 5;
-		if (months > 3)
-			min_score = 7;
-
 		if (!baseformat.equalsIgnoreCase("cd"))
 			cd_extra = "";
 
-		String sql = "SELECT recordnumber from formats,records,score_table,recrand WHERE recordnumber = recrand.record_id AND recordnumber = score_table.record_id AND format = formatnumber "
+		String sql = "select recordnumber,count(score_value) as cnt,avg(score_value) AS mean  from records,score_history,formats WHERE format = formatnumber AND "
 				+ cd_extra
-				+ " AND baseformat = ? AND simon_rank_count = ? AND simon_score_date < 'today'::date - "
-				+ months
-				+ "*'1 month'::interval AND simon_score > "
-				+ min_score
-				+ " AND salepricepence < 0 ORDER BY simon_score DESC, randval ASC LIMIT 1";
+				+ "baseformat = ? AND recordnumber = record_id AND user_id =1 GROUP BY recrand,recordnumber HAVING count(score_value) = 1 ORDER BY avg(score_value) DESC, recrand ASC LIMIT 10";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
-		ps.setInt(2, listenCount);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		if (rs.next())
 			return GetRecords.create().getRecord(rs.getInt(1));
@@ -74,7 +64,7 @@ public class RecordUtils {
 		Record r = getNewRecord(baseformat);
 		// r = getRecord(baseformat, 2, 6);
 		if (r == null)
-			r = getRecord(baseformat, 1, 3);
+			r = getRecord(baseformat);
 		return r;
 	}
 
