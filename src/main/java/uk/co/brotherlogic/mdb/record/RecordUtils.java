@@ -13,8 +13,8 @@ public class RecordUtils {
 		if (!baseformat.equalsIgnoreCase("cd"))
 			cd_extra = "";
 
-		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_table ON recordnumber = record_id WHERE format = formatnumber "
-				+ cd_extra + " AND baseformat = ? AND simon_score IS NULL";
+		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_history ON recordnumber = record_id WHERE format = formatnumber "
+				+ cd_extra + " AND baseformat = ? AND score_value IS NULL";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
@@ -100,7 +100,7 @@ public class RecordUtils {
 	}
 
 	public static void main(String[] args) throws SQLException {
-		Connect.setForProduction();
+		// Connect.setForProduction();
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] { "7"
 		// }));
 		// System.out.println(RecordUtils.getRecordToListenTo(new String[] {
