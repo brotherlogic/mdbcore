@@ -79,7 +79,7 @@ public class GetRecords {
 		addRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
+						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price,recrand) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,random())");
 		getRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
