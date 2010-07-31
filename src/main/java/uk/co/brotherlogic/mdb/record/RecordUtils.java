@@ -62,7 +62,7 @@ public class RecordUtils
 		return records;
 	}
 
-	private static Record getRecord(String baseformat) throws SQLException
+	public static Record getRecord(String baseformat) throws SQLException
 	{
 
 		String cd_extra = "AND riploc IS NOT NULL";
@@ -82,7 +82,7 @@ public class RecordUtils
 		return null;
 	}
 
-	private static List<Record> getRecords(String baseformat, int num)
+	public static List<Record> getRecords(String baseformat, int num)
 			throws SQLException
 	{
 
