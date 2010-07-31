@@ -97,7 +97,6 @@ public class RecordUtils
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
-		System.out.println(ps);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		List<Record> records = new LinkedList<Record>();
 		while (rs.next())
