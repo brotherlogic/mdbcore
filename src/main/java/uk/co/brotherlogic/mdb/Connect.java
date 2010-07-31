@@ -43,6 +43,14 @@ public final class Connect
 		return singleton;
 	}
 
+	public static String getSource()
+	{
+		if (operationMode == mode.DEVELOPMENT)
+			return "Dev";
+		else
+			return "";
+	}
+
 	public static void setForProduction()
 	{
 		operationMode = mode.PRODUCTION;
@@ -50,11 +58,11 @@ public final class Connect
 
 	/** The connection to the local DB */
 	private Connection locDB;
-
 	int sCount = 0;
-	long longestQueryTime = 0;
 
+	long longestQueryTime = 0;
 	long totalDBTime = 0;
+
 	String longestQuery = "";
 
 	private Connect(mode operationMode) throws SQLException
@@ -142,14 +150,6 @@ public final class Connect
 	public int getSCount()
 	{
 		return sCount;
-	}
-
-	public String getSource()
-	{
-		if (operationMode == mode.DEVELOPMENT)
-			return "Dev";
-		else
-			return "";
 	}
 
 	public long getTQueryTime()
