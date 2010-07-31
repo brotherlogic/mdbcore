@@ -3,7 +3,7 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdbcore</artifactId>
   <packaging>jar</packaging>
-  <version>0.6-SNAPSHOT</version>
+  <version>0.51</version>
   <name>mdbcore</name>
   <url>http://maven.apache.org</url>
   <dependencies>
