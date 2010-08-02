@@ -41,6 +41,16 @@ public class Record implements Comparable<Record> {
 
 	String author;
 
+	private String riploc;
+	
+	public String getRiploc() {
+		return riploc;
+	}
+
+	public void setRiploc(String riploc) {
+		this.riploc = riploc;
+	}
+
 	private int discogsNum = -1;
 
 	Calendar boughtDate;
