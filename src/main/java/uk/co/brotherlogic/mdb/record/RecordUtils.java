@@ -10,7 +10,7 @@ import uk.co.brotherlogic.mdb.Connect;
 
 public class RecordUtils {
 	public static List<Record> getIpodRecords() throws SQLException {
-		String sql = " select recordnumber,riploc,recrand,COUNT(score_value) as cnt,AVG(score_value) as val from records left join score_history ON records.recordnumber = record_id WHERE riploc IS NOT NULL AND user_id = 1 GROUP BY recordnumber,recrand,riploc HAVING count(score_value) = 1 ORDER by val DESC,recrand DESC LIMIT 5";
+		String sql = "select recordnumber,riploc,recrand,COUNT(score_value) as cnt,AVG(score_value) as val from records left join score_history ON records.recordnumber = record_id WHERE riploc IS NOT NULL AND user_id = 1 GROUP BY recordnumber,recrand,riploc HAVING count(score_value) = 1 ORDER by val DESC,recrand DESC LIMIT 5";
 		List<Record> rec = new LinkedList<Record>();
 
 		PreparedStatement ps = Connect.getConnection()
