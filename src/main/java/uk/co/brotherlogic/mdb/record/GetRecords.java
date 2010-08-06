@@ -639,7 +639,7 @@ public class GetRecords {
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum);
+					getPersonnel(refNum), trckNum, refNum,trckNum);
 			retSet.add(currTrack);
 		}
 		rs.close();

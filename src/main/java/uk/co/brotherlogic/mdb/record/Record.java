@@ -157,7 +157,7 @@ public class Record implements Comparable<Record> {
 
 		// Now add the new tracks using the new information collected above
 		for (int i = addPoint + 1; i < addPoint + noToAdd + 1; i++)
-			tracks.add(new Track("", 0, groops, pers, i, -1));
+			tracks.add(new Track("", 0, groops, pers, i, -1,i));
 	}
 
 	public int compareTo(Record o) {

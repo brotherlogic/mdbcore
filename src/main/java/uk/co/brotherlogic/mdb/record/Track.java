@@ -32,6 +32,9 @@ public class Track implements Comparable<Track>, Serializable {
 
 	/** THe track reference number */
 	private int refNumber = -1;
+	
+	/** The format track number */
+	private int formTrackNumber;
 
 	/**
 	 * Constructor
@@ -73,7 +76,7 @@ public class Track implements Comparable<Track>, Serializable {
 	public Track(final String titleIn, final int lengthIn,
 			final Collection<LineUp> groopsIn,
 			final Collection<Artist> personnelIn, final int trackNumberIn,
-			final int trackRefNumber) {
+			final int trackRefNumber, final int formTrackNumber) {
 		title = titleIn;
 		lengthInSeconds = lengthIn;
 		groops = new LinkedList<LineUp>();
@@ -82,6 +85,7 @@ public class Track implements Comparable<Track>, Serializable {
 		personnel.addAll(personnelIn);
 		trackNumber = trackNumberIn;
 		refNumber = trackRefNumber;
+		this.formTrackNumber = formTrackNumber;
 	}
 
 	public final void addLineUp(final LineUp lineup) {
