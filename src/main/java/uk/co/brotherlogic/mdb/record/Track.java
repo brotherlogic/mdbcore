@@ -5,8 +5,10 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import uk.co.brotherlogic.mdb.artist.Artist;
+import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 
 /**
@@ -25,7 +27,7 @@ public class Track implements Comparable<Track>, Serializable {
 	private int lengthInSeconds;
 
 	/** The LineUps associated with this track */
-	private final Collection<LineUp> groops;
+	private final List<LineUp> groops;
 
 	/** The personnel on the track */
 	private final Collection<Artist> personnel;
@@ -46,6 +48,26 @@ public class Track implements Comparable<Track>, Serializable {
 		lengthInSeconds = -1;
 		trackNumber = -1;
 		refNumber = -1;
+		formTrackNumber = -1;
+	}
+	
+	public Collection<Groop> getGroops()
+	{
+		Collection<Groop> grps = new LinkedList<Groop>();
+		
+		for (LineUp lUp : groops)
+			grps.add(lUp.getGroop());
+		
+		return grps;
+	}
+	
+	public String getTrackAuthor()
+	{
+		String author = groops.get(0).getGroop().getShowName();
+		for(LineUp lUp : groops.subList(1, groops.size()-1))
+			author += ", " + lUp.getGroop().getShowName();
+		
+		return author;
 	}
 
 	public Track(int number) {
@@ -55,6 +77,11 @@ public class Track implements Comparable<Track>, Serializable {
 		lengthInSeconds = -1;
 		trackNumber = number;
 		refNumber = -1;
+		formTrackNumber = -1;
+	}
+	
+	public int getFormTrackNumber() {
+		return formTrackNumber;
 	}
 
 	/**
