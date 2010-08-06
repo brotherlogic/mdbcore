@@ -620,7 +620,7 @@ public class GetRecords {
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"SELECT TrackRefNumber, TrackName, Length, TrackNumber FROM Track  WHERE RecordNumber = ? ORDER BY TrackNumber");
+						"SELECT TrackRefNumber, TrackName, Length, TrackNumber,formtrack FROM Track  WHERE RecordNumber = ? ORDER BY TrackNumber");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -635,11 +635,12 @@ public class GetRecords {
 				name = "";
 			int len = rs.getInt(3);
 			int refNum = rs.getInt(1);
+			int formtrack = rs.getInt(5);
 
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum,trckNum);
+					getPersonnel(refNum), trckNum, refNum,formtrack);
 			retSet.add(currTrack);
 		}
 		rs.close();
