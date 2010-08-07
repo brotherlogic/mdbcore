@@ -51,11 +51,6 @@ public final class Connect
 			return "";
 	}
 
-	public static void setForProduction()
-	{
-		operationMode = mode.PRODUCTION;
-	}
-
 	/** The connection to the local DB */
 	private Connection locDB;
 	int sCount = 0;
@@ -67,7 +62,7 @@ public final class Connect
 
 	private Connect(mode operationMode) throws SQLException
 	{
-		makeConnection(operationMode);
+		makeConnection(mode.DEVELOPMENT);
 	}
 
 	/**
