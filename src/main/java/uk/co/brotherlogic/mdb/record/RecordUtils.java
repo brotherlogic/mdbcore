@@ -157,7 +157,7 @@ public class RecordUtils
 
 	public static void main(String[] args) throws SQLException
 	{
-		for (Record rec : RecordUtils.getRecords("12", 10))
-			System.out.println(rec.getAuthor() + " - " + rec.getTitle());
+		Connect.setForProduction();
+		System.err.println(RecordUtils.getRecordToListenTo("CD"));
 	}
 }
