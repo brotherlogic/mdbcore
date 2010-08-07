@@ -62,7 +62,7 @@ public final class Connect
 
 	private Connect(mode operationMode) throws SQLException
 	{
-		makeConnection(mode.PRODUCTION);
+		makeConnection(mode.DEVELOPMENT);
 	}
 
 	/**
