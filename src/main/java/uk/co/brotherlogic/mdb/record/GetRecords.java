@@ -39,18 +39,6 @@ public class GetRecords {
 		return singleton;
 	}
 
-	public static void main(String[] args) throws Exception {
-		Connect.setForProduction();
-
-		DiscogParser dp = new DiscogParser();
-		Record rec = dp.parseDiscogRelease(1401331);
-		rec.setOwner(2);
-		rec.setReleaseType(1);
-
-		GetRecords.create().addRecord(rec);
-
-	}
-
 	PreparedStatement addRecord;
 
 	PreparedStatement getRecord;

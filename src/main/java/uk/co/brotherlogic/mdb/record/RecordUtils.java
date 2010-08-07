@@ -155,9 +155,4 @@ public class RecordUtils
 		return null;
 	}
 
-	public static void main(String[] args) throws SQLException
-	{
-		Connect.setForProduction();
-		System.err.println(RecordUtils.getRecordToListenTo("CD"));
-	}
 }
