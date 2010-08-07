@@ -5,8 +5,10 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import uk.co.brotherlogic.mdb.artist.Artist;
+import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 
 /**
@@ -25,13 +27,16 @@ public class Track implements Comparable<Track>, Serializable {
 	private int lengthInSeconds;
 
 	/** The LineUps associated with this track */
-	private final Collection<LineUp> groops;
+	private final List<LineUp> groops;
 
 	/** The personnel on the track */
 	private final Collection<Artist> personnel;
 
 	/** THe track reference number */
 	private int refNumber = -1;
+	
+	/** The format track number */
+	private int formTrackNumber;
 
 	/**
 	 * Constructor
@@ -43,6 +48,26 @@ public class Track implements Comparable<Track>, Serializable {
 		lengthInSeconds = -1;
 		trackNumber = -1;
 		refNumber = -1;
+		formTrackNumber = -1;
+	}
+	
+	public Collection<Groop> getGroops()
+	{
+		Collection<Groop> grps = new LinkedList<Groop>();
+		
+		for (LineUp lUp : groops)
+			grps.add(lUp.getGroop());
+		
+		return grps;
+	}
+	
+	public String getTrackAuthor()
+	{
+		String author = groops.get(0).getGroop().getShowName();
+		for(LineUp lUp : groops.subList(1, groops.size()-1))
+			author += ", " + lUp.getGroop().getShowName();
+		
+		return author;
 	}
 
 	public Track(int number) {
@@ -52,6 +77,11 @@ public class Track implements Comparable<Track>, Serializable {
 		lengthInSeconds = -1;
 		trackNumber = number;
 		refNumber = -1;
+		formTrackNumber = -1;
+	}
+	
+	public int getFormTrackNumber() {
+		return formTrackNumber;
 	}
 
 	/**
@@ -73,7 +103,7 @@ public class Track implements Comparable<Track>, Serializable {
 	public Track(final String titleIn, final int lengthIn,
 			final Collection<LineUp> groopsIn,
 			final Collection<Artist> personnelIn, final int trackNumberIn,
-			final int trackRefNumber) {
+			final int trackRefNumber, final int formTrackNumber) {
 		title = titleIn;
 		lengthInSeconds = lengthIn;
 		groops = new LinkedList<LineUp>();
@@ -82,6 +112,7 @@ public class Track implements Comparable<Track>, Serializable {
 		personnel.addAll(personnelIn);
 		trackNumber = trackNumberIn;
 		refNumber = trackRefNumber;
+		this.formTrackNumber = formTrackNumber;
 	}
 
 	public final void addLineUp(final LineUp lineup) {

@@ -79,7 +79,7 @@ public class GetRecords {
 		addRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
+						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price,recrand) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,random())");
 		getRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -568,7 +568,7 @@ public class GetRecords {
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
+						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -590,6 +590,7 @@ public class GetRecords {
 			int own = rs.getInt(10);
 			double price = rs.getDouble(11);
 			int shelfpos = rs.getInt(12);
+			String riploc = rs.getString(13);
 
 			currRec = new Record(title, GetFormats.create().getFormat(format),
 					boughtDate, shelfpos);
@@ -601,6 +602,7 @@ public class GetRecords {
 			currRec.setAuthor(aut);
 			currRec.setOwner(own);
 			currRec.setPrice(price);
+			currRec.setRiploc(riploc);
 
 			currRec.setCategory(GetCategories.build().getCategory(category));
 
@@ -618,7 +620,7 @@ public class GetRecords {
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"SELECT TrackRefNumber, TrackName, Length, TrackNumber FROM Track  WHERE RecordNumber = ? ORDER BY TrackNumber");
+						"SELECT TrackRefNumber, TrackName, Length, TrackNumber,formtrack FROM Track  WHERE RecordNumber = ? ORDER BY TrackNumber");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -633,11 +635,12 @@ public class GetRecords {
 				name = "";
 			int len = rs.getInt(3);
 			int refNum = rs.getInt(1);
+			int formtrack = rs.getInt(5);
 
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum);
+					getPersonnel(refNum), trckNum, refNum,formtrack);
 			retSet.add(currTrack);
 		}
 		rs.close();
