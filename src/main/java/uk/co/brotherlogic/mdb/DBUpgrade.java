@@ -42,8 +42,9 @@ public class DBUpgrade {
 		String className = "uk.co.brotherlogic.mdb.db.upgrade.Version"
 				+ version;
 		try {
-			Class cls = Class.forName(className);
-			Version v = (Version) cls.getConstructor(new Class[0]).newInstance(
+			@SuppressWarnings("unchecked")
+			Class<Version> cls = (Class<Version>) Class.forName(className);
+			Version v = cls.getConstructor(new Class[0]).newInstance(
 					new Object[0]);
 			if (v != null && v.run()) {
 				Connect.getConnection().commitTrans();

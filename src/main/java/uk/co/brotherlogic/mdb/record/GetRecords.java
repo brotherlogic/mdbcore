@@ -30,7 +30,6 @@ import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.GetLabels;
 import uk.co.brotherlogic.mdb.label.Label;
-import uk.co.brotherlogic.mdb.parsers.DiscogParser;
 
 public class GetRecords {
 	public static GetRecords create() throws SQLException {
@@ -212,7 +211,7 @@ public class GetRecords {
 		ps.setInt(2, toAdd.getTrackNumber());
 		ps.setString(3, toAdd.getTitle());
 		ps.setInt(4, toAdd.getLengthInSeconds());
-		ps.setInt(5,toAdd.getFormTrackNumber());
+		ps.setInt(5, toAdd.getFormTrackNumber());
 
 		ps.execute();
 
@@ -630,7 +629,7 @@ public class GetRecords {
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum,formtrack);
+					getPersonnel(refNum), trckNum, refNum, formtrack);
 			retSet.add(currTrack);
 		}
 		rs.close();
@@ -686,7 +685,7 @@ public class GetRecords {
 
 	public void updateRecord(Record in) throws SQLException {
 		System.err.println("UPDATING RECORD: " + in.getNumber());
-		
+
 		// First get the format number
 		int formatNumber = in.getFormat().save();
 
@@ -775,12 +774,12 @@ public class GetRecords {
 		// update parameters
 		updateTrack.setString(1, newTrack.getTitle());
 		updateTrack.setInt(2, newTrack.getLengthInSeconds());
-		updateTrack.setInt(3,newTrack.getFormTrackNumber());
+		updateTrack.setInt(3, newTrack.getFormTrackNumber());
 		updateTrack.setInt(4, recordNumber);
 		updateTrack.setInt(5, newTrack.getTrackNumber());
 
 		System.err.println("UPDATE: " + updateTrack);
-		
+
 		// Run the update
 		updateTrack.execute();
 

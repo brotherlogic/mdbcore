@@ -8,9 +8,6 @@ import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.User;
 
 public class RecordScore {
-	boolean[] changed = new boolean[1];
-	private static int SIMON_RANK_CHANGED = 0;
-
 	public static void add(Record rec, User user, int score)
 			throws SQLException {
 		if (rec != null && user != null) {
