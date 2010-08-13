@@ -20,6 +20,10 @@ public class Track implements Comparable<Track>, Serializable {
 	/** The track number of this track */
 	private int trackNumber;
 
+	public void setFormTrackNumber(int formTrackNumber) {
+		this.formTrackNumber = formTrackNumber;
+	}
+
 	/** The track title */
 	private String title;
 

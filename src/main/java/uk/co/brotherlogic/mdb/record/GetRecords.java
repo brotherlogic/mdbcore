@@ -75,7 +75,7 @@ public class GetRecords {
 		updateTrack = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"UPDATE TRACK SET TrackName = ?, Length = ? WHERE RecordNumber = ? AND TrackNumber = ?");
+						"UPDATE TRACK SET TrackName = ?, Length = ?, formtrack = ? WHERE RecordNumber = ? AND TrackNumber = ?");
 		updateRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -207,11 +207,13 @@ public class GetRecords {
 		PreparedStatement ps = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"INSERT INTO Track (RecordNumber,TrackNumber,TrackName,Length) VALUES (?,?,?,?)");
+						"INSERT INTO Track (RecordNumber,TrackNumber,TrackName,Length,formtrack) VALUES (?,?,?,?,?)");
 		ps.setInt(1, recordNumber);
 		ps.setInt(2, toAdd.getTrackNumber());
 		ps.setString(3, toAdd.getTitle());
 		ps.setInt(4, toAdd.getLengthInSeconds());
+		ps.setInt(5,toAdd.getFormTrackNumber());
+
 		ps.execute();
 
 		// Now get that track number
@@ -683,6 +685,8 @@ public class GetRecords {
 	}
 
 	public void updateRecord(Record in) throws SQLException {
+		System.err.println("UPDATING RECORD: " + in.getNumber());
+		
 		// First get the format number
 		int formatNumber = in.getFormat().save();
 
@@ -771,9 +775,12 @@ public class GetRecords {
 		// update parameters
 		updateTrack.setString(1, newTrack.getTitle());
 		updateTrack.setInt(2, newTrack.getLengthInSeconds());
-		updateTrack.setInt(3, recordNumber);
-		updateTrack.setInt(4, newTrack.getTrackNumber());
+		updateTrack.setInt(3,newTrack.getFormTrackNumber());
+		updateTrack.setInt(4, recordNumber);
+		updateTrack.setInt(5, newTrack.getTrackNumber());
 
+		System.err.println("UPDATE: " + updateTrack);
+		
 		// Run the update
 		updateTrack.execute();
 
