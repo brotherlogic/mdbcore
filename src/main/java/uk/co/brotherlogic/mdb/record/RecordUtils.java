@@ -41,6 +41,12 @@ public class RecordUtils
 			return GetRecords.create().getRecord(rs.getInt(1));
 		return null;
 	}
+	
+	public static void main(String[] args) throws Exception
+	{
+		for (Record rec: getNewRecords("10"))
+			System.err.println(rec.getTitle());
+	}
 
 	public static List<Record> getNewRecords(String baseformat)
 			throws SQLException
@@ -55,9 +61,10 @@ public class RecordUtils
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
+		System.err.println(ps);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		List<Record> records = new LinkedList<Record>();
-		if (rs.next())
+		while(rs.next())
 			records.add(GetRecords.create().getRecord(rs.getInt(1)));
 		return records;
 	}
