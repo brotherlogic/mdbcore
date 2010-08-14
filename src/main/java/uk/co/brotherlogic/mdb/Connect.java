@@ -62,7 +62,7 @@ public final class Connect
 
 	private Connect(mode operationMode) throws SQLException
 	{
-		makeConnection(mode.DEVELOPMENT);
+		makeConnection(operationMode);
 	}
 
 	/**
@@ -184,6 +184,11 @@ public final class Connect
 		{
 			throw new SQLException(e);
 		}
+	}
+	
+	public static void main(String[] args) throws Exception
+	{
+		Connect.getConnection();
 	}
 
 	public void printStats()
