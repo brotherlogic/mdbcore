@@ -40,6 +40,10 @@ public class User {
 
 	private final int id;
 
+	public String getName() {
+		return name;
+	}
+
 	private final String name;
 
 	public User(int id, String name) {

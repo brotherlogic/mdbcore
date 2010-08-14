@@ -17,8 +17,17 @@ import uk.co.brotherlogic.mdb.groop.LineUp;
  * @author Simon Tucker
  */
 public class Track implements Comparable<Track>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/** The track number of this track */
 	private int trackNumber;
+
+	public void setFormTrackNumber(int formTrackNumber) {
+		this.formTrackNumber = formTrackNumber;
+	}
 
 	/** The track title */
 	private String title;
@@ -34,7 +43,7 @@ public class Track implements Comparable<Track>, Serializable {
 
 	/** THe track reference number */
 	private int refNumber = -1;
-	
+
 	/** The format track number */
 	private int formTrackNumber;
 
@@ -50,24 +59,23 @@ public class Track implements Comparable<Track>, Serializable {
 		refNumber = -1;
 		formTrackNumber = -1;
 	}
-	
-	public Collection<Groop> getGroops()
-	{
+
+	public Collection<Groop> getGroops() {
 		Collection<Groop> grps = new LinkedList<Groop>();
-		
+
 		for (LineUp lUp : groops)
 			grps.add(lUp.getGroop());
-		
+
 		return grps;
 	}
-	
-	public String getTrackAuthor()
-	{
-		String author = groops.get(0).getGroop().getShowName();
-		for(LineUp lUp : groops.subList(1, groops.size()-1))
-			author += ", " + lUp.getGroop().getShowName();
-		
-		return author;
+
+	public String getTrackAuthor() {
+		StringBuffer author = new StringBuffer(groops.get(0).getGroop()
+				.getShowName());
+		for (LineUp lUp : groops.subList(1, groops.size() - 1))
+			author.append(", " + lUp.getGroop().getShowName());
+
+		return author.toString();
 	}
 
 	public Track(int number) {
@@ -79,7 +87,7 @@ public class Track implements Comparable<Track>, Serializable {
 		refNumber = -1;
 		formTrackNumber = -1;
 	}
-	
+
 	public int getFormTrackNumber() {
 		return formTrackNumber;
 	}
@@ -137,6 +145,7 @@ public class Track implements Comparable<Track>, Serializable {
 		personnel.addAll(personnelIn);
 	}
 
+	@Override
 	public final int compareTo(final Track in) {
 		int otherNum = in.getTrackNumber();
 		return trackNumber - otherNum;

@@ -44,7 +44,7 @@ public class Record implements Comparable<Record> {
 	String author;
 
 	private String riploc;
-	
+
 	public String getRiploc() {
 		return riploc;
 	}
@@ -159,9 +159,10 @@ public class Record implements Comparable<Record> {
 
 		// Now add the new tracks using the new information collected above
 		for (int i = addPoint + 1; i < addPoint + noToAdd + 1; i++)
-			tracks.add(new Track("", 0, groops, pers, i, -1,i));
+			tracks.add(new Track("", 0, groops, pers, i, -1, i));
 	}
 
+	@Override
 	public int compareTo(Record o) {
 		return (title.toLowerCase() + number).compareTo(o.getTitle()
 				.toLowerCase() + (o.getNumber()));
@@ -309,55 +310,51 @@ public class Record implements Comparable<Record> {
 	public int getNumber() {
 		return number;
 	}
-	
-	public int getNumberOfFormatTracks()
-	{
+
+	public int getNumberOfFormatTracks() {
 		int tNumber = -1;
 		for (Track trck : tracks)
-			tNumber = Math.max(trck.getFormTrackNumber(),tNumber);
+			tNumber = Math.max(trck.getFormTrackNumber(), tNumber);
 		return tNumber;
 	}
-	
-	public String getTrackRep(int formTrackNumber)
-	{
+
+	public String getTrackRep(int formTrackNumber) {
 		List<Track> trackRepTracks = new LinkedList<Track>();
 		for (Track t : tracks)
 			if (t.getFormTrackNumber() == formTrackNumber)
 				trackRepTracks.add(t);
-		
+
 		if (trackRepTracks.size() == 1)
 			return getTrackRep(trackRepTracks.get(0));
-		
-		String title = trackRepTracks.get(0).getTitle();
+
+		StringBuffer title = new StringBuffer(trackRepTracks.get(0).getTitle());
 		List<Groop> grps = new LinkedList<Groop>();
 		grps.addAll(trackRepTracks.get(0).getGroops());
-		for (Track tck : trackRepTracks.subList(1, trackRepTracks.size()-1))
-		{
-			title += " / " + tck.getTitle();
+		for (Track tck : trackRepTracks.subList(1, trackRepTracks.size() - 1)) {
+			title.append(" / " + tck.getTitle());
 			grps.addAll(tck.getGroops());
 		}
-		
+
 		Collections.sort(grps);
-		String grpString = grps.get(0).getShowName();
-		for(Groop grp : grps)
-			grpString += ", " + grp.getShowName();
-		
+		StringBuffer grpString = new StringBuffer(grps.get(0).getShowName());
+		for (Groop grp : grps)
+			grpString.append(", " + grp.getShowName());
+
 		return numberize(formTrackNumber) + "~" + grpString + "~" + title;
 	}
-	
-	public String numberize(int number)
-	{
+
+	public String numberize(int number) {
 		if (number > 100)
 			return "" + number;
 		else if (number > 10)
-			return  "0" + number;
-		else 
+			return "0" + number;
+		else
 			return "00" + number;
 	}
-	
-	public String getTrackRep(Track trck)
-	{
-		return numberize(trck.getFormTrackNumber() )+ "~" + trck.getTrackAuthor() + "~" + trck.getTitle();
+
+	public String getTrackRep(Track trck) {
+		return numberize(trck.getFormTrackNumber()) + "~"
+				+ trck.getTrackAuthor() + "~" + trck.getTitle();
 	}
 
 	public int getOwner() {
