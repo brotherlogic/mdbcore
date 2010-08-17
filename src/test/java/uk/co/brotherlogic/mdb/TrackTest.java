@@ -51,12 +51,14 @@ public class TrackTest extends TestCase {
 			t1.setTitle("Donkey");
 			t1.addLineUp(lu);
 			t1.addPersonnel(p1);
+			t1.setFormTrackNumber(1);
 
 			Track t2 = new Track(2);
 			t2.setLengthInSeconds(120);
 			t2.setTitle("Help");
 			t2.addLineUp(lu);
 			t2.addPersonnel(p1);
+			t2.setFormTrackNumber(2);
 
 			// This should cause the record to update
 			r.addTrack(t1);
@@ -69,6 +71,7 @@ public class TrackTest extends TestCase {
 		} catch (SQLException e) {
 			System.err.println("Exception");
 			e.printStackTrace();
+			assert (false);
 		}
 	}
 

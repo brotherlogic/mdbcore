@@ -9,13 +9,15 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
@@ -40,6 +42,16 @@ public class Record implements Comparable<Record> {
 	}
 
 	String author;
+
+	private String riploc;
+
+	public String getRiploc() {
+		return riploc;
+	}
+
+	public void setRiploc(String riploc) {
+		this.riploc = riploc;
+	}
 
 	private int discogsNum = -1;
 
@@ -113,6 +125,10 @@ public class Record implements Comparable<Record> {
 		intTrack.addPersonnel(pers);
 	}
 
+	public void addScore(User user, int score) throws SQLException {
+		RecordScore.add(this, user, score);
+	}
+
 	public void addTrack(Track trk) {
 		updated = true;
 		tracks.add(trk);
@@ -143,13 +159,13 @@ public class Record implements Comparable<Record> {
 
 		// Now add the new tracks using the new information collected above
 		for (int i = addPoint + 1; i < addPoint + noToAdd + 1; i++)
-			tracks.add(new Track("", 0, groops, pers, i, -1));
+			tracks.add(new Track("", 0, groops, pers, i, -1, i));
 	}
 
+	@Override
 	public int compareTo(Record o) {
 		return (title.toLowerCase() + number).compareTo(o.getTitle()
-				.toLowerCase()
-				+ (o.getNumber()));
+				.toLowerCase() + (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks) {
@@ -293,6 +309,52 @@ public class Record implements Comparable<Record> {
 
 	public int getNumber() {
 		return number;
+	}
+
+	public int getNumberOfFormatTracks() {
+		int tNumber = -1;
+		for (Track trck : tracks)
+			tNumber = Math.max(trck.getFormTrackNumber(), tNumber);
+		return tNumber;
+	}
+
+	public String getTrackRep(int formTrackNumber) {
+		List<Track> trackRepTracks = new LinkedList<Track>();
+		for (Track t : tracks)
+			if (t.getFormTrackNumber() == formTrackNumber)
+				trackRepTracks.add(t);
+
+		if (trackRepTracks.size() == 1)
+			return getTrackRep(trackRepTracks.get(0));
+
+		StringBuffer title = new StringBuffer(trackRepTracks.get(0).getTitle());
+		List<Groop> grps = new LinkedList<Groop>();
+		grps.addAll(trackRepTracks.get(0).getGroops());
+		for (Track tck : trackRepTracks.subList(1, trackRepTracks.size() - 1)) {
+			title.append(" / " + tck.getTitle());
+			grps.addAll(tck.getGroops());
+		}
+
+		Collections.sort(grps);
+		StringBuffer grpString = new StringBuffer(grps.get(0).getShowName());
+		for (Groop grp : grps)
+			grpString.append(", " + grp.getShowName());
+
+		return numberize(formTrackNumber) + "~" + grpString + "~" + title;
+	}
+
+	public String numberize(int number) {
+		if (number > 100)
+			return "" + number;
+		else if (number > 10)
+			return "0" + number;
+		else
+			return "00" + number;
+	}
+
+	public String getTrackRep(Track trck) {
+		return numberize(trck.getFormTrackNumber()) + "~"
+				+ trck.getTrackAuthor() + "~" + trck.getTitle();
 	}
 
 	public int getOwner() {
@@ -492,10 +554,6 @@ public class Record implements Comparable<Record> {
 	 */
 	public void setReleaseType(int releaseType) {
 		this.releaseType = releaseType;
-	}
-
-	public void setScore(User user, int score) throws SQLException {
-		RecordScore.set(this, user, score);
 	}
 
 	public void setTitle(String tit) {

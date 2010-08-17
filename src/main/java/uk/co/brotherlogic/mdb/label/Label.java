@@ -11,8 +11,12 @@ import uk.co.brotherlogic.mdb.record.Record;
  * 
  * @author Simon Tucker
  */
-public class Label implements Comparable<Label>, Serializable
-{
+public class Label implements Comparable<Label>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7750109574923648363L;
+
 	/**
 	 * The label name
 	 */
@@ -27,8 +31,7 @@ public class Label implements Comparable<Label>, Serializable
 	 * @param name
 	 *            The name of the label
 	 */
-	public Label(final String name)
-	{
+	public Label(final String name) {
 		this(name, -1);
 	}
 
@@ -40,20 +43,18 @@ public class Label implements Comparable<Label>, Serializable
 	 * @param number
 	 *            The number of the label
 	 */
-	public Label(final String name, final int number)
-	{
+	public Label(final String name, final int number) {
 		labelName = name;
 		labNo = number;
 	}
 
-	public final int compareTo(final Label o)
-	{
+	@Override
+	public final int compareTo(final Label o) {
 		return -labelName.toLowerCase().compareTo(o.labelName.toLowerCase());
 	}
 
 	@Override
-	public final boolean equals(final Object o)
-	{
+	public final boolean equals(final Object o) {
 		if (o instanceof Label)
 			return this.compareTo((Label) o) == 0;
 		else
@@ -65,8 +66,7 @@ public class Label implements Comparable<Label>, Serializable
 	 * 
 	 * @return The name of the label
 	 */
-	public final String getName()
-	{
+	public final String getName() {
 		return labelName;
 	}
 
@@ -77,14 +77,12 @@ public class Label implements Comparable<Label>, Serializable
 	 * @throws SQLException
 	 *             If the DB connection fails
 	 */
-	public final Collection<Record> getRecords() throws SQLException
-	{
+	public final Collection<Record> getRecords() throws SQLException {
 		return GetLabels.create().getRecords(labNo);
 	}
 
 	@Override
-	public final int hashCode()
-	{
+	public final int hashCode() {
 		return labelName.hashCode();
 	}
 
@@ -94,16 +92,14 @@ public class Label implements Comparable<Label>, Serializable
 	 * @throws SQLException
 	 *             if the DB connection fails
 	 */
-	public final int save() throws SQLException
-	{
+	public final int save() throws SQLException {
 		if (labNo == -1)
 			labNo = GetLabels.create().addLabel(this);
 		return labNo;
 	}
 
 	@Override
-	public final String toString()
-	{
+	public final String toString() {
 		return labelName;
 	}
 }

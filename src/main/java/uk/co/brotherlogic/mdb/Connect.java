@@ -43,19 +43,21 @@ public final class Connect
 		return singleton;
 	}
 
-	public static void setForProduction()
+	public static String getSource()
 	{
-		operationMode = mode.PRODUCTION;
+		if (operationMode == mode.DEVELOPMENT)
+			return "Dev";
+		else
+			return "";
 	}
 
 	/** The connection to the local DB */
 	private Connection locDB;
-
 	int sCount = 0;
 
 	long longestQueryTime = 0;
-
 	long totalDBTime = 0;
+
 	String longestQuery = "";
 
 	private Connect(mode operationMode) throws SQLException
@@ -88,7 +90,6 @@ public final class Connect
 	public ResultSet executeQuery(PreparedStatement ps) throws SQLException
 	{
 
-		System.err.println("RUN: " + ps);
 		sCount++;
 
 		long sTime = System.currentTimeMillis();
@@ -106,7 +107,6 @@ public final class Connect
 	public void executeStatement(PreparedStatement ps) throws SQLException
 	{
 
-		System.err.println("RUN: " + ps);
 		sCount++;
 
 		long sTime = System.currentTimeMillis();
@@ -147,14 +147,6 @@ public final class Connect
 		return sCount;
 	}
 
-	public String getSource()
-	{
-		if (operationMode == mode.DEVELOPMENT)
-			return "Dev";
-		else
-			return "";
-	}
-
 	public long getTQueryTime()
 	{
 		return totalDBTime;
@@ -192,6 +184,11 @@ public final class Connect
 		{
 			throw new SQLException(e);
 		}
+	}
+	
+	public static void main(String[] args) throws Exception
+	{
+		Connect.getConnection();
 	}
 
 	public void printStats()

@@ -30,25 +30,12 @@ import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.GetLabels;
 import uk.co.brotherlogic.mdb.label.Label;
-import uk.co.brotherlogic.mdb.parsers.DiscogParser;
 
 public class GetRecords {
 	public static GetRecords create() throws SQLException {
 		if (singleton == null)
 			singleton = new GetRecords();
 		return singleton;
-	}
-
-	public static void main(String[] args) throws Exception {
-		Connect.setForProduction();
-
-		DiscogParser dp = new DiscogParser();
-		Record rec = dp.parseDiscogRelease(1401331);
-		rec.setOwner(2);
-		rec.setReleaseType(1);
-
-		GetRecords.create().addRecord(rec);
-
 	}
 
 	PreparedStatement addRecord;
@@ -79,7 +66,7 @@ public class GetRecords {
 		addRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
+						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price,recrand) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,random())");
 		getRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -87,7 +74,7 @@ public class GetRecords {
 		updateTrack = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"UPDATE TRACK SET TrackName = ?, Length = ? WHERE RecordNumber = ? AND TrackNumber = ?");
+						"UPDATE TRACK SET TrackName = ?, Length = ?, formtrack = ? WHERE RecordNumber = ? AND TrackNumber = ?");
 		updateRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -219,11 +206,13 @@ public class GetRecords {
 		PreparedStatement ps = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"INSERT INTO Track (RecordNumber,TrackNumber,TrackName,Length) VALUES (?,?,?,?)");
+						"INSERT INTO Track (RecordNumber,TrackNumber,TrackName,Length,formtrack) VALUES (?,?,?,?,?)");
 		ps.setInt(1, recordNumber);
 		ps.setInt(2, toAdd.getTrackNumber());
 		ps.setString(3, toAdd.getTitle());
 		ps.setInt(4, toAdd.getLengthInSeconds());
+		ps.setInt(5, toAdd.getFormTrackNumber());
+
 		ps.execute();
 
 		// Now get that track number
@@ -568,7 +557,7 @@ public class GetRecords {
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
+						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -590,6 +579,7 @@ public class GetRecords {
 			int own = rs.getInt(10);
 			double price = rs.getDouble(11);
 			int shelfpos = rs.getInt(12);
+			String riploc = rs.getString(13);
 
 			currRec = new Record(title, GetFormats.create().getFormat(format),
 					boughtDate, shelfpos);
@@ -601,6 +591,7 @@ public class GetRecords {
 			currRec.setAuthor(aut);
 			currRec.setOwner(own);
 			currRec.setPrice(price);
+			currRec.setRiploc(riploc);
 
 			currRec.setCategory(GetCategories.build().getCategory(category));
 
@@ -618,7 +609,7 @@ public class GetRecords {
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"SELECT TrackRefNumber, TrackName, Length, TrackNumber FROM Track  WHERE RecordNumber = ? ORDER BY TrackNumber");
+						"SELECT TrackRefNumber, TrackName, Length, TrackNumber,formtrack FROM Track  WHERE RecordNumber = ? ORDER BY TrackNumber");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -633,11 +624,12 @@ public class GetRecords {
 				name = "";
 			int len = rs.getInt(3);
 			int refNum = rs.getInt(1);
+			int formtrack = rs.getInt(5);
 
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum);
+					getPersonnel(refNum), trckNum, refNum, formtrack);
 			retSet.add(currTrack);
 		}
 		rs.close();
@@ -692,6 +684,8 @@ public class GetRecords {
 	}
 
 	public void updateRecord(Record in) throws SQLException {
+		System.err.println("UPDATING RECORD: " + in.getNumber());
+
 		// First get the format number
 		int formatNumber = in.getFormat().save();
 
@@ -780,8 +774,11 @@ public class GetRecords {
 		// update parameters
 		updateTrack.setString(1, newTrack.getTitle());
 		updateTrack.setInt(2, newTrack.getLengthInSeconds());
-		updateTrack.setInt(3, recordNumber);
-		updateTrack.setInt(4, newTrack.getTrackNumber());
+		updateTrack.setInt(3, newTrack.getFormTrackNumber());
+		updateTrack.setInt(4, recordNumber);
+		updateTrack.setInt(5, newTrack.getTrackNumber());
+
+		System.err.println("UPDATE: " + updateTrack);
 
 		// Run the update
 		updateTrack.execute();
