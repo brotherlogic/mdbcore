@@ -8,10 +8,8 @@ import java.util.List;
 
 import uk.co.brotherlogic.mdb.Connect;
 
-public class RecordUtils
-{
-	public static List<Record> getIpodRecords() throws SQLException
-	{
+public class RecordUtils {
+	public static List<Record> getIpodRecords() throws SQLException {
 		String sql = " select recordnumber,riploc,recrand,COUNT(score_value) as cnt,AVG(score_value) as val from records left join score_history ON records.recordnumber = record_id WHERE riploc IS NOT NULL AND user_id = 1 GROUP BY recordnumber,recrand,riploc HAVING count(score_value) = 1 ORDER by val DESC,recrand DESC LIMIT 5";
 		List<Record> rec = new LinkedList<Record>();
 
@@ -24,8 +22,7 @@ public class RecordUtils
 		return rec;
 	}
 
-	private static Record getNewRecord(String baseformat) throws SQLException
-	{
+	private static Record getNewRecord(String baseformat) throws SQLException {
 		String cd_extra = "AND riploc IS NOT NULL";
 
 		if (!baseformat.equalsIgnoreCase("cd"))
@@ -41,16 +38,14 @@ public class RecordUtils
 			return GetRecords.create().getRecord(rs.getInt(1));
 		return null;
 	}
-	
-	public static void main(String[] args) throws Exception
-	{
-		for (Record rec: getNewRecords("10"))
+
+	public static void main(String[] args) throws Exception {
+		for (Record rec : getNewRecords("10"))
 			System.err.println(rec.getTitle());
 	}
 
 	public static List<Record> getNewRecords(String baseformat)
-			throws SQLException
-	{
+			throws SQLException {
 		String cd_extra = "AND riploc IS NOT NULL";
 
 		if (!baseformat.equalsIgnoreCase("cd"))
@@ -64,13 +59,12 @@ public class RecordUtils
 		System.err.println(ps);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		List<Record> records = new LinkedList<Record>();
-		while(rs.next())
+		while (rs.next())
 			records.add(GetRecords.create().getRecord(rs.getInt(1)));
 		return records;
 	}
 
-	public static Record getRecord(String baseformat) throws SQLException
-	{
+	public static Record getRecord(String baseformat) throws SQLException {
 
 		String cd_extra = "AND riploc IS NOT NULL";
 		if (!baseformat.equalsIgnoreCase("cd"))
@@ -90,8 +84,7 @@ public class RecordUtils
 	}
 
 	public static List<Record> getRecords(String baseformat, int num)
-			throws SQLException
-	{
+			throws SQLException {
 
 		String cd_extra = "AND riploc IS NOT NULL";
 		if (!baseformat.equalsIgnoreCase("cd"))
@@ -113,8 +106,7 @@ public class RecordUtils
 	}
 
 	public static Record getRecordToListenTo(String baseformat)
-			throws SQLException
-	{
+			throws SQLException {
 		// Always favour new records
 		Record r = getNewRecord(baseformat);
 		// r = getRecord(baseformat, 2, 6);
@@ -124,13 +116,11 @@ public class RecordUtils
 	}
 
 	public static Record getRecordToListenTo(String[] baseformats)
-			throws SQLException
-	{
+			throws SQLException {
 
 		Record newRecord = null;
 		Record currRecord = null;
-		for (String string : baseformats)
-		{
+		for (String string : baseformats) {
 			Record tempNew = getNewRecord(string);
 			Record currRec = getRecordToListenTo(string);
 			{
@@ -151,14 +141,16 @@ public class RecordUtils
 		return currRecord;
 	}
 
-	public static Record getRecordToRip() throws SQLException
-	{
+	public static Record getRecordToRip() throws SQLException {
 		String sql = "SELECT recordnumber from records,formats WHERE baseformat = 'CD' AND format = formatnumber AND riploc IS NULL ORDER BY owner";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ResultSet rs = ps.executeQuery();
-		while (rs.next())
-			return (GetRecords.create().getRecord(rs.getInt(1)));
+		while (rs.next()) {
+			Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
+			if (!rec.getFormat().getName().equals("DVD"))
+				return rec;
+		}
 		return null;
 	}
 
