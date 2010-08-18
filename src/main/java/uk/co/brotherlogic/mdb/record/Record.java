@@ -5,18 +5,22 @@ package uk.co.brotherlogic.mdb.record;
  * @author Simon Tucker
  */
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import uk.co.brotherlogic.mdb.User;
@@ -29,31 +33,30 @@ import uk.co.brotherlogic.mdb.label.Label;
 
 public class Record implements Comparable<Record> {
 
+	private static final double GROOP_RATIO = 0.8;
+
+	public static final int RANKED = 4;
+
+	private static String REPLACE = "aaaaaaaaaaaaa";
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5625039435654063418L;
 
-	private static final double GROOP_RATIO = 0.8;
-
-	public static void main(String[] args) throws SQLException {
-		Record rec = GetRecords.create().getRecord(1562);
-		System.err.println(rec.getScore(User.getUser("Simon")));
+	public static void main(String[] args) throws Exception {
+		Record rec = GetRecords.create().getRecord(3708);
+		System.out.println("TITLE = " + rec.getTitle());
+		System.out.println("Tracks = " + rec.getNumberOfFormatTracks());
+		System.out.println("REP = " + rec.getFileAdd());
+		for (int i = 1; i <= rec.getNumberOfFormatTracks(); i++) {
+			System.out.println(rec.getTrackRep(i));
+			System.out.println(rec.getFormTrackArtist(i));
+			System.out.println(rec.getFormTrackTitle(i));
+		}
 	}
 
 	String author;
-
-	private String riploc;
-
-	public String getRiploc() {
-		return riploc;
-	}
-
-	public void setRiploc(String riploc) {
-		this.riploc = riploc;
-	}
-
-	private int discogsNum = -1;
 
 	Calendar boughtDate;
 
@@ -61,36 +64,38 @@ public class Record implements Comparable<Record> {
 
 	Collection<String> catnos;
 
+	Collection<Artist> compilers;
+
+	private int discogsNum = -1;
+
 	Format format;
 
 	Collection<Label> labels;
 
 	String notes;
 
-	boolean updated = false;
-
 	int number = -1;
 
 	int owner;
 
-	String title;
-
-	Collection<Track> tracks;
-
-	Integer year;
+	double price;
 
 	int releaseMonth;
 
 	int releaseType;
 
-	double price;
-
-	Collection<Artist> compilers;
+	private String riploc;
 
 	/** The location of the record on it's respective shelf */
 	private int shelfpos;
 
-	public static final int RANKED = 4;
+	String title;
+
+	Collection<Track> tracks;
+
+	boolean updated = false;
+
+	Integer year;
 
 	public Record() {
 		title = "";
@@ -235,8 +240,55 @@ public class Record implements Comparable<Record> {
 		return author + " - " + title;
 	}
 
+	public String getFileAdd() {
+		try {
+			return sanitize(getAuthor()) + File.separator
+					+ sanitize(getTitle());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public Format getFormat() {
 		return format;
+	}
+
+	public String getFormTrackArtist(int formTrackNumber) {
+		List<Track> trackRepTracks = new LinkedList<Track>();
+		for (Track t : tracks)
+			if (t.getFormTrackNumber() == formTrackNumber)
+				trackRepTracks.add(t);
+
+		Set<Groop> grpset = new TreeSet<Groop>();
+		grpset.addAll(trackRepTracks.get(0).getGroops());
+		for (Track tck : trackRepTracks.subList(1, trackRepTracks.size())) {
+			grpset.addAll(tck.getGroops());
+		}
+
+		List<Groop> grps = new LinkedList<Groop>(grpset);
+		StringBuffer grpString = new StringBuffer(grps.get(0).getShowName());
+		for (Groop grp : grps.subList(1, grps.size()))
+			grpString.append(", " + grp.getShowName());
+
+		return grpString.toString();
+	}
+
+	public String getFormTrackTitle(int formTrackNumber) {
+		List<Track> trackRepTracks = new LinkedList<Track>();
+		for (Track t : tracks)
+			if (t.getFormTrackNumber() == formTrackNumber)
+				trackRepTracks.add(t);
+
+		if (trackRepTracks.size() == 1)
+			return trackRepTracks.get(0).getTitle();
+
+		StringBuffer title = new StringBuffer(trackRepTracks.get(0).getTitle());
+		for (Track tck : trackRepTracks.subList(1, trackRepTracks.size())) {
+			title.append(" / " + tck.getTitle());
+		}
+
+		return title.toString();
 	}
 
 	public int getGenre() {
@@ -311,50 +363,11 @@ public class Record implements Comparable<Record> {
 		return number;
 	}
 
-	public int getNumberOfFormatTracks() {
+	public int getNumberOfFormatTracks() throws SQLException {
 		int tNumber = -1;
-		for (Track trck : tracks)
+		for (Track trck : getTracks())
 			tNumber = Math.max(trck.getFormTrackNumber(), tNumber);
 		return tNumber;
-	}
-
-	public String getTrackRep(int formTrackNumber) {
-		List<Track> trackRepTracks = new LinkedList<Track>();
-		for (Track t : tracks)
-			if (t.getFormTrackNumber() == formTrackNumber)
-				trackRepTracks.add(t);
-
-		if (trackRepTracks.size() == 1)
-			return getTrackRep(trackRepTracks.get(0));
-
-		StringBuffer title = new StringBuffer(trackRepTracks.get(0).getTitle());
-		List<Groop> grps = new LinkedList<Groop>();
-		grps.addAll(trackRepTracks.get(0).getGroops());
-		for (Track tck : trackRepTracks.subList(1, trackRepTracks.size() - 1)) {
-			title.append(" / " + tck.getTitle());
-			grps.addAll(tck.getGroops());
-		}
-
-		Collections.sort(grps);
-		StringBuffer grpString = new StringBuffer(grps.get(0).getShowName());
-		for (Groop grp : grps)
-			grpString.append(", " + grp.getShowName());
-
-		return numberize(formTrackNumber) + "~" + grpString + "~" + title;
-	}
-
-	public String numberize(int number) {
-		if (number > 100)
-			return "" + number;
-		else if (number > 10)
-			return "0" + number;
-		else
-			return "00" + number;
-	}
-
-	public String getTrackRep(Track trck) {
-		return numberize(trck.getFormTrackNumber()) + "~"
-				+ trck.getTrackAuthor() + "~" + trck.getTitle();
 	}
 
 	public int getOwner() {
@@ -381,6 +394,10 @@ public class Record implements Comparable<Record> {
 
 	public Integer getReleaseYear() {
 		return year;
+	}
+
+	public String getRiploc() {
+		return riploc;
 	}
 
 	public double getScore(User user) throws SQLException {
@@ -415,6 +432,30 @@ public class Record implements Comparable<Record> {
 		return ret;
 	}
 
+	public String getTrackRep(int formTrackNumber) {
+		try {
+			return numberize(formTrackNumber) + "~"
+					+ sanitize(getFormTrackArtist(formTrackNumber)) + "~"
+					+ sanitize(getFormTrackTitle(formTrackNumber));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		return "";
+	}
+
+	public String getTrackRep(Track trck) {
+		try {
+			return numberize(trck.getFormTrackNumber()) + "~"
+					+ sanitize(trck.getTrackAuthor()) + "~"
+					+ sanitize(trck.getTitle());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	public Collection<Track> getTracks() throws SQLException {
 
 		if (tracks == null || tracks.size() == 0)
@@ -441,13 +482,27 @@ public class Record implements Comparable<Record> {
 		return number;
 	}
 
+	public String numberize(int number) {
+		if (number >= 100)
+			return "" + number;
+		else if (number >= 10)
+			return "0" + number;
+		else
+			return "00" + number;
+	}
+
 	private void resetShelfPos() {
 		if (shelfpos > 0)
 			shelfpos = 0;
 	}
 
+	private String sanitize(String str) throws UnsupportedEncodingException {
+
+		return URLEncoder.encode(str.replace(" ", REPLACE), "UTF-8").replace(
+				REPLACE, " ");
+	}
+
 	public void save() throws SQLException {
-		System.err.println("Saving: " + number + " and " + updated);
 		if (number == -1)
 			number = GetRecords.create().addRecord(this);
 		else if (updated) {
@@ -554,6 +609,10 @@ public class Record implements Comparable<Record> {
 	 */
 	public void setReleaseType(int releaseType) {
 		this.releaseType = releaseType;
+	}
+
+	public void setRiploc(String riploc) {
+		this.riploc = riploc;
 	}
 
 	public void setTitle(String tit) {
