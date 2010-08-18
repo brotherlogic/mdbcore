@@ -32,6 +32,12 @@ import uk.co.brotherlogic.mdb.label.GetLabels;
 import uk.co.brotherlogic.mdb.label.Label;
 
 public class GetRecords {
+	public static final int SHELVED = 1;
+
+	private static GetRecords singleton;
+
+	private static final int UNRANKED = 3;
+
 	public static GetRecords create() throws SQLException {
 		if (singleton == null)
 			singleton = new GetRecords();
@@ -39,23 +45,18 @@ public class GetRecords {
 	}
 
 	PreparedStatement addRecord;
+	PreparedStatement getPersonnel;
 
 	PreparedStatement getRecord;
 
 	PreparedStatement getTracks;
+
 	// Flag indicating overlap of record titles
 	boolean nonOver;
-	PreparedStatement updateTrack;
 
 	PreparedStatement updateRecord;
 
-	PreparedStatement getPersonnel;
-
-	private static GetRecords singleton;
-
-	private static final int UNRANKED = 3;
-
-	public static final int SHELVED = 1;
+	PreparedStatement updateTrack;
 
 	private GetRecords() throws SQLException {
 		// Create the records
@@ -148,7 +149,6 @@ public class GetRecords {
 		addRecord.setInt(9, in.getReleaseType());
 		addRecord.setInt(10, in.getOwner());
 		addRecord.setDouble(11, in.getPrice());
-		System.err.println("ADDING RECORD");
 		Connect.getConnection().executeStatement(addRecord);
 
 		getRecord.setString(1, in.getTitle());
@@ -684,8 +684,6 @@ public class GetRecords {
 	}
 
 	public void updateRecord(Record in) throws SQLException {
-		System.err.println("UPDATING RECORD: " + in.getNumber());
-
 		// First get the format number
 		int formatNumber = in.getFormat().save();
 
@@ -707,8 +705,6 @@ public class GetRecords {
 		updateRecord.setDouble(11, in.getPrice());
 		updateRecord.setInt(12, in.getShelfPos());
 		updateRecord.setInt(13, in.getNumber());
-
-		System.err.println(updateRecord);
 
 		updateRecord.execute();
 		int recordNumber = in.getNumber();
@@ -777,8 +773,6 @@ public class GetRecords {
 		updateTrack.setInt(3, newTrack.getFormTrackNumber());
 		updateTrack.setInt(4, recordNumber);
 		updateTrack.setInt(5, newTrack.getTrackNumber());
-
-		System.err.println("UPDATE: " + updateTrack);
 
 		// Run the update
 		updateTrack.execute();
