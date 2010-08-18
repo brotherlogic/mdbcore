@@ -18,7 +18,7 @@ public final class Connect {
 	}
 
 	/** Current mode of operation */
-	private static mode operationMode = mode.DEVELOPMENT;
+	private static mode operationMode = mode.PRODUCTION;
 
 	private static Connect singleton;
 
