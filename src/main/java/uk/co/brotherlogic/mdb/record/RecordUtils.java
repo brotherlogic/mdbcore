@@ -39,11 +39,6 @@ public class RecordUtils {
 		return null;
 	}
 
-	public static void main(String[] args) throws Exception {
-		for (Record rec : getNewRecords("10"))
-			System.err.println(rec.getTitle());
-	}
-
 	public static List<Record> getNewRecords(String baseformat)
 			throws SQLException {
 		String cd_extra = "AND riploc IS NOT NULL";
@@ -56,7 +51,6 @@ public class RecordUtils {
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
-		System.err.println(ps);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		List<Record> records = new LinkedList<Record>();
 		while (rs.next())

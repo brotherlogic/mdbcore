@@ -35,12 +35,6 @@ import uk.co.brotherlogic.mdb.record.Record;
 import uk.co.brotherlogic.mdb.record.Track;
 
 public class DiscogParser {
-
-	public static void main(String[] args) throws Exception {
-		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(27169));
-	}
-
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
 
 	public Record parseDiscogRelease(int id) throws IOException {
@@ -78,27 +72,27 @@ public class DiscogParser {
 }
 
 class DiscogXMLParser extends DefaultHandler {
-	Record rec = new Record();
-	List<LineUp> overallGroops = new LinkedList<LineUp>();
+	private boolean contNum = false;
 	Track currTrack;
-
-	String text = "";
-
 	// Set up the mapping for the track numbers
 	Map<Integer, Integer> highest = new TreeMap<Integer, Integer>();
+
+	private boolean inArtists = false;
+
+	private boolean inFormats = false;
+	private boolean inLabels = false;
+
+	private boolean inMain = false;
+	private boolean inTracks = false;
+	List<LineUp> overallGroops = new LinkedList<LineUp>();
+	private int quantity = -1;
+	Record rec = new Record();
+	String text = "";
+	private boolean trackGroops = true;
+
 	{
 		highest.put(0, 0);
 	}
-
-	private boolean inMain = false;
-	private boolean inArtists = false;
-	private boolean inLabels = false;
-	private boolean inTracks = false;
-	private boolean inFormats = false;
-	private boolean trackGroops = true;
-	private boolean contNum = false;
-
-	private int quantity = -1;
 
 	@Override
 	public void characters(char[] ch, int start, int length)
@@ -123,9 +117,7 @@ class DiscogXMLParser extends DefaultHandler {
 					if (text.equals("LP"))
 						switch (quantity) {
 						case 1:
-							rec
-									.setFormat(GetFormats.create().getFormat(
-											"12\""));
+							rec.setFormat(GetFormats.create().getFormat("12\""));
 							break;
 						}
 				} else if (qualName.equals("name") && inArtists) {
@@ -181,10 +173,6 @@ class DiscogXMLParser extends DefaultHandler {
 							int discNumber = Integer.parseInt(elems[0]);
 							int trckNumber = Integer.parseInt(elems[1]);
 							int number;
-							System.err
-									.println((highest.get(discNumber - 1) + 1)
-											+ " and " + trckNumber + " given "
-											+ contNum);
 							if (contNum
 									|| highest.get(discNumber - 1) + 1 == trckNumber) {
 								number = trckNumber;
@@ -196,8 +184,8 @@ class DiscogXMLParser extends DefaultHandler {
 							currTrack.setTrackNumber(number);
 
 							if (highest.containsKey(discNumber))
-								highest.put(discNumber, Math.max(discNumber,
-										number));
+								highest.put(discNumber,
+										Math.max(discNumber, number));
 							else
 								highest.put(discNumber, number);
 						} else {

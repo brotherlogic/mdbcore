@@ -18,25 +18,22 @@ import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
 public class GetLabels {
+	private static GetLabels singleton;
+
 	public static GetLabels create() throws SQLException {
 		if (singleton == null)
 			singleton = new GetLabels();
 		return singleton;
 	}
 
-	public static void main(String[] args) throws Exception {
-		System.err.println(GetLabels.create().getLabel(9));
-	}
-
-	// Map of labelName --> Label
-	Map<String, Label> labels;
-	PreparedStatement insertQuery;
-
 	PreparedStatement collectQuery;
 
 	PreparedStatement getQuery;
 
-	private static GetLabels singleton;
+	PreparedStatement insertQuery;
+
+	// Map of labelName --> Label
+	Map<String, Label> labels;
 
 	private GetLabels() throws SQLException {
 		// Initialise the set

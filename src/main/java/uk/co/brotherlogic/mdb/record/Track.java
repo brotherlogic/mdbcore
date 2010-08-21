@@ -22,21 +22,14 @@ public class Track implements Comparable<Track>, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/** The track number of this track */
-	private int trackNumber;
-
-	public void setFormTrackNumber(int formTrackNumber) {
-		this.formTrackNumber = formTrackNumber;
-	}
-
-	/** The track title */
-	private String title;
-
-	/** The length of the track in seconds */
-	private int lengthInSeconds;
+	/** The format track number */
+	private int formTrackNumber = -1;
 
 	/** The LineUps associated with this track */
 	private final List<LineUp> groops;
+
+	/** The length of the track in seconds */
+	private int lengthInSeconds;
 
 	/** The personnel on the track */
 	private final Collection<Artist> personnel;
@@ -44,8 +37,11 @@ public class Track implements Comparable<Track>, Serializable {
 	/** THe track reference number */
 	private int refNumber = -1;
 
-	/** The format track number */
-	private int formTrackNumber;
+	/** The track title */
+	private String title;
+
+	/** The track number of this track */
+	private int trackNumber;
 
 	/**
 	 * Constructor
@@ -60,24 +56,6 @@ public class Track implements Comparable<Track>, Serializable {
 		formTrackNumber = -1;
 	}
 
-	public Collection<Groop> getGroops() {
-		Collection<Groop> grps = new LinkedList<Groop>();
-
-		for (LineUp lUp : groops)
-			grps.add(lUp.getGroop());
-
-		return grps;
-	}
-
-	public String getTrackAuthor() {
-		StringBuffer author = new StringBuffer(groops.get(0).getGroop()
-				.getShowName());
-		for (LineUp lUp : groops.subList(1, groops.size() - 1))
-			author.append(", " + lUp.getGroop().getShowName());
-
-		return author.toString();
-	}
-
 	public Track(int number) {
 		groops = new LinkedList<LineUp>();
 		personnel = new LinkedList<Artist>();
@@ -86,10 +64,6 @@ public class Track implements Comparable<Track>, Serializable {
 		trackNumber = number;
 		refNumber = -1;
 		formTrackNumber = -1;
-	}
-
-	public int getFormTrackNumber() {
-		return formTrackNumber;
 	}
 
 	/**
@@ -159,6 +133,19 @@ public class Track implements Comparable<Track>, Serializable {
 			return false;
 	}
 
+	public int getFormTrackNumber() {
+		return formTrackNumber;
+	}
+
+	public Collection<Groop> getGroops() {
+		Collection<Groop> grps = new LinkedList<Groop>();
+
+		for (LineUp lUp : groops)
+			grps.add(lUp.getGroop());
+
+		return grps;
+	}
+
 	/**
 	 * Get method for length
 	 * 
@@ -195,6 +182,15 @@ public class Track implements Comparable<Track>, Serializable {
 		return title;
 	}
 
+	public String getTrackAuthor() {
+		StringBuffer author = new StringBuffer(groops.get(0).getGroop()
+				.getShowName());
+		for (LineUp lUp : groops.subList(1, groops.size()))
+			author.append(", " + lUp.getGroop().getShowName());
+
+		return author.toString();
+	}
+
 	/**
 	 * Get method for the track number
 	 * 
@@ -214,6 +210,10 @@ public class Track implements Comparable<Track>, Serializable {
 			GetRecords.create().addTrack(recordNumber, this);
 		else
 			GetRecords.create().updateTrack(recordNumber, this);
+	}
+
+	public void setFormTrackNumber(int formTrackNumber) {
+		this.formTrackNumber = formTrackNumber;
 	}
 
 	public void setLengthInSeconds(int lengthInSeconds) {
