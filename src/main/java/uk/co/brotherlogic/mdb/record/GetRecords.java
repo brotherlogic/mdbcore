@@ -629,7 +629,7 @@ public class GetRecords {
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum, formtrack);
+					getPersonnel(refNum), trckNum, refNum, formtrack,recNumber);
 			retSet.add(currTrack);
 		}
 		rs.close();

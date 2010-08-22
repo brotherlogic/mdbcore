@@ -27,6 +27,20 @@ public class RecordScore {
 			rec.save();
 		}
 	}
+	
+	public static double get(Record rec) throws SQLException{
+		double scoreVal = 0.0;
+		int count = 0;
+		for (User user: User.getUsers())
+		{
+			scoreVal += get(rec,user);
+			count++;
+		}
+		
+		if (count > 0)
+		return scoreVal / count;
+		else return 0.0;
+	}
 
 	public static double get(Record rec, User user) throws SQLException {
 		String sql = "SELECT score_value from score_history WHERE record_id = ? AND user_id = ?";

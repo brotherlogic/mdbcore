@@ -42,6 +42,9 @@ public class Track implements Comparable<Track>, Serializable {
 
 	/** The track number of this track */
 	private int trackNumber;
+	
+	/** THe record from which the track is taken */
+	private int parentNumber;
 
 	/**
 	 * Constructor
@@ -85,7 +88,7 @@ public class Track implements Comparable<Track>, Serializable {
 	public Track(final String titleIn, final int lengthIn,
 			final Collection<LineUp> groopsIn,
 			final Collection<Artist> personnelIn, final int trackNumberIn,
-			final int trackRefNumber, final int formTrackNumber) {
+			final int trackRefNumber, final int formTrackNumber, final int recordnumber) {
 		title = titleIn;
 		lengthInSeconds = lengthIn;
 		groops = new LinkedList<LineUp>();
@@ -95,6 +98,11 @@ public class Track implements Comparable<Track>, Serializable {
 		trackNumber = trackNumberIn;
 		refNumber = trackRefNumber;
 		this.formTrackNumber = formTrackNumber;
+		parentNumber = recordnumber;
+	}
+
+	public void setParentNumber(int parentNumber) {
+		this.parentNumber = parentNumber;
 	}
 
 	public final void addLineUp(final LineUp lineup) {
@@ -198,6 +206,10 @@ public class Track implements Comparable<Track>, Serializable {
 	 */
 	public final int getTrackNumber() {
 		return trackNumber;
+	}
+	
+	public Record getParent() throws SQLException{
+		return GetRecords.create().getRecord(parentNumber);
 	}
 
 	@Override
