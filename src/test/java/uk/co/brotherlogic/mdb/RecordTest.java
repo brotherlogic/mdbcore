@@ -95,4 +95,16 @@ public class RecordTest extends TestCase {
 		}
 	}
 
+	public void testScore() {
+		try {
+			buildRecord();
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			double score = nrec.getScore();
+			double sscore = nrec.getScore(User.getUser("Simon"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
 }

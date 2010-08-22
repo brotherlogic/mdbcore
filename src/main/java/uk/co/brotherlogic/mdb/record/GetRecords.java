@@ -629,7 +629,7 @@ public class GetRecords {
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum, formtrack);
+					getPersonnel(refNum), trckNum, refNum, formtrack,recNumber);
 			retSet.add(currTrack);
 		}
 		rs.close();
@@ -656,6 +656,8 @@ public class GetRecords {
 
 	}
 
+	
+	
 	public void saveCompilers(Record record) throws SQLException {
 		// Delete the current compilers
 		String delSQL = "DELETE FROM compiler WHERE record_id = ?";

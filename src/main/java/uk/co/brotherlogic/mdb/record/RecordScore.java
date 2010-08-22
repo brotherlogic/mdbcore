@@ -28,6 +28,23 @@ public class RecordScore {
 		}
 	}
 
+	public static double get(Record rec) throws SQLException {
+		double scoreVal = 0.0;
+		int count = 0;
+		for (User user : User.getUsers()) {
+			double score = get(rec, user);
+			if (score >= 0) {
+				scoreVal += get(rec, user);
+				count++;
+			}
+		}
+
+		if (count > 0)
+			return scoreVal / count;
+		else
+			return 0.0;
+	}
+
 	public static double get(Record rec, User user) throws SQLException {
 		String sql = "SELECT score_value from score_history WHERE record_id = ? AND user_id = ?";
 		PreparedStatement ps = Connect.getConnection()
@@ -40,8 +57,7 @@ public class RecordScore {
 		if (rs.next()) {
 			count++;
 			sum += rs.getInt(1);
-		} else
-			throw new SQLException("Record " + rec + " not found!");
+		}
 
 		if (count == 0)
 			return -1;
