@@ -23,9 +23,9 @@ public class RecordUtils {
 		return rec;
 	}	
 	
-	public static Track getRandomTrack(double minScore) throws SQLException {
+	public static Track getRandomCDTrack(double minScore) throws SQLException {
 		//Get a random record
-		String sql = "SELECT recordnumber from records LEFT JOIN score_history ON recordnumber = record_id GROUP BY recordnumber HAVING avg(score_value) > ? ORDER BY random() LIMIT 1";
+		String sql = "SELECT recordnumber from records LEFT JOIN score_history ON recordnumber = record_id WHERE riploc IS NOT NULL GROUP BY recordnumber HAVING avg(score_value) > ? ORDER BY random() LIMIT 1";
 		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
 		ps.setDouble(1, minScore);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
@@ -39,6 +39,7 @@ public class RecordUtils {
 		
 		return null;
 	}
+
 	
 	private static Record getNewRecord(String baseformat) throws SQLException {
 		String cd_extra = "AND riploc IS NOT NULL";

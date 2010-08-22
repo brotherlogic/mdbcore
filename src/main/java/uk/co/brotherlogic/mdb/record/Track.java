@@ -208,6 +208,8 @@ public class Track implements Comparable<Track>, Serializable {
 		return trackNumber;
 	}
 	
+
+	
 	public Record getParent() throws SQLException{
 		return GetRecords.create().getRecord(parentNumber);
 	}
