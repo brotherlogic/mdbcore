@@ -9,7 +9,6 @@ public abstract class Version {
 	public abstract int getVersion();
 
 	public boolean run() throws SQLException {
-		System.out.println("Upgrading to version: " + getVersion());
 		boolean res = runLocal();
 		if (res)
 			setVersion(getVersion() + 1);

@@ -41,7 +41,6 @@ class DiscogHandler extends DefaultHandler {
 	}
 
 	public Map<String, Integer> getReleaseMap(String artist) {
-		System.err.println(releaseMap);
 
 		List<String> toRemove = new LinkedList<String>();
 		for (String key : releaseMap.keySet())
@@ -54,18 +53,13 @@ class DiscogHandler extends DefaultHandler {
 }
 
 public class DiscogSelector {
-	public static void main(String[] args) {
-		DiscogSelector selector = new DiscogSelector();
-		System.out.println(selector.getDiscogID("Blondie", "Plastic Letters"));
-	}
-
+	
 	String req = "http://www.discogs.com/search?type=all&q=QUERY&f=xml&api_key=67668099b8";
 
 	public int getDiscogID(String artist, String title) {
 		try {
-			URL url = new URL(req.replace("QUERY", URLEncoder.encode(title,
-					"utf-8")));
-			System.err.println(url);
+			URL url = new URL(req.replace("QUERY",
+					URLEncoder.encode(title, "utf-8")));
 			DiscogHandler handler = new DiscogHandler();
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			parser.parse(new GZIPInputStream(url.openStream()), handler);

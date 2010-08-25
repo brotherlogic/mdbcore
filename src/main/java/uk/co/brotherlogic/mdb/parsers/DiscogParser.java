@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -35,10 +33,9 @@ import uk.co.brotherlogic.mdb.record.Record;
 import uk.co.brotherlogic.mdb.record.Track;
 
 public class DiscogParser {
-
 	public static void main(String[] args) throws Exception {
-		DiscogParser parser = new DiscogParser();
-		System.out.println(parser.parseDiscogRelease(27169));
+		DiscogParser p = new DiscogParser();
+		System.out.println(p.parseDiscogRelease(1642454));
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
@@ -57,20 +54,22 @@ public class DiscogParser {
 		} catch (ParserConfigurationException e) {
 			throw new IOException(e);
 		} catch (IOException e) {
-			// Deal with 400 exceptions here (needs discog login)
-			if (e.getMessage().contains("400 for URL")) {
+			try {
+				// Deal with 400 exceptions here (needs discog login)
+				if (e.getMessage().contains("Not in GZIP format")) {
+					HttpURLConnection uc = (HttpURLConnection) url
+							.openConnection();
+					uc.addRequestProperty("Accept-Encoding", "gzip");
+					SAXParser parser = SAXParserFactory.newInstance()
+							.newSAXParser();
+					DiscogXMLParser handler = new DiscogXMLParser();
+					parser.parse(uc.getInputStream(), handler);
+					return handler.getRecord();
+				}
+			} catch (Exception e2) {
+				throw new IOException(e2);
+			}
 
-				// Open a browser
-				JFrame framer = new JFrame();
-				JEditorPane htmlPane = new JEditorPane();
-				htmlPane.setPage(url);
-				framer.add(htmlPane);
-				framer.setSize(500, 500);
-				framer.setLocationRelativeTo(null);
-				framer.setVisible(true);
-
-			} else
-				throw (e);
 		}
 
 		return null;
@@ -78,27 +77,27 @@ public class DiscogParser {
 }
 
 class DiscogXMLParser extends DefaultHandler {
-	Record rec = new Record();
-	List<LineUp> overallGroops = new LinkedList<LineUp>();
+	private boolean contNum = false;
 	Track currTrack;
-
-	String text = "";
-
 	// Set up the mapping for the track numbers
 	Map<Integer, Integer> highest = new TreeMap<Integer, Integer>();
+
+	private boolean inArtists = false;
+
+	private boolean inFormats = false;
+	private boolean inLabels = false;
+
+	private boolean inMain = false;
+	private boolean inTracks = false;
+	List<LineUp> overallGroops = new LinkedList<LineUp>();
+	private int quantity = -1;
+	Record rec = new Record();
+	String text = "";
+	private boolean trackGroops = true;
+
 	{
 		highest.put(0, 0);
 	}
-
-	private boolean inMain = false;
-	private boolean inArtists = false;
-	private boolean inLabels = false;
-	private boolean inTracks = false;
-	private boolean inFormats = false;
-	private boolean trackGroops = true;
-	private boolean contNum = false;
-
-	private int quantity = -1;
 
 	@Override
 	public void characters(char[] ch, int start, int length)
@@ -181,10 +180,6 @@ class DiscogXMLParser extends DefaultHandler {
 							int discNumber = Integer.parseInt(elems[0]);
 							int trckNumber = Integer.parseInt(elems[1]);
 							int number;
-							System.err
-									.println((highest.get(discNumber - 1) + 1)
-											+ " and " + trckNumber + " given "
-											+ contNum);
 							if (contNum
 									|| highest.get(discNumber - 1) + 1 == trckNumber) {
 								number = trckNumber;

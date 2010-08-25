@@ -3,6 +3,7 @@ package uk.co.brotherlogic.mdb.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,8 +21,26 @@ public class RecordUtils {
 			rec.add(GetRecords.create().getRecord(rs.getInt(1)));
 
 		return rec;
+	}	
+	
+	public static Track getRandomCDTrack(double minScore) throws SQLException {
+		//Get a random record
+		String sql = "SELECT recordnumber from records LEFT JOIN score_history ON recordnumber = record_id WHERE riploc IS NOT NULL GROUP BY recordnumber HAVING avg(score_value) > ? ORDER BY random() LIMIT 1";
+		PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+		ps.setDouble(1, minScore);
+		ResultSet rs = Connect.getConnection().executeQuery(ps);
+		if (rs.next())
+		{
+			Record r = GetRecords.create().getRecord(rs.getInt(1));
+			List<Track> tracks = new LinkedList<Track>(r.getTracks());
+			Collections.shuffle(tracks);
+			return tracks.get(0);
+		}
+		
+		return null;
 	}
 
+	
 	private static Record getNewRecord(String baseformat) throws SQLException {
 		String cd_extra = "AND riploc IS NOT NULL";
 
@@ -39,11 +58,6 @@ public class RecordUtils {
 		return null;
 	}
 
-	public static void main(String[] args) throws Exception {
-		for (Record rec : getNewRecords("10"))
-			System.err.println(rec.getTitle());
-	}
-
 	public static List<Record> getNewRecords(String baseformat)
 			throws SQLException {
 		String cd_extra = "AND riploc IS NOT NULL";
@@ -56,7 +70,6 @@ public class RecordUtils {
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
-		System.err.println(ps);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		List<Record> records = new LinkedList<Record>();
 		while (rs.next())
