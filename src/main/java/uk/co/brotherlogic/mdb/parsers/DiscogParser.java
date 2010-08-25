@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -35,6 +33,11 @@ import uk.co.brotherlogic.mdb.record.Record;
 import uk.co.brotherlogic.mdb.record.Track;
 
 public class DiscogParser {
+	public static void main(String[] args) throws Exception {
+		DiscogParser p = new DiscogParser();
+		System.out.println(p.parseDiscogRelease(1642454));
+	}
+
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
 
 	public Record parseDiscogRelease(int id) throws IOException {
@@ -51,20 +54,22 @@ public class DiscogParser {
 		} catch (ParserConfigurationException e) {
 			throw new IOException(e);
 		} catch (IOException e) {
-			// Deal with 400 exceptions here (needs discog login)
-			if (e.getMessage().contains("400 for URL")) {
+			try {
+				// Deal with 400 exceptions here (needs discog login)
+				if (e.getMessage().contains("Not in GZIP format")) {
+					HttpURLConnection uc = (HttpURLConnection) url
+							.openConnection();
+					uc.addRequestProperty("Accept-Encoding", "gzip");
+					SAXParser parser = SAXParserFactory.newInstance()
+							.newSAXParser();
+					DiscogXMLParser handler = new DiscogXMLParser();
+					parser.parse(uc.getInputStream(), handler);
+					return handler.getRecord();
+				}
+			} catch (Exception e2) {
+				throw new IOException(e2);
+			}
 
-				// Open a browser
-				JFrame framer = new JFrame();
-				JEditorPane htmlPane = new JEditorPane();
-				htmlPane.setPage(url);
-				framer.add(htmlPane);
-				framer.setSize(500, 500);
-				framer.setLocationRelativeTo(null);
-				framer.setVisible(true);
-
-			} else
-				throw (e);
 		}
 
 		return null;
@@ -117,7 +122,9 @@ class DiscogXMLParser extends DefaultHandler {
 					if (text.equals("LP"))
 						switch (quantity) {
 						case 1:
-							rec.setFormat(GetFormats.create().getFormat("12\""));
+							rec
+									.setFormat(GetFormats.create().getFormat(
+											"12\""));
 							break;
 						}
 				} else if (qualName.equals("name") && inArtists) {
@@ -184,8 +191,8 @@ class DiscogXMLParser extends DefaultHandler {
 							currTrack.setTrackNumber(number);
 
 							if (highest.containsKey(discNumber))
-								highest.put(discNumber,
-										Math.max(discNumber, number));
+								highest.put(discNumber, Math.max(discNumber,
+										number));
 							else
 								highest.put(discNumber, number);
 						} else {
