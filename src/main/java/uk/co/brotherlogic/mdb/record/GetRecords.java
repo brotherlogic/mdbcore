@@ -79,7 +79,7 @@ public class GetRecords {
 		updateRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ? WHERE RecordNumber = ?");
+						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ? WHERE RecordNumber = ?");
 		getPersonnel = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -629,7 +629,7 @@ public class GetRecords {
 			// currTrack = new Track(name, len, getLineUps(refNum),
 			// getPersonnel(refNum), trckNum, refNum);
 			currTrack = new Track(name, len, getLineUps(refNum),
-					getPersonnel(refNum), trckNum, refNum, formtrack,recNumber);
+					getPersonnel(refNum), trckNum, refNum, formtrack, recNumber);
 			retSet.add(currTrack);
 		}
 		rs.close();
@@ -656,8 +656,6 @@ public class GetRecords {
 
 	}
 
-	
-	
 	public void saveCompilers(Record record) throws SQLException {
 		// Delete the current compilers
 		String delSQL = "DELETE FROM compiler WHERE record_id = ?";
@@ -706,7 +704,8 @@ public class GetRecords {
 		updateRecord.setInt(10, in.getOwner());
 		updateRecord.setDouble(11, in.getPrice());
 		updateRecord.setInt(12, in.getShelfPos());
-		updateRecord.setInt(13, in.getNumber());
+		updateRecord.setString(13, in.getRiploc());
+		updateRecord.setInt(14, in.getNumber());
 
 		updateRecord.execute();
 		int recordNumber = in.getNumber();

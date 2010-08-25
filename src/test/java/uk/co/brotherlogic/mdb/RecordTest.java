@@ -95,6 +95,22 @@ public class RecordTest extends TestCase {
 		}
 	}
 
+	public void testRiploc() {
+		try {
+			buildRecord();
+			// Retrieve
+			Record rec = GetRecords.create().getRecords("fake-title").get(0);
+			rec.setRiploc("testing");
+			rec.save();
+
+			Record rec2 = GetRecords.create().getRecords("fake-title").get(0);
+			assert (rec2.getRiploc().equals("testing"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
 	public void testScore() {
 		try {
 			buildRecord();
