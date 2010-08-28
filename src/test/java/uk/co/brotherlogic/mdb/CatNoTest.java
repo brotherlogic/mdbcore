@@ -10,6 +10,11 @@ import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
 public class CatNoTest {
+	public CatNoTest() {
+		super();
+		Connect.setForDevMode();
+	}
+
 	public void testCatNo() {
 		Record r = new Record();
 		r.setAuthor("fake-author");

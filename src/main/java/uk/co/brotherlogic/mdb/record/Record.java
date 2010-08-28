@@ -17,11 +17,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
@@ -31,72 +31,88 @@ import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.Label;
 
+/**
+ * Core of the record class
+ * 
+ * @author simon
+ * 
+ */
 public class Record implements Comparable<Record> {
 
+	/** The ratio of groups required to author a record */
 	private static final double GROOP_RATIO = 0.8;
 
-	public static final int RANKED = 4;
-
-	private static String REPLACE = "aaaaaaaaaaaaa";
+	/** Replacement string used to represent spaces when sanitizing */
+	private static final String REPLACE = "aaaaaaaaaaaaa";
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5625039435654063418L;
 
-	public static void main(String[] args) throws Exception {
-		Record rec = GetRecords.create().getRecord(3708);
-		System.out.println("TITLE = " + rec.getTitle());
-		System.out.println("Tracks = " + rec.getNumberOfFormatTracks());
-		System.out.println("REP = " + rec.getFileAdd());
-		for (int i = 1; i <= rec.getNumberOfFormatTracks(); i++) {
-			System.out.println(rec.getTrackRep(i));
-			System.out.println(rec.getFormTrackArtist(i));
-			System.out.println(rec.getFormTrackTitle(i));
-		}
-	}
+	/** The author of the record */
+	private String author;
 
-	String author;
+	/** The date the record was bought */
+	private Calendar boughtDate;
 
-	Calendar boughtDate;
+	/** The category to which this record belongs */
+	private Category category;
 
-	Category category;
+	/** Catalogue numbers */
+	private Collection<String> catnos;
 
-	Collection<String> catnos;
+	/** Any compilers of this if compilation */
+	private Collection<Artist> compilers;
 
-	Collection<Artist> compilers;
-
+	/** The number of the record on discogs */
 	private int discogsNum = -1;
 
-	Format format;
+	/** The format of the record */
+	private Format format;
 
-	Collection<Label> labels;
+	/** Labels which released the record */
+	private Collection<Label> labels;
 
-	String notes;
+	/** Any notes applied to the record */
+	private String notes;
 
-	int number = -1;
+	/** The record id number */
+	private int number = -1;
 
-	int owner;
+	/** The id number of the owner of the record */
+	private int owner;
 
-	double price;
+	/** Price paid for the record */
+	private double price;
 
-	int releaseMonth;
+	/** The month the record was released */
+	private int releaseMonth;
 
-	int releaseType;
+	/** Single or album release */
+	private int releaseType;
 
+	/** The place where the record has been ripped to */
 	private String riploc;
 
 	/** The location of the record on it's respective shelf */
 	private int shelfpos;
 
-	String title;
+	/** The name of the record */
+	private String title;
 
-	Collection<Track> tracks;
+	/** The set of all tracks */
+	private Collection<Track> tracks;
 
-	boolean updated = false;
+	/** Flag to indicate that the record needs to be updated */
+	private boolean updated = false;
 
-	Integer year;
+	/** THe year of release */
+	private Integer year;
 
+	/**
+	 * Empty Constructor
+	 */
 	public Record() {
 		title = "";
 		notes = " ";
@@ -171,7 +187,8 @@ public class Record implements Comparable<Record> {
 	@Override
 	public int compareTo(Record o) {
 		return (title.toLowerCase() + number).compareTo(o.getTitle()
-				.toLowerCase() + (o.getNumber()));
+				.toLowerCase()
+				+ (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks) {
@@ -231,6 +248,10 @@ public class Record implements Comparable<Record> {
 
 	public Calendar getDate() {
 		return boughtDate;
+	}
+
+	public int getDiscogsNum() {
+		return discogsNum;
 	}
 
 	public int getDiscogsURI() {
