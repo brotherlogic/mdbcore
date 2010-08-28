@@ -37,6 +37,9 @@ public class RecordTest extends TestCase {
 				// Persist
 				r.save();
 				built = true;
+
+				// Set some scores
+				r.addScore(User.getUser("Simon"), 5);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -117,6 +120,8 @@ public class RecordTest extends TestCase {
 			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
 			double score = nrec.getScore();
 			double sscore = nrec.getScore(User.getUser("Simon"));
+			assert (score >= 0);
+			assert (sscore >= 0);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
