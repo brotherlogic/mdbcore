@@ -50,6 +50,11 @@ public class Record implements Comparable<Record> {
 	 */
 	private static final long serialVersionUID = -5625039435654063418L;
 
+	public static void main(String[] args) throws Exception {
+		Record r = GetRecords.create().getRecord(9410);
+		System.out.println(r.getFileAdd());
+	}
+
 	/** The author of the record */
 	private String author;
 
@@ -524,8 +529,9 @@ public class Record implements Comparable<Record> {
 
 	private String sanitize(String str) throws UnsupportedEncodingException {
 
+		// Commas are fine for us
 		return URLEncoder.encode(str.replace(" ", REPLACE), "UTF-8").replace(
-				REPLACE, " ");
+				REPLACE, " ").replace("%2C", ",");
 	}
 
 	public void save() throws SQLException {
