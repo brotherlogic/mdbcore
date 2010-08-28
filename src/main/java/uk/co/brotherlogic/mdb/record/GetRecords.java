@@ -67,7 +67,7 @@ public class GetRecords {
 		addRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price,recrand) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,random())");
+						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price,recrand,discog_id) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,random(),?)");
 		getRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -149,6 +149,7 @@ public class GetRecords {
 		addRecord.setInt(9, in.getReleaseType());
 		addRecord.setInt(10, in.getOwner());
 		addRecord.setDouble(11, in.getPrice());
+		addRecord.setInt(12, in.getDiscogsNum());
 		Connect.getConnection().executeStatement(addRecord);
 
 		getRecord.setString(1, in.getTitle());
@@ -314,22 +315,6 @@ public class GetRecords {
 		return retSet;
 	}
 
-	public List<Record> getRankedRecords(String format) throws SQLException {
-		List<Record> rankedRecords = new LinkedList<Record>();
-
-		PreparedStatement ps = Connect
-				.getConnection()
-				.getPreparedStatement(
-						"SELECT recordnumber from records,score_table,formats where format = formatnumber and baseformat = ? AND recordnumber = record_id AND state = ? ORDER BY simon_rank ASC");
-		ps.setString(1, format);
-		ps.setInt(2, Record.RANKED);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next())
-			rankedRecords.add(getRecord(rs.getInt(1)));
-
-		return rankedRecords;
-	}
-
 	public Record getRecord(int recNumber) throws SQLException {
 		Record rec = null;
 		try {
@@ -434,21 +419,6 @@ public class GetRecords {
 		}
 
 		return featuring;
-	}
-
-	public List<Record> getRecordsToRank() throws SQLException {
-		List<Record> rankedRecords = new LinkedList<Record>();
-
-		PreparedStatement ps = Connect
-				.getConnection()
-				.getPreparedStatement(
-						"SELECT recordnumber from records,score_table where recordnumber = record_id AND state = ? ORDER BY simon_rank DESC");
-		ps.setInt(1, Record.RANKED);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next())
-			rankedRecords.add(getRecord(rs.getInt(1)));
-
-		return rankedRecords;
 	}
 
 	public List<Record> getRecordsToRank(String format) throws SQLException {
@@ -557,7 +527,7 @@ public class GetRecords {
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
+						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc,discog_id FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -580,6 +550,7 @@ public class GetRecords {
 			double price = rs.getDouble(11);
 			int shelfpos = rs.getInt(12);
 			String riploc = rs.getString(13);
+			int discogid = rs.getInt(14);
 
 			currRec = new Record(title, GetFormats.create().getFormat(format),
 					boughtDate, shelfpos);
@@ -592,6 +563,7 @@ public class GetRecords {
 			currRec.setOwner(own);
 			currRec.setPrice(price);
 			currRec.setRiploc(riploc);
+			currRec.setDiscogsNum(discogid);
 
 			currRec.setCategory(GetCategories.build().getCategory(category));
 
@@ -613,7 +585,7 @@ public class GetRecords {
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
-		// Naive approach to check for spped
+		// Naive approach to check for speed
 		Track currTrack = null;
 		while (rs.next()) {
 			int trckNum = rs.getInt(4);

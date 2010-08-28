@@ -64,7 +64,9 @@ public class DiscogParser {
 							.newSAXParser();
 					DiscogXMLParser handler = new DiscogXMLParser();
 					parser.parse(uc.getInputStream(), handler);
-					return handler.getRecord();
+					Record r = handler.getRecord();
+					r.setDiscogsNum(id);
+					return r;
 				}
 			} catch (Exception e2) {
 				throw new IOException(e2);
@@ -189,6 +191,7 @@ class DiscogXMLParser extends DefaultHandler {
 								number = highest.get(discNumber - 1)
 										+ trckNumber;
 							currTrack.setTrackNumber(number);
+							currTrack.setFormTrackNumber(number);
 
 							if (highest.containsKey(discNumber))
 								highest.put(discNumber, Math.max(discNumber,

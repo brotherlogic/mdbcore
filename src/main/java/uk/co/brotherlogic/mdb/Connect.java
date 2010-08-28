@@ -18,7 +18,7 @@ public final class Connect {
 	}
 
 	/** Current mode of operation */
-	private static mode operationMode = mode.PRODUCTION;
+	private static mode operationMode = mode.DEVELOPMENT;
 
 	private static Connect singleton;
 
@@ -48,6 +48,10 @@ public final class Connect {
 
 	public static void main(String[] args) throws Exception {
 		Connect.getConnection();
+	}
+
+	public static void setForDevMode() {
+		operationMode = mode.DEVELOPMENT;
 	}
 
 	/** The connection to the local DB */

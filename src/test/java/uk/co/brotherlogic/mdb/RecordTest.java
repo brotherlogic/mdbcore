@@ -14,6 +14,11 @@ import uk.co.brotherlogic.mdb.record.Record;
 public class RecordTest extends TestCase {
 	private static boolean built = false;
 
+	public RecordTest() {
+		super();
+		Connect.setForDevMode();
+	}
+
 	private void buildRecord() {
 		if (!built) {
 			// Create
@@ -32,11 +37,15 @@ public class RecordTest extends TestCase {
 			r.setReleaseType(1);
 			r.setTitle("fake-title");
 			r.setYear(2000);
+			r.setDiscogsNum(1234);
 
 			try {
 				// Persist
 				r.save();
 				built = true;
+
+				// Set some scores
+				r.addScore(User.getUser("Simon"), 5);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -49,6 +58,17 @@ public class RecordTest extends TestCase {
 			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
 			assert (nrec.getCatNos().size() == 1);
 			assert (nrec.getCatNoString().equals("fake-cat-no"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testDiscog() {
+		try {
+			buildRecord();
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec.getDiscogsNum() == 1234);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
@@ -117,6 +137,8 @@ public class RecordTest extends TestCase {
 			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
 			double score = nrec.getScore();
 			double sscore = nrec.getScore(User.getUser("Simon"));
+			assert (score >= 0);
+			assert (sscore >= 0);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);

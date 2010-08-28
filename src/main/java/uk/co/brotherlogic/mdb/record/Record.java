@@ -17,11 +17,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
@@ -31,13 +31,19 @@ import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.Label;
 
+/**
+ * Core of the record class
+ * 
+ * @author simon
+ * 
+ */
 public class Record implements Comparable<Record> {
 
+	/** The ratio of groups required to author a record */
 	private static final double GROOP_RATIO = 0.8;
 
-	public static final int RANKED = 4;
-
-	private static String REPLACE = "aaaaaaaaaaaaa";
+	/** Replacement string used to represent spaces when sanitizing */
+	private static final String REPLACE = "aaaaaaaaaaaaa";
 
 	/**
 	 * 
@@ -45,58 +51,73 @@ public class Record implements Comparable<Record> {
 	private static final long serialVersionUID = -5625039435654063418L;
 
 	public static void main(String[] args) throws Exception {
-		Record rec = GetRecords.create().getRecord(3708);
-		System.out.println("TITLE = " + rec.getTitle());
-		System.out.println("Tracks = " + rec.getNumberOfFormatTracks());
-		System.out.println("REP = " + rec.getFileAdd());
-		for (int i = 1; i <= rec.getNumberOfFormatTracks(); i++) {
-			System.out.println(rec.getTrackRep(i));
-			System.out.println(rec.getFormTrackArtist(i));
-			System.out.println(rec.getFormTrackTitle(i));
-		}
+		Record r = GetRecords.create().getRecord(9410);
+		System.out.println(r.getFileAdd());
 	}
 
-	String author;
+	/** The author of the record */
+	private String author;
 
-	Calendar boughtDate;
+	/** The date the record was bought */
+	private Calendar boughtDate;
 
-	Category category;
+	/** The category to which this record belongs */
+	private Category category;
 
-	Collection<String> catnos;
+	/** Catalogue numbers */
+	private Collection<String> catnos;
 
-	Collection<Artist> compilers;
+	/** Any compilers of this if compilation */
+	private Collection<Artist> compilers;
 
+	/** The number of the record on discogs */
 	private int discogsNum = -1;
 
-	Format format;
+	/** The format of the record */
+	private Format format;
 
-	Collection<Label> labels;
+	/** Labels which released the record */
+	private Collection<Label> labels;
 
-	String notes;
+	/** Any notes applied to the record */
+	private String notes;
 
-	int number = -1;
+	/** The record id number */
+	private int number = -1;
 
-	int owner;
+	/** The id number of the owner of the record */
+	private int owner;
 
-	double price;
+	/** Price paid for the record */
+	private double price;
 
-	int releaseMonth;
+	/** The month the record was released */
+	private int releaseMonth;
 
-	int releaseType;
+	/** Single or album release */
+	private int releaseType;
 
+	/** The place where the record has been ripped to */
 	private String riploc;
 
 	/** The location of the record on it's respective shelf */
 	private int shelfpos;
 
-	String title;
+	/** The name of the record */
+	private String title;
 
-	Collection<Track> tracks;
+	/** The set of all tracks */
+	private Collection<Track> tracks;
 
-	boolean updated = false;
+	/** Flag to indicate that the record needs to be updated */
+	private boolean updated = false;
 
-	Integer year;
+	/** THe year of release */
+	private Integer year;
 
+	/**
+	 * Empty Constructor
+	 */
 	public Record() {
 		title = "";
 		notes = " ";
@@ -171,7 +192,8 @@ public class Record implements Comparable<Record> {
 	@Override
 	public int compareTo(Record o) {
 		return (title.toLowerCase() + number).compareTo(o.getTitle()
-				.toLowerCase() + (o.getNumber()));
+				.toLowerCase()
+				+ (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks) {
@@ -233,6 +255,10 @@ public class Record implements Comparable<Record> {
 		return boughtDate;
 	}
 
+	public int getDiscogsNum() {
+		return discogsNum;
+	}
+
 	public int getDiscogsURI() {
 		return discogsNum;
 	}
@@ -255,9 +281,9 @@ public class Record implements Comparable<Record> {
 		return format;
 	}
 
-	public String getFormTrackArtist(int formTrackNumber) {
+	public String getFormTrackArtist(int formTrackNumber) throws SQLException {
 		List<Track> trackRepTracks = new LinkedList<Track>();
-		for (Track t : tracks)
+		for (Track t : getTracks())
 			if (t.getFormTrackNumber() == formTrackNumber)
 				trackRepTracks.add(t);
 
@@ -437,7 +463,7 @@ public class Record implements Comparable<Record> {
 		return ret;
 	}
 
-	public String getTrackRep(int formTrackNumber) {
+	public String getTrackRep(int formTrackNumber) throws SQLException {
 		try {
 			return numberize(formTrackNumber) + "~"
 					+ sanitize(getFormTrackArtist(formTrackNumber)) + "~"
@@ -463,8 +489,9 @@ public class Record implements Comparable<Record> {
 
 	public Collection<Track> getTracks() throws SQLException {
 
-		if (tracks == null || tracks.size() == 0)
+		if (tracks == null || tracks.size() == 0) {
 			tracks = GetRecords.create().getTracks(number);
+		}
 
 		return tracks;
 	}
@@ -503,8 +530,9 @@ public class Record implements Comparable<Record> {
 
 	private String sanitize(String str) throws UnsupportedEncodingException {
 
+		// Commas are fine for us
 		return URLEncoder.encode(str.replace(" ", REPLACE), "UTF-8").replace(
-				REPLACE, " ");
+				REPLACE, " ").replace("%2C", ",");
 	}
 
 	public void save() throws SQLException {
@@ -623,6 +651,20 @@ public class Record implements Comparable<Record> {
 
 	public void setTitle(String tit) {
 		title = tit;
+	}
+
+	public void setTrackLength(int trackNumber, int lengthInSeconds)
+			throws SQLException {
+		Track t = null;
+		for (Track track : getTracks())
+			if (track.getFormTrackNumber() == trackNumber)
+				if (t == null)
+					t = track;
+				else
+					return;
+
+		t.setLengthInSeconds(lengthInSeconds);
+		updated = true;
 	}
 
 	public void setTracks(Collection<Track> tracksIn) {
