@@ -189,6 +189,7 @@ class DiscogXMLParser extends DefaultHandler {
 								number = highest.get(discNumber - 1)
 										+ trckNumber;
 							currTrack.setTrackNumber(number);
+							currTrack.setFormTrackNumber(number);
 
 							if (highest.containsKey(discNumber))
 								highest.put(discNumber, Math.max(discNumber,
