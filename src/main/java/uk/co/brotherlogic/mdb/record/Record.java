@@ -653,6 +653,20 @@ public class Record implements Comparable<Record> {
 		title = tit;
 	}
 
+	public void setTrackLength(int trackNumber, int lengthInSeconds)
+			throws SQLException {
+		Track t = null;
+		for (Track track : getTracks())
+			if (track.getFormTrackNumber() == trackNumber)
+				if (t == null)
+					t = track;
+				else
+					return;
+
+		t.setLengthInSeconds(lengthInSeconds);
+		updated = true;
+	}
+
 	public void setTracks(Collection<Track> tracksIn) {
 		tracks.clear();
 		tracks.addAll(tracksIn);

@@ -161,8 +161,7 @@ public class TrackTest extends TestCase {
 	public void testFormTrackPerm() {
 		try {
 			buildTrackForTest();
-			Record nrec = GetRecords.create().getRecords("Firm Roots").get(0);
-			assert (nrec.getTracks().iterator().next().getLineUps().size() == 1);
+			Record nrec = GetRecords.create().getRecord(9140);
 			assert (nrec.getTrackRep(1).length() > 0);
 		} catch (Exception e) {
 			e.printStackTrace();
