@@ -115,7 +115,7 @@ public class RecordTest extends TestCase {
 					overloadReps.add(rec.getFileAdd());
 			for (int i = 0; i < overloadReps.size(); i++)
 				for (int j = i + 1; j < overloadReps.size(); j++) {
-					if (overloadReps.get(i).equals(overloadReps.get(j)) || true)
+					if (overloadReps.get(i).equals(overloadReps.get(j)))
 						System.err.println(overloadReps.get(i) + " vs "
 								+ overloadReps.get(j));
 					assert (!overloadReps.get(i).equals(overloadReps.get(j)));
