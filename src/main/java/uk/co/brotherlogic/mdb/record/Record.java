@@ -267,10 +267,10 @@ public class Record implements Comparable<Record> {
 		return author + " - " + title;
 	}
 
-	public String getFileAdd() {
+	public String getFileAdd() throws SQLException {
 		try {
 			return sanitize(getAuthor()) + File.separator
-					+ sanitize(getTitle());
+					+ sanitize(getRepTitle());
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -421,6 +421,23 @@ public class Record implements Comparable<Record> {
 
 	public Integer getReleaseYear() {
 		return year;
+	}
+
+	public String getRepTitle() throws SQLException {
+		if (!getFormat().getBaseFormat().equals("CD"))
+			return getTitle();
+
+		// Check the database for other titles
+		List<Record> recs = GetRecords.create().getRecords(this.getTitle());
+		int count = 0;
+		for (Record rec : recs)
+			if (rec.getFormat().getBaseFormat().equals("CD")
+					&& rec.getAuthor().equals(this.getAuthor()))
+				count++;
+		if (count == 1)
+			return getTitle();
+		else
+			return getTitle() + " " + getCatNoString();
 	}
 
 	public String getRiploc() {

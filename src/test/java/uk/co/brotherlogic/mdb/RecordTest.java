@@ -1,7 +1,9 @@
 package uk.co.brotherlogic.mdb;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -97,6 +99,27 @@ public class RecordTest extends TestCase {
 			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
 			assert (nrec.getAuthor().equals("New Fake Author"));
 
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testOverlap() {
+		try {
+			Collection<Record> records = GetRecords.create().getRecords(
+					"Overload");
+			List<String> overloadReps = new LinkedList<String>();
+			for (Record rec : records)
+				if (rec.getFormat().getBaseFormat().equals("CD"))
+					overloadReps.add(rec.getFileAdd());
+			for (int i = 0; i < overloadReps.size(); i++)
+				for (int j = i + 1; j < overloadReps.size(); j++) {
+					if (overloadReps.get(i).equals(overloadReps.get(j)))
+						System.err.println(overloadReps.get(i) + " vs "
+								+ overloadReps.get(j));
+					assert (!overloadReps.get(i).equals(overloadReps.get(j)));
+				}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
