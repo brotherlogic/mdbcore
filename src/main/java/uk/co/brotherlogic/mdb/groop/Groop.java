@@ -26,11 +26,11 @@ public class Groop implements Comparable<Groop>, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6634379623430065530L;
-	// Groop properties
-	private String sortName = "";
-	private String showName = "";
 	private int groopNumber;
 	private Collection<LineUp> lineUps = null;
+	private String showName = "";
+	// Groop properties
+	private String sortName = "";
 
 	private boolean updated = false;
 
@@ -230,7 +230,7 @@ public class Groop implements Comparable<Groop>, Serializable {
 
 	@Override
 	public String toString() {
-		return sortName;
+		return "GROOP [" + groopNumber + "]: " + sortName;
 	}
 
 }

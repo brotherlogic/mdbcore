@@ -281,9 +281,9 @@ public class Record implements Comparable<Record> {
 		return format;
 	}
 
-	public String getFormTrackArtist(int formTrackNumber) {
+	public String getFormTrackArtist(int formTrackNumber) throws SQLException {
 		List<Track> trackRepTracks = new LinkedList<Track>();
-		for (Track t : tracks)
+		for (Track t : getTracks())
 			if (t.getFormTrackNumber() == formTrackNumber)
 				trackRepTracks.add(t);
 
@@ -463,7 +463,7 @@ public class Record implements Comparable<Record> {
 		return ret;
 	}
 
-	public String getTrackRep(int formTrackNumber) {
+	public String getTrackRep(int formTrackNumber) throws SQLException {
 		try {
 			return numberize(formTrackNumber) + "~"
 					+ sanitize(getFormTrackArtist(formTrackNumber)) + "~"
@@ -489,8 +489,9 @@ public class Record implements Comparable<Record> {
 
 	public Collection<Track> getTracks() throws SQLException {
 
-		if (tracks == null || tracks.size() == 0)
+		if (tracks == null || tracks.size() == 0) {
 			tracks = GetRecords.create().getTracks(number);
+		}
 
 		return tracks;
 	}

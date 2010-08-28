@@ -585,7 +585,7 @@ public class GetRecords {
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
-		// Naive approach to check for spped
+		// Naive approach to check for speed
 		Track currTrack = null;
 		while (rs.next()) {
 			int trckNum = rs.getInt(4);
