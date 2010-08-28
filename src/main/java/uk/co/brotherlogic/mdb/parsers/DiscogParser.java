@@ -64,7 +64,9 @@ public class DiscogParser {
 							.newSAXParser();
 					DiscogXMLParser handler = new DiscogXMLParser();
 					parser.parse(uc.getInputStream(), handler);
-					return handler.getRecord();
+					Record r = handler.getRecord();
+					r.setDiscogsNum(id);
+					return r;
 				}
 			} catch (Exception e2) {
 				throw new IOException(e2);
