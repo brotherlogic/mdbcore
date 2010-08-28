@@ -43,7 +43,7 @@ public class Record implements Comparable<Record> {
 	private static final double GROOP_RATIO = 0.8;
 
 	/** Replacement string used to represent spaces when sanitizing */
-	private static final String REPLACE = "aaaaaaaaaaaaa";
+	private static final String REPLACE = "~ababababababa~";
 
 	/**
 	 * 
