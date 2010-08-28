@@ -50,6 +50,10 @@ public final class Connect {
 		Connect.getConnection();
 	}
 
+	public static void setForDevMode() {
+		operationMode = mode.DEVELOPMENT;
+	}
+
 	/** The connection to the local DB */
 	private Connection locDB;
 

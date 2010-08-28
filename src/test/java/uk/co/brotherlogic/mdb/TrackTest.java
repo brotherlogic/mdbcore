@@ -16,6 +16,11 @@ import uk.co.brotherlogic.mdb.record.Track;
 
 public class TrackTest extends TestCase {
 
+	public TrackTest() {
+		super();
+		Connect.setForDevMode();
+	}
+
 	public void testFormTrack() {
 		// Create
 		Record r = new Record();

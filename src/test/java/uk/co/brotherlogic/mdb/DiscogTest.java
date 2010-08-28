@@ -6,6 +6,11 @@ import uk.co.brotherlogic.mdb.record.Record;
 
 public class DiscogTest extends TestCase {
 
+	public DiscogTest() {
+		super();
+		Connect.setForDevMode();
+	}
+
 	public void testDiscog() {
 		DiscogParser parser = new DiscogParser();
 
