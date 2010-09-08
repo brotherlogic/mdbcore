@@ -43,4 +43,22 @@ public class DiscogTest extends TestCase {
 		}
 	}
 
+	public final void testDiscogLabels() {
+		DiscogParser parser = new DiscogParser();
+
+		// This is MV & EE - Drone Trailer
+		try {
+			Record r = parser.parseDiscogRelease(DISCOG_NUMBER);
+
+			// Check that the format tracks are correct
+			assert (r.getLabels().size() == 1);
+			assert (r.getLabels().iterator().next().getName()
+					.equals("Dicristina Stair Builders"));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
 }
