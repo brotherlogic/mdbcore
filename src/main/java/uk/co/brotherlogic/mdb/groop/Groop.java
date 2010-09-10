@@ -21,7 +21,8 @@ import uk.co.brotherlogic.mdb.artist.GetArtists;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
-public class Groop implements Comparable<Groop>, Serializable {
+public class Groop implements Comparable<Groop>, Serializable
+{
 	/**
 	 * 
 	 */
@@ -34,22 +35,26 @@ public class Groop implements Comparable<Groop>, Serializable {
 
 	private boolean updated = false;
 
-	public Groop() {
+	public Groop()
+	{
 
 	}
 
-	public Groop(String sortName) {
+	public Groop(String sortName)
+	{
 		this(sortName, Utils.flipString(sortName));
 	}
 
-	public Groop(String sortName, String showName) {
+	public Groop(String sortName, String showName)
+	{
 		this.sortName = sortName;
 		this.showName = showName;
 		groopNumber = -1;
 		lineUps = new LinkedList<LineUp>();
 	}
 
-	public Groop(String sortName, String showName, int num) {
+	public Groop(String sortName, String showName, int num)
+	{
 		// Set the variables
 		this.sortName = sortName;
 		this.showName = showName;
@@ -57,7 +62,8 @@ public class Groop implements Comparable<Groop>, Serializable {
 	}
 
 	public Groop(String sortName, String showName, int num,
-			Collection<LineUp> lineUps) {
+			Collection<LineUp> lineUps)
+	{
 		// Set the variables
 		this.sortName = sortName;
 		this.showName = showName;
@@ -66,43 +72,53 @@ public class Groop implements Comparable<Groop>, Serializable {
 		this.lineUps.addAll(lineUps);
 	}
 
-	public void addLineUp(LineUp in) {
+	public void addLineUp(LineUp in)
+	{
 		if (lineUps == null)
 			lineUps = new LinkedList<LineUp>();
 		lineUps.add(in);
 	}
 
-	public void addLineUps(Collection<LineUp> lineUpsToAdd) {
+	public void addLineUps(Collection<LineUp> lineUpsToAdd)
+	{
 		if (lineUps == null)
 			lineUps = new LinkedList<LineUp>();
 		lineUps.addAll(lineUpsToAdd);
 	}
 
-	public Groop build(String name) {
+	public Groop build(String name)
+	{
 		return new Groop(name, Utils.flipString(name), -1);
 	}
 
-	public int compareTo(Groop o) {
+	public int compareTo(Groop o)
+	{
 		return -sortName.toLowerCase().compareTo(o.sortName.toLowerCase());
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(Object o)
+	{
 		if (o instanceof Groop)
 			return this.compareTo((Groop) o) == 0;
 		else
 			return false;
 	}
 
-	private void fillLineUp() {
-		try {
+	private void fillLineUp()
+	{
+		try
+		{
 			this.lineUps = GetGroops.build().getLineUps(this);
-		} catch (SQLException e) {
+		}
+		catch (SQLException e)
+		{
 			e.printStackTrace();
 		}
 	}
 
-	public Collection<Artist> getAllMembers() {
+	public Collection<Artist> getAllMembers()
+	{
 		Set<Artist> allMembers = new TreeSet<Artist>();
 
 		for (LineUp lineUp : getLineUps())
@@ -111,20 +127,25 @@ public class Groop implements Comparable<Groop>, Serializable {
 		return allMembers;
 	}
 
-	public Collection<Record> getAuthoredRecords() throws SQLException {
+	public Collection<Record> getAuthoredRecords() throws SQLException
+	{
 		return GetRecords.create().getRecordsWithAuthor(this.showName);
 	}
 
-	public Collection<Artist> getCoreMembers() {
+	public Collection<Artist> getCoreMembers()
+	{
 		Set<Artist> coreMembers = new TreeSet<Artist>();
 		boolean first = true;
 
 		for (LineUp lineUp : getLineUps())
-			if (first) {
+			if (first)
+			{
 				// Add all the artists
 				coreMembers.addAll(lineUp.getArtists());
 				first = false;
-			} else {
+			}
+			else
+			{
 				Collection<Artist> toRemove = new LinkedList<Artist>();
 				for (Artist artist : coreMembers)
 					if (!lineUp.getArtists().contains(artist))
@@ -135,7 +156,8 @@ public class Groop implements Comparable<Groop>, Serializable {
 		return coreMembers;
 	}
 
-	public LineUp getLineUp(int in) {
+	public LineUp getLineUp(int in)
+	{
 		if (lineUps == null || lineUps.size() == 0)
 			fillLineUp();
 
@@ -143,9 +165,11 @@ public class Groop implements Comparable<Groop>, Serializable {
 		// Move and iterator to the right point
 		boolean found = false;
 		Iterator<LineUp> it = lineUps.iterator();
-		while (!found && it.hasNext()) {
+		while (!found && it.hasNext())
+		{
 			LineUp temp = it.next();
-			if (temp.getLineUpNumber() == in) {
+			if (temp.getLineUpNumber() == in)
+			{
 				ret = temp;
 				found = true;
 			}
@@ -154,21 +178,25 @@ public class Groop implements Comparable<Groop>, Serializable {
 		return ret;
 	}
 
-	public Collection<LineUp> getLineUps() {
+	public Collection<LineUp> getLineUps()
+	{
 		if (lineUps == null || lineUps.size() == 0)
 			fillLineUp();
 		return lineUps;
 	}
 
-	public int getNoLineUps() {
+	public int getNoLineUps()
+	{
 		return lineUps.size();
 	}
 
-	public int getNumber() {
+	public int getNumber()
+	{
 		return groopNumber;
 	}
 
-	public Collection<Record> getPersRecords() throws SQLException {
+	public Collection<Record> getPersRecords() throws SQLException
+	{
 		List<Record> persRecords = new LinkedList<Record>();
 
 		// Get the artist
@@ -178,59 +206,70 @@ public class Groop implements Comparable<Groop>, Serializable {
 		return persRecords;
 	}
 
-	public String getShowName() {
+	public String getShowName()
+	{
 		return showName;
 	}
 
-	public String getSimpRep() {
+	public String getSimpRep()
+	{
 		return "G" + groopNumber;
 	}
 
-	public String getSortName() {
+	public String getSortName()
+	{
 		return sortName;
 	}
 
-	public Collection<Record> getUnauthoredRecords() throws SQLException {
+	public Collection<Record> getUnauthoredRecords() throws SQLException
+	{
 		return GetRecords.create().getRecordsFeaturingGroop(this.showName,
 				this.groopNumber);
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return sortName.hashCode();
 	}
 
-	public void save() throws SQLException {
+	public void save() throws SQLException
+	{
 		if (groopNumber == -1)
 			groopNumber = GetGroops.build().addGroop(this);
 		else if (updated)
 			GetGroops.build().save(this);
 	}
 
-	public void setLineUps(Collection<LineUp> lineUpsIn) {
+	public void setLineUps(Collection<LineUp> lineUpsIn)
+	{
 		// Clear and add lineUpsIn
 		lineUps.clear();
 		lineUps.addAll(lineUpsIn);
 	}
 
-	public void setNumber(int in) {
+	public void setNumber(int in)
+	{
 		groopNumber = in;
 	}
 
-	public void setShowName(String groopIn) {
+	public void setShowName(String groopIn)
+	{
 		showName = groopIn;
 		updated = true;
 	}
 
 	// Set methods
-	public void setSortName(String groopIn) {
+	public void setSortName(String groopIn)
+	{
 		sortName = groopIn;
 		updated = true;
 	}
 
 	@Override
-	public String toString() {
-		return "GROOP [" + groopNumber + "]: " + sortName;
+	public String toString()
+	{
+		return sortName;
 	}
 
 }
