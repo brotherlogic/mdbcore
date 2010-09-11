@@ -182,7 +182,7 @@ public class RecordUtils
 	public static void main(String[] args) throws Exception
 	{
 		for (Record rec : RecordUtils.getRecords("12", 10))
-			System.err.println(rec.getAuthor() + " - " + rec.getTitle());
+			System.out.println(rec.getAuthor() + " - " + rec.getTitle());
 	}
 
 }
