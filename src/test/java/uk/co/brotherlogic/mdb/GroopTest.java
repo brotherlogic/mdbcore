@@ -6,35 +6,35 @@ import junit.framework.TestCase;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.groop.Groop;
 
-public class GroopTest extends TestCase
-{
-	public void testGroop()
-	{
-		try
-		{
-			//Create
+public class GroopTest extends TestCase {
+	public GroopTest() {
+		super();
+		Connect.setForDevMode();
+	}
+
+	public void testGroop() {
+		try {
+			// Create
 			Groop g = new Groop("TestGroop", "TestGroop");
 
-			//Persist
+			// Persist
 			g.save();
 
-			//Retrieve
+			// Retrieve
 			Groop g2 = GetGroops.build().getGroop("TestGroop");
 
-			//Test
+			// Test
 			assert (g2.equals(g));
 
-			//Make a new groop and test for collisions
+			// Make a new groop and test for collisions
 			Groop g3 = new Groop("TestGroop", "TestGroop");
 			g3.save();
 			Groop g4 = GetGroops.build().getGroop("TestGroop");
 
-			//Check
+			// Check
 			assert (g3.equals(g4));
 			assert (g3.equals(g2));
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}

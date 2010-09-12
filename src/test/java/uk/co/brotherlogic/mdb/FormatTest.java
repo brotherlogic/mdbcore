@@ -6,12 +6,14 @@ import junit.framework.TestCase;
 import uk.co.brotherlogic.mdb.format.Format;
 import uk.co.brotherlogic.mdb.format.GetFormats;
 
-public class FormatTest extends TestCase
-{
-	public void testFormat()
-	{
-		try
-		{
+public class FormatTest extends TestCase {
+	public FormatTest() {
+		super();
+		Connect.setForDevMode();
+	}
+
+	public void testFormat() {
+		try {
 			// Create
 			Format form = new Format("TestFormat", "12");
 
@@ -32,23 +34,17 @@ public class FormatTest extends TestCase
 			Format form4 = GetFormats.create().getFormat("TestFormat");
 			assert (form4.equals(form3));
 			assert (form4.equals(form));
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
 		}
 	}
 
-	public void testRetrieveFormats()
-	{
+	public void testRetrieveFormats() {
 		// Clear the database
-		try
-		{
+		try {
 			GetFormats.create().getFormats();
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
 		}

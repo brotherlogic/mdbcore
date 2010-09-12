@@ -9,16 +9,18 @@ import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 
-public class LineUpTest extends TestCase
-{
-	public void testLineUp()
-	{
-		try
-		{
-			//Create a groop
+public class LineUpTest extends TestCase {
+	public LineUpTest() {
+		super();
+		Connect.setForDevMode();
+	}
+
+	public void testLineUp() {
+		try {
+			// Create a groop
 			Groop g = new Groop("lutgroop", "lutgroop");
 
-			//Create some artists
+			// Create some artists
 			Artist a1 = new Artist("artist1");
 			Artist a2 = new Artist("artist2");
 
@@ -29,13 +31,14 @@ public class LineUpTest extends TestCase
 			g.save();
 			lineup.save();
 
-			//Retrieve the groop
+			// Retrieve the groop
 			Groop g2 = GetGroops.build().getGroop("lutgroop");
 			LinkedList<LineUp> lineups = new LinkedList<LineUp>(g2.getLineUps());
 			assert (lineups.size() == 1);
 
 			LineUp lineup2 = lineups.get(0);
-			LinkedList<Artist> artists = new LinkedList<Artist>(lineup2.getArtists());
+			LinkedList<Artist> artists = new LinkedList<Artist>(lineup2
+					.getArtists());
 			assert (artists.size() == 2);
 			assert (artists.get(0).equals(a1) || artists.get(0).equals(a2));
 			assert (artists.get(0).equals(a1) || artists.get(0).equals(a2));
@@ -51,9 +54,7 @@ public class LineUpTest extends TestCase
 
 			g3.save();
 			lineup3.save();
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
