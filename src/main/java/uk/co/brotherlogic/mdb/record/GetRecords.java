@@ -82,7 +82,7 @@ public class GetRecords
 		updateRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ? WHERE RecordNumber = ?");
+						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ? WHERE RecordNumber = ?");
 		getPersonnel = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -740,7 +740,8 @@ public class GetRecords
 		updateRecord.setDouble(11, in.getPrice());
 		updateRecord.setInt(12, in.getShelfPos());
 		updateRecord.setString(13, in.getRiploc());
-		updateRecord.setInt(14, in.getNumber());
+		updateRecord.setInt(14, in.getDiscogsNum());
+		updateRecord.setInt(15, in.getNumber());
 
 		updateRecord.execute();
 		int recordNumber = in.getNumber();

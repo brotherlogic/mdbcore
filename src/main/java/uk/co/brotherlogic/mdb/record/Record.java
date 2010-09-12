@@ -17,11 +17,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
@@ -43,7 +43,7 @@ public class Record implements Comparable<Record> {
 	private static final double GROOP_RATIO = 0.8;
 
 	/** Replacement string used to represent spaces when sanitizing */
-	private static final String REPLACE = "~ababababababa~";
+	public static final String REPLACE = "~!@$%^&*()~";
 
 	/**
 	 * 
@@ -192,8 +192,7 @@ public class Record implements Comparable<Record> {
 	@Override
 	public int compareTo(Record o) {
 		return (title.toLowerCase() + number).compareTo(o.getTitle()
-				.toLowerCase()
-				+ (o.getNumber()));
+				.toLowerCase() + (o.getNumber()));
 	}
 
 	public void createTracks(int noTracks) {
@@ -548,8 +547,9 @@ public class Record implements Comparable<Record> {
 	private String sanitize(String str) throws UnsupportedEncodingException {
 
 		// Commas are fine for us
-		return URLEncoder.encode(str.replace(" ", REPLACE), "UTF-8").replace(
-				REPLACE, " ").replace("%2C", ",");
+		return URLEncoder.encode(str.replace(" ", REPLACE), "UTF-8")
+				.replace(URLEncoder.encode(REPLACE, "UTF-8"), " ")
+				.replace("%2C", ",");
 	}
 
 	public void save() throws SQLException {
