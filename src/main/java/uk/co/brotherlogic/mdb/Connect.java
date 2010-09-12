@@ -11,14 +11,16 @@ import java.sql.SQLException;
  * 
  * @author Simon Tucker
  */
-public final class Connect {
+public final class Connect
+{
 	/** enum of modes */
-	private enum mode {
+	private enum mode
+	{
 		DEVELOPMENT, PRODUCTION
 	}
 
 	/** Current mode of operation */
-	private static mode operationMode = mode.PRODUCTION;
+	private static mode operationMode = mode.DEVELOPMENT;
 
 	private static Connect singleton;
 
@@ -29,8 +31,10 @@ public final class Connect {
 	 * @throws SQLException
 	 *             if a db connection cannot be established
 	 */
-	public static Connect getConnection() throws SQLException {
-		if (singleton == null) {
+	public static Connect getConnection() throws SQLException
+	{
+		if (singleton == null)
+		{
 			singleton = new Connect(operationMode);
 
 			// Upgrade the database ready for use
@@ -39,15 +43,22 @@ public final class Connect {
 		return singleton;
 	}
 
-	public static String getSource() {
+	public static String getSource()
+	{
 		if (operationMode == mode.DEVELOPMENT)
 			return "Dev";
 		else
 			return "";
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception
+	{
 		Connect.getConnection();
+	}
+
+	public static void setForDevMode()
+	{
+		operationMode = mode.DEVELOPMENT;
 	}
 
 	/** The connection to the local DB */
@@ -60,7 +71,8 @@ public final class Connect {
 
 	long totalDBTime = 0;
 
-	private Connect(mode operationMode) throws SQLException {
+	private Connect(mode operationMode) throws SQLException
+	{
 		makeConnection(operationMode);
 	}
 
@@ -70,7 +82,8 @@ public final class Connect {
 	 * @throws SQLException
 	 *             if the cancel fails
 	 */
-	public void cancelTrans() throws SQLException {
+	public void cancelTrans() throws SQLException
+	{
 		locDB.rollback();
 	}
 
@@ -80,11 +93,13 @@ public final class Connect {
 	 * @throws SQLException
 	 *             If the commit fails
 	 */
-	public void commitTrans() throws SQLException {
+	public void commitTrans() throws SQLException
+	{
 		locDB.commit();
 	}
 
-	public ResultSet executeQuery(PreparedStatement ps) throws SQLException {
+	public ResultSet executeQuery(PreparedStatement ps) throws SQLException
+	{
 
 		sCount++;
 
@@ -92,14 +107,16 @@ public final class Connect {
 		ResultSet rs = ps.executeQuery();
 		long eTime = System.currentTimeMillis() - sTime;
 		totalDBTime += eTime;
-		if (eTime > longestQueryTime) {
+		if (eTime > longestQueryTime)
+		{
 			longestQueryTime = eTime;
 			longestQuery = ps.toString();
 		}
 		return rs;
 	}
 
-	public void executeStatement(PreparedStatement ps) throws SQLException {
+	public void executeStatement(PreparedStatement ps) throws SQLException
+	{
 
 		sCount++;
 
@@ -107,13 +124,15 @@ public final class Connect {
 		ps.execute();
 		long eTime = System.currentTimeMillis() - sTime;
 		totalDBTime += eTime;
-		if (eTime > longestQueryTime) {
+		if (eTime > longestQueryTime)
+		{
 			longestQueryTime = eTime;
 			longestQuery = ps.toString();
 		}
 	}
 
-	public long getLQueryTime() {
+	public long getLQueryTime()
+	{
 		return longestQueryTime;
 	}
 
@@ -127,17 +146,20 @@ public final class Connect {
 	 *             If the construction fails
 	 */
 	public PreparedStatement getPreparedStatement(final String sql)
-			throws SQLException {
+			throws SQLException
+	{
 		// Create the statement
 		PreparedStatement ps = locDB.prepareStatement(sql);
 		return ps;
 	}
 
-	public int getSCount() {
+	public int getSCount()
+	{
 		return sCount;
 	}
 
-	public long getTQueryTime() {
+	public long getTQueryTime()
+	{
 		return totalDBTime;
 	}
 
@@ -147,16 +169,20 @@ public final class Connect {
 	 * @throws SQLException
 	 *             if something fails
 	 */
-	private void makeConnection(mode operationMode) throws SQLException {
-		try {
+	private void makeConnection(mode operationMode) throws SQLException
+	{
+		try
+		{
 			// Load all the drivers and initialise the database connection
 			Class.forName("org.postgresql.Driver");
 
-			if (operationMode == mode.PRODUCTION) {
-				System.err.println("Connecting to production database");
+			if (operationMode == mode.PRODUCTION)
+			{
 				locDB = DriverManager
 						.getConnection("jdbc:postgresql://192.168.1.100/music?user=music");
-			} else {
+			}
+			else
+			{
 				System.err.println("Connection to development database");
 				locDB = DriverManager
 						.getConnection("jdbc:postgresql://localhost/musicdev?user=musicdev");
@@ -164,12 +190,15 @@ public final class Connect {
 
 			// Switch off auto commit
 			locDB.setAutoCommit(false);
-		} catch (ClassNotFoundException e) {
+		}
+		catch (ClassNotFoundException e)
+		{
 			throw new SQLException(e);
 		}
 	}
 
-	public void printStats() {
+	public void printStats()
+	{
 		System.out.println("SQL: " + longestQueryTime + " => " + longestQuery);
 	}
 }

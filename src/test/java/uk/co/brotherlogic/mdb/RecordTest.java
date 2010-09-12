@@ -1,7 +1,9 @@
 package uk.co.brotherlogic.mdb;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -13,6 +15,11 @@ import uk.co.brotherlogic.mdb.record.Record;
 
 public class RecordTest extends TestCase {
 	private static boolean built = false;
+
+	public RecordTest() {
+		super();
+		Connect.setForDevMode();
+	}
 
 	private void buildRecord() {
 		if (!built) {
@@ -32,11 +39,15 @@ public class RecordTest extends TestCase {
 			r.setReleaseType(1);
 			r.setTitle("fake-title");
 			r.setYear(2000);
+			r.setDiscogsNum(1234);
 
 			try {
 				// Persist
 				r.save();
 				built = true;
+
+				// Set some scores
+				r.addScore(User.getUser("Simon"), 5);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -49,6 +60,17 @@ public class RecordTest extends TestCase {
 			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
 			assert (nrec.getCatNos().size() == 1);
 			assert (nrec.getCatNoString().equals("fake-cat-no"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testDiscog() {
+		try {
+			buildRecord();
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec.getDiscogsNum() == 1234);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
@@ -77,6 +99,27 @@ public class RecordTest extends TestCase {
 			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
 			assert (nrec.getAuthor().equals("New Fake Author"));
 
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testOverlap() {
+		try {
+			Collection<Record> records = GetRecords.create().getRecords(
+					"Overload");
+			List<String> overloadReps = new LinkedList<String>();
+			for (Record rec : records)
+				if (rec.getFormat().getBaseFormat().equals("CD"))
+					overloadReps.add(rec.getFileAdd());
+			for (int i = 0; i < overloadReps.size(); i++)
+				for (int j = i + 1; j < overloadReps.size(); j++) {
+					if (overloadReps.get(i).equals(overloadReps.get(j)))
+						System.err.println(overloadReps.get(i) + " vs "
+								+ overloadReps.get(j));
+					assert (!overloadReps.get(i).equals(overloadReps.get(j)));
+				}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
@@ -117,6 +160,19 @@ public class RecordTest extends TestCase {
 			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
 			double score = nrec.getScore();
 			double sscore = nrec.getScore(User.getUser("Simon"));
+			assert (score >= 0);
+			assert (sscore >= 0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testWeaver() {
+		try {
+			Record weaver = GetRecords.create()
+					.getRecords("The Fallen By Watch Bird").get(0);
+			assert (!weaver.getTrackRep(1).contains(Record.REPLACE));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			assert (false);
