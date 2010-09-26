@@ -153,17 +153,21 @@ public class RecordUtils {
 		return currRecord;
 	}
 
-	public static Record getRecordToRip() throws SQLException {
+	public static List<Record> getRecordToRip(int n) throws SQLException {
 		String sql = "SELECT recordnumber from records,formats WHERE baseformat = 'CD' AND format = formatnumber AND riploc IS NULL ORDER BY owner";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ResultSet rs = ps.executeQuery();
+		List<Record> recs = new LinkedList<Record>();
 		while (rs.next()) {
 			Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
 			if (!rec.getFormat().getName().equals("DVD"))
-				return rec;
+				recs.add(rec);
+
+			if (recs.size() == n)
+				return recs;
 		}
-		return null;
+		return recs;
 	}
 
 	public static void main(String[] args) throws Exception {
