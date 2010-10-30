@@ -160,6 +160,25 @@ public class RecordTest extends TestCase
 		}
 	}
 
+	public void testParent()
+	{
+		try
+		{
+			buildRecord();
+			Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec.getParent() == -1);
+			nrec.setParent(123);
+			nrec.save();
+			Record nrec2 = GetRecords.create().getRecords("fake-title").get(0);
+			assert (nrec2.getParent() == 123);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
 	public void testRetrieveSize()
 	{
 		try
