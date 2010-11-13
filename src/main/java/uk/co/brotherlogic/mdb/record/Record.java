@@ -53,7 +53,7 @@ public class Record implements Comparable<Record>
 
 	public static void main(String[] args) throws Exception
 	{
-		Record r = GetRecords.create().getRecord(9410);
+		Record r = GetRecords.create().getRecord(3373);
 		System.out.println(r.getFileAdd());
 	}
 
