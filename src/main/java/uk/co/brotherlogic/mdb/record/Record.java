@@ -152,6 +152,13 @@ public class Record implements Comparable<Record>
 		catnos.add(catNo);
 	}
 
+	private String addD(String in)
+	{
+		if (in.endsWith("."))
+			return in + "d";
+		return in;
+	}
+
 	public void addLabel(Label label)
 	{
 		labels.add(label);
@@ -302,7 +309,7 @@ public class Record implements Comparable<Record>
 	{
 		try
 		{
-			return sanitize(getAuthor()) + File.separator
+			return addD(sanitize(getAuthor())) + File.separator
 					+ sanitize(getRepTitle());
 		}
 		catch (UnsupportedEncodingException e)
