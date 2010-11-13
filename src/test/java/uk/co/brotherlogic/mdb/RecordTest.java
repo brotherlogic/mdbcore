@@ -1,5 +1,6 @@
 package uk.co.brotherlogic.mdb;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
@@ -90,6 +91,24 @@ public class RecordTest extends TestCase
 			nrec.save();
 			Record nrec2 = GetRecords.create().getRecords("fake-title").get(0);
 			assert (nrec2.getDiscogsNum() == 1235);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	public void testFileAdd()
+	{
+		Record r = new Record();
+		r.setAuthor("Burman, R.D.");
+		r.setTitle("Hello");
+		r.setFormat(new Format("12\"", "12"));
+
+		try
+		{
+			assert (!r.getFileAdd().contains("." + File.separator));
 		}
 		catch (SQLException e)
 		{
