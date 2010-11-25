@@ -90,7 +90,7 @@ public class Record implements Comparable<Record>
 	/** The id number of the owner of the record */
 	private int owner;
 
-	/** Parent of the record (for multi-item boxsets */
+	/** Parent of the record (for multi-item boxsets) */
 	private Integer parent;
 
 	/** Price paid for the record */
