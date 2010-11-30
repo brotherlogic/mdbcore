@@ -3,6 +3,7 @@ package uk.co.brotherlogic.mdb;
 import junit.framework.TestCase;
 import uk.co.brotherlogic.mdb.parsers.DiscogParser;
 import uk.co.brotherlogic.mdb.record.Record;
+import uk.co.brotherlogic.mdb.record.Track;
 
 /**
  * Testing the discogs parser
@@ -10,7 +11,11 @@ import uk.co.brotherlogic.mdb.record.Record;
  * @author simon
  * 
  */
-public class DiscogTest extends TestCase {
+public class DiscogTest extends TestCase
+{
+
+	/** The Fall - Wonderful and Frightening World Box Set */
+	private static final int DISCOG_FALL = 2518468;
 
 	/** MV & EE - Drone Trailer */
 	private static final int DISCOG_NUMBER = 1642454;
@@ -21,7 +26,8 @@ public class DiscogTest extends TestCase {
 	/**
 	 * Constructor
 	 */
-	public DiscogTest() {
+	public DiscogTest()
+	{
 		super();
 		Connect.setForDevMode();
 	}
@@ -29,44 +35,54 @@ public class DiscogTest extends TestCase {
 	/**
 	 * Main test method
 	 */
-	public final void testDiscog() {
+	public final void testDiscog()
+	{
 		DiscogParser parser = new DiscogParser();
 
 		// This is MV & EE - Drone Trailer
-		try {
+		try
+		{
 			Record r = parser.parseDiscogRelease(DISCOG_NUMBER);
 
 			// Check that the format tracks are correct
 			assert (r.getTracks().iterator().next().getFormTrackNumber() != -1);
 			assert (r.getDiscogsNum() == DISCOG_NUMBER);
 
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			assert (false);
 		}
 	}
 
-	public final void testDiscogFormatTracks() {
+	public final void testDiscogFormatTracks()
+	{
 		DiscogParser parser = new DiscogParser();
 
 		// This is MV & EE - Drone Trailer
-		try {
+		try
+		{
 			Record r = parser.parseDiscogRelease(DISCOG_NUMBER_2);
 
 			// Check that the format tracks are correct
 			assert (r.getTracks().iterator().next().getFormTrackNumber() != -1);
 
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			assert (false);
 		}
 	}
 
-	public final void testDiscogLabels() {
+	public final void testDiscogLabels()
+	{
 		DiscogParser parser = new DiscogParser();
 
 		// This is MV & EE - Drone Trailer
-		try {
+		try
+		{
 			Record r = parser.parseDiscogRelease(DISCOG_NUMBER);
 
 			// Check that the format tracks are correct
@@ -74,7 +90,36 @@ public class DiscogTest extends TestCase {
 			assert (r.getLabels().iterator().next().getName()
 					.equals("Dicristina Stair Builders"));
 
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			assert (false);
+		}
+	}
+
+	/**
+	 * Fall Test
+	 */
+	public final void testFall()
+	{
+		DiscogParser parser = new DiscogParser();
+
+		try
+		{
+			Record r = parser.parseDiscogRelease(DISCOG_FALL);
+			assert (r.getTracks().size() == 50);
+
+			// Check the last track has a correct title
+			for (Track t : r.getTracks())
+			{
+				if (t.getTrackNumber() == 50)
+					assert (t.getTitle().equals("Middle Mass (Live)"));
+			}
+
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			assert (false);
 		}
