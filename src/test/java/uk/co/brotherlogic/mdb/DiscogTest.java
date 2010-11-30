@@ -108,6 +108,7 @@ public class DiscogTest extends TestCase
 		try
 		{
 			Record r = parser.parseDiscogRelease(DISCOG_FALL);
+			System.err.println("TRACKS = " + r.getTracks().size());
 			assert (r.getTracks().size() == 50);
 
 			// Check the last track has a correct title
