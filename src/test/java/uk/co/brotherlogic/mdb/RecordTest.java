@@ -116,7 +116,8 @@ public class RecordTest extends TestCase
 			assert (false);
 		}
 	}
-
+	
+	
 	public void testLabels()
 	{
 		try

@@ -45,6 +45,12 @@ public class GetRecords
 			singleton = new GetRecords();
 		return singleton;
 	}
+	
+	public static void main(String[] args) throws Exception
+	{
+		Record antbox = GetRecords.create().getRecord(10284);
+		System.err.println(antbox.getNumberOfFormatTracks());
+	}
 
 	PreparedStatement addRecord;
 	PreparedStatement getPersonnel;
