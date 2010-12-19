@@ -95,6 +95,17 @@ public class Record implements Comparable<Record>
 
 	/** Price paid for the record */
 	private double price;
+	
+	/** Price of sold record */
+	private double soldPrice;
+
+	public double getSoldPrice() {
+		return soldPrice;
+	}
+
+	public void setSoldPrice(double soldPrice) {
+		this.soldPrice = soldPrice;
+	}
 
 	/** The month the record was released */
 	private int releaseMonth;
