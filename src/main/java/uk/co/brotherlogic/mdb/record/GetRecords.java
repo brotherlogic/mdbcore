@@ -45,6 +45,12 @@ public class GetRecords
 			singleton = new GetRecords();
 		return singleton;
 	}
+	
+	public static void main(String[] args) throws Exception
+	{
+		Record antbox = GetRecords.create().getRecord(10284);
+		System.err.println(antbox.getNumberOfFormatTracks());
+	}
 
 	PreparedStatement addRecord;
 	PreparedStatement getPersonnel;
@@ -70,7 +76,7 @@ public class GetRecords
 		addRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price,recrand,discog_id) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,random(),?)");
+						"INSERT INTO Records (Title,BoughtDate,Format,Notes,ReleaseYear,Category,Author,ReleaseMonth,ReleaseType, modified,Owner,purchase_price,recrand,discog_id,parent) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,random(),?,?)");
 		getRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -82,7 +88,7 @@ public class GetRecords
 		updateRecord = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ? WHERE RecordNumber = ?");
+						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ?, parent = ? WHERE RecordNumber = ?");
 		getPersonnel = Connect
 				.getConnection()
 				.getPreparedStatement(
@@ -157,6 +163,7 @@ public class GetRecords
 		addRecord.setInt(10, in.getOwner());
 		addRecord.setDouble(11, in.getPrice());
 		addRecord.setInt(12, in.getDiscogsNum());
+		addRecord.setInt(13, in.getParent());
 		Connect.getConnection().executeStatement(addRecord);
 
 		getRecord.setString(1, in.getTitle());
@@ -565,7 +572,7 @@ public class GetRecords
 		PreparedStatement s = Connect
 				.getConnection()
 				.getPreparedStatement(
-						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc,discog_id FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
+						"Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc,discog_id,parent,salepricepence FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
 		s.setInt(1, recNumber);
 		ResultSet rs = s.executeQuery();
 
@@ -590,6 +597,8 @@ public class GetRecords
 			int shelfpos = rs.getInt(12);
 			String riploc = rs.getString(13);
 			int discogid = rs.getInt(14);
+			int parent = rs.getInt(15);
+			double salePrice = rs.getDouble(16);
 
 			currRec = new Record(title, GetFormats.create().getFormat(format),
 					boughtDate, shelfpos);
@@ -603,6 +612,8 @@ public class GetRecords
 			currRec.setPrice(price);
 			currRec.setRiploc(riploc);
 			currRec.setDiscogsNum(discogid);
+			currRec.setParent(parent);
+			currRec.setSoldPrice(salePrice);
 
 			currRec.setCategory(GetCategories.build().getCategory(category));
 
@@ -741,7 +752,8 @@ public class GetRecords
 		updateRecord.setInt(12, in.getShelfPos());
 		updateRecord.setString(13, in.getRiploc());
 		updateRecord.setInt(14, in.getDiscogsNum());
-		updateRecord.setInt(15, in.getNumber());
+		updateRecord.setInt(15, in.getParent());
+		updateRecord.setInt(16, in.getNumber());
 
 		updateRecord.execute();
 		int recordNumber = in.getNumber();

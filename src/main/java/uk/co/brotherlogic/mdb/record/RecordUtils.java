@@ -161,7 +161,7 @@ public class RecordUtils {
 		List<Record> recs = new LinkedList<Record>();
 		while (rs.next()) {
 			Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
-			if (!rec.getFormat().getName().equals("DVD"))
+			if (!rec.getFormat().getName().equals("DVD") && rec.getTracks().size() > 0)
 				recs.add(rec);
 
 			if (recs.size() == n)
