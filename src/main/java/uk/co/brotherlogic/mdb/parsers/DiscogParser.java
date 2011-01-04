@@ -37,7 +37,9 @@ public class DiscogParser
 	public static void main(String[] args) throws Exception
 	{
 		DiscogParser p = new DiscogParser();
-		System.out.println(p.parseDiscogRelease(1642454));
+		Record r = p.parseDiscogRelease(2518468);
+		// System.out.println(r);
+		// System.out.println(r.getTracks().size());
 	}
 
 	String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
@@ -47,6 +49,7 @@ public class DiscogParser
 		URL url = new URL(base.replace("ID", "" + id));
 		try
 		{
+			// System.err.println(url);
 			HttpURLConnection uc = (HttpURLConnection) url.openConnection();
 			uc.addRequestProperty("Accept-Encoding", "gzip");
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
@@ -100,11 +103,12 @@ class DiscogXMLParser extends DefaultHandler
 	// Set up the mapping for the track numbers
 	Map<Integer, Integer> highest = new TreeMap<Integer, Integer>();
 
+	boolean ignore = false;
+
 	private boolean inArtists = false;
-
 	private boolean inFormats = false;
-	private boolean inLabels = false;
 
+	private boolean inLabels = false;
 	private boolean inMain = false;
 	private boolean inTracks = false;
 	List<LineUp> overallGroops = new LinkedList<LineUp>();
@@ -223,12 +227,18 @@ class DiscogXMLParser extends DefaultHandler
 							String[] elems = text.split("-");
 							int discNumber = Integer.parseInt(elems[0]);
 							int trckNumber = Integer.parseInt(elems[1]);
+
 							if (contNum
 									|| highest.get(discNumber - 1) + 1 == trckNumber)
 							{
+
 								number = trckNumber;
-								if (number > 1)
+								if (discNumber > 1
+										&& !highest.containsKey(discNumber))
 									contNum = true;
+								else
+									number = highest.get(discNumber - 1)
+											+ trckNumber;
 							}
 							else
 								number = highest.get(discNumber - 1)
@@ -244,14 +254,15 @@ class DiscogXMLParser extends DefaultHandler
 						{
 							number = Integer.parseInt(text);
 						}
+
 						currTrack.setTrackNumber(number);
 						currTrack.setFormTrackNumber(number);
-
 					}
 				}
 				else if (qualName.equals("track"))
 				{
-					rec.addTrack(currTrack);
+					if (currTrack.getTrackNumber() > 0)
+						rec.addTrack(currTrack);
 					if (currTrack.getLineUps().size() == 0)
 						currTrack.addLineUps(overallGroops);
 				}

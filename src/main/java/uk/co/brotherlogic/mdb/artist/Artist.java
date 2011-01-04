@@ -22,11 +22,11 @@ public class Artist implements Comparable<Artist>, Serializable {
 	/** The id number of the artist */
 	private int id;
 
-	/** The sort name */
-	private final String sortName;
-
 	/** The show name */
 	private final String showName;
+
+	/** The sort name */
+	private final String sortName;
 
 	/**
 	 * Empty constructor
@@ -53,6 +53,7 @@ public class Artist implements Comparable<Artist>, Serializable {
 		this.showName = show;
 	}
 
+	@Override
 	public final int compareTo(final Artist o) {
 		return -sortName.toLowerCase().compareTo(o.sortName.toLowerCase());
 	}
