@@ -84,7 +84,7 @@ public class RecordUtils {
 
 		String sql = "select recordnumber,count(score_value) as cnt,avg(score_value) AS mean  from records,score_history,formats WHERE format = formatnumber AND "
 				+ cd_extra
-				+ "baseformat = ? AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND user_id =1 GROUP BY recrand,recordnumber HAVING count(score_value) = 1 ORDER BY avg(score_value) DESC, recrand ASC LIMIT 10";
+				+ "baseformat = ? AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND user_id =1 GROUP BY records.owner, recrand,recordnumber HAVING count(score_value) = 1 ORDER BY owner, random() LIMIT 10";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
@@ -104,8 +104,8 @@ public class RecordUtils {
 
 		String sql = "select recordnumber,count(score_value) as cnt,avg(score_value) AS mean from records,score_history,formats WHERE format = formatnumber "
 				+ cd_extra
-				+ " AND baseformat = ? AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND salepricepence < 0 AND user_id =1 GROUP BY recrand,recordnumber HAVING count(score_value) = 1 "
-				+ "ORDER BY avg(score_value) DESC, recrand ASC LIMIT " + num;
+				+ " AND baseformat = ? AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND salepricepence < 0 AND user_id =1 GROUP BY records.owner, recrand,recordnumber HAVING count(score_value) = 1 "
+				+ "ORDER BY owner, random() LIMIT " + num;
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
@@ -161,7 +161,8 @@ public class RecordUtils {
 		List<Record> recs = new LinkedList<Record>();
 		while (rs.next()) {
 			Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
-			if (!rec.getFormat().getName().equals("DVD") && rec.getTracks().size() > 0)
+			if (!rec.getFormat().getName().equals("DVD")
+					&& rec.getTracks().size() > 0)
 				recs.add(rec);
 
 			if (recs.size() == n)
