@@ -45,6 +45,23 @@ public class RecordScore {
 			return 0.0;
 	}
 
+	public static int getCount(Record rec, User user) throws SQLException {
+      String sql = "SELECT count(score_value) from score_history WHERE record_id = ? AND user_id = ?";
+      PreparedStatement ps = Connect.getConnection()
+            .getPreparedStatement(sql);
+      ps.setInt(1, rec.getNumber());
+      ps.setInt(2, user.getID());
+      ResultSet rs = ps.executeQuery();
+      int count = 0;
+      if (rs.next()) {
+         count = rs.getInt(1);
+      }
+      rs.close();
+      ps.close();
+      
+      return count;
+   }
+	
 	public static double get(Record rec, User user) throws SQLException {
 		String sql = "SELECT score_value from score_history WHERE record_id = ? AND user_id = ?";
 		PreparedStatement ps = Connect.getConnection()
