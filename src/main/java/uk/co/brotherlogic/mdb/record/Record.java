@@ -534,6 +534,11 @@ public class Record implements Comparable<Record>
 	{
 		return RecordScore.get(this, user);
 	}
+	
+	public int getScoreCount(User user) throws SQLException
+	{
+	   return RecordScore.getCount(this, user);
+	}
 
 	public Integer getShelfPos()
 	{
