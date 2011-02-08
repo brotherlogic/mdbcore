@@ -36,8 +36,14 @@ public class RecordUtils
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setString(1, baseformat);
       ResultSet rs = Connect.getConnection().executeQuery(ps);
-      if (rs.next())
-         return GetRecords.create().getRecord(rs.getInt(1));
+      while (rs.next())
+      {
+         Record r = GetRecords.create().getRecord(rs.getInt(1));
+         System.err.println(r.getAuthor() + " - " + r.getTitle() + " : " + r.getChildren().size());
+         if (r.getChildren().size() == 0)
+            return r;
+      }
+
       return null;
    }
 
@@ -86,13 +92,14 @@ public class RecordUtils
 
       String sql = "select recordnumber,count(score_value) as cnt,avg(score_value) AS mean  from records,score_history,formats WHERE format = formatnumber AND "
             + cd_extra
-            + "baseformat = ? AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND user_id =1 GROUP BY records.owner, recrand,recordnumber HAVING count(score_value) = 1 ORDER BY owner, random() LIMIT 10";
+            + "baseformat = ? AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND user_id =1 GROUP BY records.owner, recrand,recordnumber HAVING count(score_value) = 1 ORDER BY owner, mean ASC LIMIT 10";
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setString(1, baseformat);
       ResultSet rs = Connect.getConnection().executeQuery(ps);
       while (rs.next())
       {
          Record r = GetRecords.create().getRecord(rs.getInt(1));
+         System.err.println(r.getAuthor() + " - " + r.getTitle() + " : " + r.getChildren().size());
          if (r.getChildren().size() == 0)
             return r;
       }
