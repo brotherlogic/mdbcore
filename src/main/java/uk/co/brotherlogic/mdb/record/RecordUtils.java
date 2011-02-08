@@ -90,8 +90,12 @@ public class RecordUtils
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setString(1, baseformat);
       ResultSet rs = Connect.getConnection().executeQuery(ps);
-      if (rs.next())
-         return GetRecords.create().getRecord(rs.getInt(1));
+      while (rs.next())
+      {
+         Record r = GetRecords.create().getRecord(rs.getInt(1));
+         if (r.getChildren().size() == 0)
+            return r;
+      }
 
       return null;
    }
@@ -172,8 +176,7 @@ public class RecordUtils
 
    public static void main(String[] args) throws Exception
    {
-      for (Record rec : RecordUtils.getRecordToRip(100))
-         System.out.println(rec.getAuthor() + " - " + rec.getTitle());
+      Record rec = RecordUtils.getRecordToListenTo("12");
+      System.out.println(rec.getAuthor() + " - " + rec.getTitle());
    }
-
 }
