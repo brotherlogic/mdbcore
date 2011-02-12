@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import uk.co.brotherlogic.mdb.Connect;
 
@@ -156,19 +155,12 @@ public class RecordUtils
       while (rs.next())
       {
          Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
-         if (!rec.getFormat().getName().equals("DVD") && rec.getTracks().size() > 0)
+         if (rec.getOwner() == 1 || rec.getFormat().getName().contains("x"))
             recs.add(rec);
 
          if (recs.size() == n)
             return recs;
       }
       return recs;
-   }
-
-   public static void main(String[] args) throws Exception
-   {
-      Properties props = System.getProperties();
-      for (Object obj : props.keySet())
-         System.out.println(obj + ": " + props.getProperty(obj.toString()));
    }
 }
