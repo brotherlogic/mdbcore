@@ -56,6 +56,24 @@
           <artifactId>maven-release-plugin</artifactId>
           <version>2.0-beta-9</version>
 	</plugin>
+	
+	  <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <executable>deploy.sh</executable>
+            <mainClass>uk.co.brotherlogic.mdb.record.RecordUtils</mainClass>
+          </configuration>
+          
+        </plugin>
 
       </plugins>
     </pluginManagement>
@@ -71,6 +89,9 @@
           <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
         </configuration>
       </plugin>
+      
+     
+      
     </plugins>
   </reporting>
 

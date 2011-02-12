@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import uk.co.brotherlogic.mdb.Connect;
 
@@ -166,7 +167,8 @@ public class RecordUtils
 
    public static void main(String[] args) throws Exception
    {
-      Record rec = RecordUtils.getNewRecord("CD");
-      System.out.println(rec.getAuthor() + " - " + rec.getTitle());
+      Properties props = System.getProperties();
+      for (Object obj : props.keySet())
+         System.out.println(obj + ": " + props.getProperty(obj.toString()));
    }
 }
