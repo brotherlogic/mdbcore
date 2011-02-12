@@ -3,7 +3,6 @@ package uk.co.brotherlogic.mdb.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +32,7 @@ public class RecordUtils
          cd_extra = "";
 
       String sql = "SELECT recordnumber from formats,records LEFT JOIN score_history ON recordnumber = record_id WHERE format = formatnumber "
-            + cd_extra + " AND baseformat = ? AND score_value IS NULL";
+            + cd_extra + " AND baseformat = ? AND score_value IS NULL ORDER by boughtdate ASC";
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setString(1, baseformat);
       ResultSet rs = Connect.getConnection().executeQuery(ps);
@@ -167,8 +166,7 @@ public class RecordUtils
 
    public static void main(String[] args) throws Exception
    {
-      Collection<Record> recs = RecordUtils.getRecords("12", 10);
-      for (Record rec : recs)
-         System.out.println(rec.getAuthor() + " - " + rec.getTitle());
+      Record rec = RecordUtils.getNewRecord("CD");
+      System.out.println(rec.getAuthor() + " - " + rec.getTitle());
    }
 }
