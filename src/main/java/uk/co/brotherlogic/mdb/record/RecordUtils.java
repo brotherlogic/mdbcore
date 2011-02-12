@@ -156,8 +156,7 @@ public class RecordUtils
       while (rs.next())
       {
          Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
-         if (!rec.getFormat().getName().equals("DVD") && rec.getTracks().size() > 0)
-            recs.add(rec);
+         recs.add(rec);
 
          if (recs.size() == n)
             return recs;
@@ -167,7 +166,7 @@ public class RecordUtils
 
    public static void main(String[] args) throws Exception
    {
-      Collection<Record> recs = RecordUtils.getRecords("12", 10);
+      Collection<Record> recs = RecordUtils.getRecordToRip(10);
       for (Record rec : recs)
          System.out.println(rec.getAuthor() + " - " + rec.getTitle());
    }
