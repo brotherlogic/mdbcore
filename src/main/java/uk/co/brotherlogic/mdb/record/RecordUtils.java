@@ -155,18 +155,12 @@ public class RecordUtils
       while (rs.next())
       {
          Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
-         if (!rec.getFormat().getName().equals("DVD") && rec.getTracks().size() > 0)
+         if (rec.getOwner() == 1 || rec.getFormat().getName().contains("x"))
             recs.add(rec);
 
          if (recs.size() == n)
             return recs;
       }
       return recs;
-   }
-
-   public static void main(String[] args) throws Exception
-   {
-      Record rec = RecordUtils.getNewRecord("CD");
-      System.out.println(rec.getAuthor() + " - " + rec.getTitle());
    }
 }
