@@ -157,11 +157,19 @@ public class RecordUtils
          Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
          if (!rec.getFormat().getName().equals("DVD")
                && (rec.getOwner() == 1 || rec.getFormat().getName().contains("x")))
-            recs.add(rec);
+            if (rec.getChildren().size() == 0)
+               recs.add(rec);
 
          if (recs.size() == n)
             return recs;
       }
       return recs;
+   }
+
+   public static void main(String[] args) throws Exception
+   {
+      Record r = getRecordToListenTo(new String[]
+      { "CD" });
+      System.out.println(r.getAuthor() + " - " + r.getTitle());
    }
 }

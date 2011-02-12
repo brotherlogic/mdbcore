@@ -11,168 +11,190 @@ import java.sql.SQLException;
  * 
  * @author Simon Tucker
  */
-public final class Connect {
-	/** enum of modes */
-	private enum mode {
-		DEVELOPMENT, PRODUCTION
-	}
+public final class Connect
+{
+   /** enum of modes */
+   private enum mode
+   {
+      DEVELOPMENT, PRODUCTION
+   }
 
-	/** Current mode of operation */
-	private static mode operationMode = mode.PRODUCTION;
+   /** Current mode of operation */
+   private static mode operationMode = mode.PRODUCTION;
 
-	private static Connect singleton;
+   private static Connect singleton;
 
-	/**
-	 * Static constructor
-	 * 
-	 * @return A suitable db connection
-	 * @throws SQLException
-	 *             if a db connection cannot be established
-	 */
-	public static Connect getConnection() throws SQLException {
-		if (singleton == null) {
-			singleton = new Connect(operationMode);
+   /**
+    * Static constructor
+    * 
+    * @return A suitable db connection
+    * @throws SQLException
+    *            if a db connection cannot be established
+    */
+   public static Connect getConnection() throws SQLException
+   {
+      if (singleton == null)
+      {
+         singleton = new Connect(operationMode);
 
-			// Upgrade the database ready for use
-			DBUpgrade.upgradeDB();
-		}
-		return singleton;
-	}
+         // Upgrade the database ready for use
+         DBUpgrade.upgradeDB();
+      }
+      return singleton;
+   }
 
-	public static String getSource() {
-		if (operationMode == mode.DEVELOPMENT)
-			return "Dev";
-		else
-			return "";
-	}
+   public static String getSource()
+   {
+      if (operationMode == mode.DEVELOPMENT)
+         return "Dev";
+      else
+         return "";
+   }
 
-	public static void main(String[] args) throws Exception {
-		Connect.getConnection();
-	}
+   public static void main(String[] args) throws Exception
+   {
+      Connect.getConnection();
+   }
 
-	public static void setForDevMode() {
-		operationMode = mode.DEVELOPMENT;
-	}
+   public static void setForDevMode()
+   {
+      operationMode = mode.DEVELOPMENT;
+   }
 
-	/** The connection to the local DB */
-	private Connection locDB;
+   /** The connection to the local DB */
+   private Connection locDB;
 
-	String longestQuery = "";
-	long longestQueryTime = 0;
+   String longestQuery = "";
+   long longestQueryTime = 0;
 
-	int sCount = 0;
+   int sCount = 0;
 
-	long totalDBTime = 0;
+   long totalDBTime = 0;
 
-	private Connect(mode operationMode) throws SQLException {
-		makeConnection(operationMode);
-	}
+   private Connect(mode operationMode) throws SQLException
+   {
+      makeConnection(operationMode);
+   }
 
-	/**
-	 * Cancels all impending transactions
-	 * 
-	 * @throws SQLException
-	 *             if the cancel fails
-	 */
-	public void cancelTrans() throws SQLException {
-		locDB.rollback();
-	}
+   /**
+    * Cancels all impending transactions
+    * 
+    * @throws SQLException
+    *            if the cancel fails
+    */
+   public void cancelTrans() throws SQLException
+   {
+      locDB.rollback();
+   }
 
-	/**
-	 * Commits the impending transactions
-	 * 
-	 * @throws SQLException
-	 *             If the commit fails
-	 */
-	public void commitTrans() throws SQLException {
-		locDB.commit();
-	}
+   /**
+    * Commits the impending transactions
+    * 
+    * @throws SQLException
+    *            If the commit fails
+    */
+   public void commitTrans() throws SQLException
+   {
+      locDB.commit();
+   }
 
-	public ResultSet executeQuery(PreparedStatement ps) throws SQLException {
+   public ResultSet executeQuery(PreparedStatement ps) throws SQLException
+   {
 
-		sCount++;
+      sCount++;
 
-		long sTime = System.currentTimeMillis();
-		ResultSet rs = ps.executeQuery();
-		long eTime = System.currentTimeMillis() - sTime;
-		totalDBTime += eTime;
-		if (eTime > longestQueryTime) {
-			longestQueryTime = eTime;
-			longestQuery = ps.toString();
-		}
-		return rs;
-	}
+      long sTime = System.currentTimeMillis();
+      ResultSet rs = ps.executeQuery();
+      long eTime = System.currentTimeMillis() - sTime;
+      totalDBTime += eTime;
+      if (eTime > longestQueryTime)
+      {
+         longestQueryTime = eTime;
+         longestQuery = ps.toString();
+      }
+      return rs;
+   }
 
-	public void executeStatement(PreparedStatement ps) throws SQLException {
+   public void executeStatement(PreparedStatement ps) throws SQLException
+   {
 
-		sCount++;
+      sCount++;
 
-		long sTime = System.currentTimeMillis();
-		ps.execute();
-		long eTime = System.currentTimeMillis() - sTime;
-		totalDBTime += eTime;
-		if (eTime > longestQueryTime) {
-			longestQueryTime = eTime;
-			longestQuery = ps.toString();
-		}
-	}
+      long sTime = System.currentTimeMillis();
+      ps.execute();
+      long eTime = System.currentTimeMillis() - sTime;
+      totalDBTime += eTime;
+      if (eTime > longestQueryTime)
+      {
+         longestQueryTime = eTime;
+         longestQuery = ps.toString();
+      }
+   }
 
-	public long getLQueryTime() {
-		return longestQueryTime;
-	}
+   public long getLQueryTime()
+   {
+      return longestQueryTime;
+   }
 
-	/**
-	 * Builds a prepared statements from the data store
-	 * 
-	 * @param sql
-	 *            The statement to build
-	 * @return a {@link PreparedStatement}
-	 * @throws SQLException
-	 *             If the construction fails
-	 */
-	public PreparedStatement getPreparedStatement(final String sql)
-			throws SQLException {
-		// Create the statement
-		PreparedStatement ps = locDB.prepareStatement(sql);
-		return ps;
-	}
+   /**
+    * Builds a prepared statements from the data store
+    * 
+    * @param sql
+    *           The statement to build
+    * @return a {@link PreparedStatement}
+    * @throws SQLException
+    *            If the construction fails
+    */
+   public PreparedStatement getPreparedStatement(final String sql) throws SQLException
+   {
+      // Create the statement
+      PreparedStatement ps = locDB.prepareStatement(sql);
+      return ps;
+   }
 
-	public int getSCount() {
-		return sCount;
-	}
+   public int getSCount()
+   {
+      return sCount;
+   }
 
-	public long getTQueryTime() {
-		return totalDBTime;
-	}
+   public long getTQueryTime()
+   {
+      return totalDBTime;
+   }
 
-	/**
-	 * Makes the connection to the DB
-	 * 
-	 * @throws SQLException
-	 *             if something fails
-	 */
-	private void makeConnection(mode operationMode) throws SQLException {
-		try {
-			// Load all the drivers and initialise the database connection
-			Class.forName("org.postgresql.Driver");
+   /**
+    * Makes the connection to the DB
+    * 
+    * @throws SQLException
+    *            if something fails
+    */
+   private void makeConnection(mode operationMode) throws SQLException
+   {
+      try
+      {
+         // Load all the drivers and initialise the database connection
+         Class.forName("org.postgresql.Driver");
 
-			if (operationMode == mode.PRODUCTION) {
-				locDB = DriverManager
-						.getConnection("jdbc:postgresql://192.168.1.100/music?user=music");
-			} else {
-				System.err.println("Connection to development database");
-				locDB = DriverManager
-						.getConnection("jdbc:postgresql://localhost/musicdev?user=musicdev");
-			}
+         if (operationMode == mode.PRODUCTION)
+            locDB = DriverManager.getConnection("jdbc:postgresql://192.168.1.100/music?user=music");
+         else
+         {
+            System.err.println("Connection to development database");
+            locDB = DriverManager
+                  .getConnection("jdbc:postgresql://localhost/musicdev?user=musicdev");
+         }
 
-			// Switch off auto commit
-			locDB.setAutoCommit(false);
-		} catch (ClassNotFoundException e) {
-			throw new SQLException(e);
-		}
-	}
+         // Switch off auto commit
+         locDB.setAutoCommit(false);
+      }
+      catch (ClassNotFoundException e)
+      {
+         throw new SQLException(e);
+      }
+   }
 
-	public void printStats() {
-		System.out.println("SQL: " + longestQueryTime + " => " + longestQuery);
-	}
+   public void printStats()
+   {
+      System.out.println("SQL: " + longestQueryTime + " => " + longestQuery);
+   }
 }
