@@ -156,7 +156,8 @@ public class RecordUtils
       while (rs.next())
       {
          Record rec = (GetRecords.create().getRecord(rs.getInt(1)));
-         recs.add(rec);
+         if (rec.getOwner() == 1 || rec.getFormat().getName().contains("x"))
+            recs.add(rec);
 
          if (recs.size() == n)
             return recs;
