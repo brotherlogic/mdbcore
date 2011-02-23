@@ -62,7 +62,11 @@ public class RecordUtils
       ResultSet rs = Connect.getConnection().executeQuery(ps);
       List<Record> records = new LinkedList<Record>();
       while (rs.next())
-         records.add(GetRecords.create().getRecord(rs.getInt(1)));
+      {
+         Record r = GetRecords.create().getRecord(rs.getInt(1));
+         if (r.getChildren().size() == 0)
+            records.add(r);
+      }
       return records;
    }
 
@@ -169,7 +173,7 @@ public class RecordUtils
 
    public static void main(String[] args) throws Exception
    {
-      Collection<Record> recs = getRecords("12", 10);
+      Collection<Record> recs = getNewRecords("12");
       for (Record r : recs)
          System.out.println(r.getAuthor() + " - " + r.getTitle());
    }
