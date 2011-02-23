@@ -3,6 +3,7 @@ package uk.co.brotherlogic.mdb.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -168,8 +169,8 @@ public class RecordUtils
 
    public static void main(String[] args) throws Exception
    {
-      Record r = getRecordToListenTo(new String[]
-      { "CD" });
-      System.out.println(r.getAuthor() + " - " + r.getTitle());
+      Collection<Record> recs = getRecords("12", 10);
+      for (Record r : recs)
+         System.out.println(r.getAuthor() + " - " + r.getTitle());
    }
 }
