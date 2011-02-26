@@ -20,7 +20,7 @@ public final class Connect
    }
 
    /** Current mode of operation */
-   private static mode operationMode = mode.PRODUCTION;
+   private static mode operationMode = mode.DEVELOPMENT;
 
    private static Connect singleton;
 
@@ -147,6 +147,9 @@ public final class Connect
     */
    public PreparedStatement getPreparedStatement(final String sql) throws SQLException
    {
+      if (operationMode == mode.DEVELOPMENT)
+         System.err.println("Q: " + sql);
+
       // Create the statement
       PreparedStatement ps = locDB.prepareStatement(sql);
       return ps;

@@ -645,6 +645,11 @@ public class Record implements Comparable<Record>
          return "00" + number;
    }
 
+   public void reset()
+   {
+      updated = false;
+   }
+
    private void resetShelfPos()
    {
       if (shelfpos > 0)
@@ -714,6 +719,7 @@ public class Record implements Comparable<Record>
 
    public void setDiscogsNum(int dNum)
    {
+      updated = true;
       discogsNum = dNum;
    }
 
@@ -762,6 +768,7 @@ public class Record implements Comparable<Record>
    public void setParent(Integer parent)
    {
       this.parent = parent;
+      updated = true;
    }
 
    public void setPersonnel(int trackNumber, Collection<Artist> pers)
