@@ -55,6 +55,8 @@ public class GetRecords
    }
 
    PreparedStatement addRecord;
+
+   PreparedStatement getChildren;
    PreparedStatement getPersonnel;
 
    PreparedStatement getRecord;
@@ -81,6 +83,10 @@ public class GetRecords
             .getConnection()
             .getPreparedStatement(
                   "SELECT RecordNumber FROM Records WHERE Title = ? AND BoughtDate = ? AND Format = ? AND Notes = ? ORDER BY RecordNumber DESC");
+
+      getChildren = Connect.getConnection().getPreparedStatement(
+            "SELECT RecordNumber FROM Records WHERE Parent = ?");
+
       updateTrack = Connect
             .getConnection()
             .getPreparedStatement(
@@ -248,6 +254,18 @@ public class GetRecords
          retSet.add(rs.getString(1));
 
       return retSet;
+   }
+
+   public Collection<Record> getChildren(Record r) throws SQLException
+   {
+      Collection<Record> records = new LinkedList<Record>();
+      getChildren.clearParameters();
+      getChildren.setInt(1, r.getNumber());
+      ResultSet rs = getChildren.executeQuery();
+      while (rs.next())
+         records.add(getRecord(rs.getInt(1)));
+      rs.close();
+      return records;
    }
 
    public Collection<Artist> getCompilers(Record rec) throws SQLException
