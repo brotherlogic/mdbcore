@@ -3,6 +3,7 @@ package uk.co.brotherlogic.mdb.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class RecordUtils {
 
 		String sql = "SELECT recordnumber from formats,records LEFT JOIN score_history ON recordnumber = record_id WHERE format = formatnumber "
 				+ cd_extra
-				+ " AND baseformat = ? AND score_value IS NULL ORDER BY boughtdate ASC";
+				+ " AND baseformat = ? AND score_value IS NULL ORDER by boughtdate ASC";
 		PreparedStatement ps = Connect.getConnection()
 				.getPreparedStatement(sql);
 		ps.setString(1, baseformat);
@@ -61,8 +62,11 @@ public class RecordUtils {
 		ps.setString(1, baseformat);
 		ResultSet rs = Connect.getConnection().executeQuery(ps);
 		List<Record> records = new LinkedList<Record>();
-		while (rs.next())
-			records.add(GetRecords.create().getRecord(rs.getInt(1)));
+		while (rs.next()) {
+			Record r = GetRecords.create().getRecord(rs.getInt(1));
+			if (r.getChildren().size() == 0)
+				records.add(r);
+		}
 		return records;
 	}
 
@@ -168,7 +172,8 @@ public class RecordUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Record r = getRecordToListenTo(new String[] { "CD" });
-		System.out.println(r.getAuthor() + " - " + r.getTitle());
+		Collection<Record> recs = getNewRecords("12");
+		for (Record r : recs)
+			System.out.println(r.getAuthor() + " - " + r.getTitle());
 	}
 }
