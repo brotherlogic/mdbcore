@@ -32,7 +32,7 @@ public class RecordUtils
          cd_extra = "";
 
       String sql = "SELECT recordnumber from formats,records LEFT JOIN score_history ON recordnumber = record_id WHERE format = formatnumber "
-            + cd_extra + " AND baseformat = ? AND score_value IS NULL";
+            + cd_extra + " AND baseformat = ? AND score_value IS NULL ORDER BY boughtdate ASC";
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setString(1, baseformat);
       ResultSet rs = Connect.getConnection().executeQuery(ps);
