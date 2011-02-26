@@ -629,6 +629,9 @@ public class GetRecords
 
          currRec.setCategory(GetCategories.build().getCategory(category));
 
+         // Assert that the record hasn't been updated
+         currRec.reset();
+
          // Return this record
          return currRec;
       }

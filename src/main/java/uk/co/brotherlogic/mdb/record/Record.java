@@ -645,6 +645,11 @@ public class Record implements Comparable<Record>
          return "00" + number;
    }
 
+   public void reset()
+   {
+      updated = false;
+   }
+
    private void resetShelfPos()
    {
       if (shelfpos > 0)
