@@ -719,6 +719,7 @@ public class Record implements Comparable<Record>
 
    public void setDiscogsNum(int dNum)
    {
+      updated = true;
       discogsNum = dNum;
    }
 
@@ -767,6 +768,7 @@ public class Record implements Comparable<Record>
    public void setParent(Integer parent)
    {
       this.parent = parent;
+      updated = true;
    }
 
    public void setPersonnel(int trackNumber, Collection<Artist> pers)
