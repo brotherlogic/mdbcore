@@ -1,10 +1,12 @@
 package uk.co.brotherlogic.mdb;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * Class to deal with database connection
@@ -20,7 +22,7 @@ public final class Connect
    }
 
    /** Current mode of operation */
-   private static mode operationMode = mode.PRODUCTION;
+   private static mode operationMode = mode.DEVELOPMENT;
 
    private static Connect singleton;
 
@@ -53,7 +55,7 @@ public final class Connect
 
    public static void main(String[] args) throws Exception
    {
-      Connect.getConnection();
+      System.err.println(Connect.getConnection().getVersionString());
    }
 
    public static void setForDevMode()
@@ -65,8 +67,8 @@ public final class Connect
    private Connection locDB;
 
    String longestQuery = "";
-   long longestQueryTime = 0;
 
+   long longestQueryTime = 0;
    int sCount = 0;
 
    long totalDBTime = 0;
@@ -163,6 +165,21 @@ public final class Connect
    public long getTQueryTime()
    {
       return totalDBTime;
+   }
+
+   public String getVersionString()
+   {
+      // Read from the properties file
+      Properties props = new Properties();
+      try
+      {
+         props.load(this.getClass().getResourceAsStream("/properties"));
+         return props.getProperty("mdbcore.version");
+      }
+      catch (IOException e)
+      {
+         return "DEV";
+      }
    }
 
    /**
