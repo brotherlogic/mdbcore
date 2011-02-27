@@ -25,6 +25,7 @@
    <url>scm:git:git://github.com/BrotherLogic/mdbcore.git</url>
   </scm>
 
+  
   <distributionManagement>
     <repository>
       <id>edip</id>
@@ -39,6 +40,15 @@
   </distributionManagement>
 
   <build>
+  
+  <resources>
+    <resource>
+        <directory>etc</directory>
+        <filtering>true</filtering>
+    </resource>
+</resources>
+  
+  
     <pluginManagement>
       <plugins>
   	<plugin>
@@ -70,7 +80,7 @@
           </executions>
           <configuration>
             <executable>deploy.sh</executable>
-            <mainClass>uk.co.brotherlogic.mdb.record.RecordUtils</mainClass>
+            <mainClass>uk.co.brotherlogic.mdb.Connect</mainClass>
           </configuration>
           
         </plugin>
@@ -90,7 +100,7 @@
         </configuration>
       </plugin>
       
-     
+     	
       
     </plugins>
   </reporting>
