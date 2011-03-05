@@ -150,7 +150,7 @@ public final class Connect
    public PreparedStatement getPreparedStatement(final String sql) throws SQLException
    {
       if (operationMode == mode.DEVELOPMENT)
-         System.err.println("Q: " + sql);
+         System.err.println("Qu: " + sql);
 
       // Create the statement
       PreparedStatement ps = locDB.prepareStatement(sql);
