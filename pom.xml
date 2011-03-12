@@ -21,8 +21,8 @@
   </dependencies>
 
   <scm>
-   <connection>scm:git:git://github.com/BrotherLogic/mdbcore.git</connection>
-   <url>scm:git:git://github.com/BrotherLogic/mdbcore.git</url>
+   <connection>scm:git:git@github.com:BrotherLogic/mdbcore.git</connection>
+   <url>scm:git:git@github.com:BrotherLogic/mdbcore.git</url>
   </scm>
 
   
