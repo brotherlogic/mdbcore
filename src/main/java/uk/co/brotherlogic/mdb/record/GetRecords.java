@@ -97,7 +97,7 @@ public class GetRecords
       updateRecord = Connect
             .getConnection()
             .getPreparedStatement(
-                  "UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ?, parent = ? WHERE RecordNumber = ?");
+                  "UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ?, parent = ?, version = 'updated' WHERE RecordNumber = ?");
       getPersonnel = Connect
             .getConnection()
             .getPreparedStatement(
@@ -243,6 +243,18 @@ public class GetRecords
       rs.close();
 
       addGroopsAndPersonnel(trackNumber, toAdd);
+   }
+
+   public void fixVersion(Record rec) throws SQLException
+   {
+      rec.setVersion(Connect.getConnection().getVersionString());
+      PreparedStatement ps = Connect.getConnection().getPreparedStatement(
+            "UPDATE records set version = ? WHERE recordnumber = ?");
+      System.err.println("HERE:" + rec.getVersion() + ":");
+      ps.setString(1, rec.getVersion());
+      ps.setInt(2, rec.getNumber());
+
+      ps.execute();
    }
 
    public Set<String> getCatNos(int recNumber) throws SQLException
@@ -588,7 +600,7 @@ public class GetRecords
       PreparedStatement s = Connect
             .getConnection()
             .getPreparedStatement(
-                  "Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc,discog_id,parent,salepricepence FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
+                  "Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos,riploc,discog_id,parent,salepricepence,version FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = ?");
       s.setInt(1, recNumber);
       ResultSet rs = s.executeQuery();
 
@@ -615,6 +627,7 @@ public class GetRecords
          int discogid = rs.getInt(14);
          int parent = rs.getInt(15);
          double salePrice = rs.getDouble(16);
+         String version = rs.getString(17).trim();
 
          currRec = new Record(title, GetFormats.create().getFormat(format), boughtDate, shelfpos);
          currRec.setNumber(recNumber);
@@ -629,6 +642,7 @@ public class GetRecords
          currRec.setDiscogsNum(discogid);
          currRec.setParent(parent);
          currRec.setSoldPrice(salePrice);
+         currRec.setVersion(version);
 
          currRec.setCategory(GetCategories.build().getCategory(category));
 

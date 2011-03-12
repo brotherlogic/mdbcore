@@ -174,7 +174,7 @@ public final class Connect
       try
       {
          props.load(this.getClass().getResourceAsStream("/properties"));
-         return props.getProperty("mdbcore.version");
+         return props.getProperty("mdbcore.version").trim();
       }
       catch (IOException e)
       {
