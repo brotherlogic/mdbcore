@@ -123,6 +123,9 @@ public class Record implements Comparable<Record>
    /** Flag to indicate that the record needs to be updated */
    private boolean updated = false;
 
+   /** The version of core that the cd files were built against */
+   private String version;
+
    /** THe year of release */
    private Integer year;
 
@@ -240,6 +243,11 @@ public class Record implements Comparable<Record>
          return this.compareTo((Record) o) == 0;
       else
          return false;
+   }
+
+   public void fixVersion() throws SQLException
+   {
+      GetRecords.create().fixVersion(this);
    }
 
    public Collection<LineUp> getAllLineUps()
@@ -624,6 +632,11 @@ public class Record implements Comparable<Record>
       return retSet;
    }
 
+   public String getVersion()
+   {
+      return version;
+   }
+
    public Integer getYear()
    {
       return year;
@@ -814,6 +827,7 @@ public class Record implements Comparable<Record>
    public void setTitle(String tit)
    {
       title = tit;
+      updated = true;
    }
 
    public void setTrackLength(int trackNumber, int lengthInSeconds) throws SQLException
@@ -851,6 +865,11 @@ public class Record implements Comparable<Record>
       // Replace the tracks
       tracks = newTracks;
 
+   }
+
+   public void setVersion(String version)
+   {
+      this.version = version;
    }
 
    public void setYear(int in)

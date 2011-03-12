@@ -22,7 +22,7 @@ public final class Connect
    }
 
    /** Current mode of operation */
-   private static mode operationMode = mode.PRODUCTION;
+   private static mode operationMode = mode.DEVELOPMENT;
 
    private static Connect singleton;
 
@@ -174,7 +174,7 @@ public final class Connect
       try
       {
          props.load(this.getClass().getResourceAsStream("/properties"));
-         return props.getProperty("mdbcore.version");
+         return props.getProperty("mdbcore.version").trim();
       }
       catch (IOException e)
       {
