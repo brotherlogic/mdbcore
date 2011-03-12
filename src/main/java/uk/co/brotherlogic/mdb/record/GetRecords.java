@@ -49,9 +49,12 @@ public class GetRecords
 
    public static void main(String[] args) throws Exception
    {
-      Collection<Record> records = GetRecords.create().getRecords(UNSHELVED, "CD");
-      for (Record rec : records)
-         System.err.println(rec);
+      Record r = GetRecords.create().getRecord(9889);
+      for (int i = 1; i <= r.getNumberOfFormatTracks(); i++)
+      {
+         System.err.println(i);
+         System.err.println(r.getTrackRep(i));
+      }
    }
 
    PreparedStatement addRecord;
