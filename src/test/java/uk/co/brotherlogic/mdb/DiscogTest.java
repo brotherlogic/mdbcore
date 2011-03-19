@@ -1,6 +1,9 @@
 package uk.co.brotherlogic.mdb;
 
+import java.util.Collection;
+
 import junit.framework.TestCase;
+import uk.co.brotherlogic.mdb.artist.Artist;
 import uk.co.brotherlogic.mdb.parsers.DiscogParser;
 import uk.co.brotherlogic.mdb.record.Record;
 import uk.co.brotherlogic.mdb.record.Track;
@@ -11,121 +14,171 @@ import uk.co.brotherlogic.mdb.record.Track;
  * @author simon
  * 
  */
-public class DiscogTest extends TestCase {
+public class DiscogTest extends TestCase
+{
 
-	/** The Fall - Wonderful and Frightening World Box Set */
-	private static final int DISCOG_FALL = 2518468;
+   /** The Fall - Wonderful and Frightening World Box Set */
+   private static final int DISCOG_FALL = 2518468;
 
-	/** MV & EE - Drone Trailer */
-	private static final int DISCOG_NUMBER = 1642454;
+   /** MV & EE - Drone Trailer */
+   private static final int DISCOG_NUMBER = 1642454;
 
-	/** Marissa Nadler - Covers Vol 1 */
-	private static final int DISCOG_NUMBER_2 = 2411995;
+   /** Marissa Nadler - Covers Vol 1 */
+   private static final int DISCOG_NUMBER_2 = 2411995;
 
-	/** Turkish Freakout */
-	private static final int DISCOG_TURKISH = 2376631;
+   /** V7W - Firefly Dusk */
+   private static final int DISCOG_NUMBER_PERS = 759539;
 
-	/**
-	 * Constructor
-	 */
-	public DiscogTest() {
-		super();
-		Connect.setForDevMode();
-	}
+   /** Turkish Freakout */
+   private static final int DISCOG_TURKISH = 2376631;
 
-	/**
-	 * Main test method
-	 */
-	public final void testDiscog() {
-		DiscogParser parser = new DiscogParser();
+   /**
+    * Constructor
+    */
+   public DiscogTest()
+   {
+      super();
+      Connect.setForDevMode();
+   }
 
-		// This is MV & EE - Drone Trailer
-		try {
-			Record r = parser.parseDiscogRelease(DISCOG_NUMBER);
+   /**
+    * Main test method
+    */
+   public final void testDiscog()
+   {
+      DiscogParser parser = new DiscogParser();
 
-			// Check that the format tracks are correct
-			assert (r.getTracks().iterator().next().getFormTrackNumber() != -1);
-			assert (r.getDiscogsNum() == DISCOG_NUMBER);
+      // This is MV & EE - Drone Trailer
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_NUMBER);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			assert (false);
-		}
-	}
+         // Check that the format tracks are correct
+         assert (r.getTracks().iterator().next().getFormTrackNumber() != -1);
+         assert (r.getDiscogsNum() == DISCOG_NUMBER);
 
-	public final void testDiscogFormatTracks() {
-		DiscogParser parser = new DiscogParser();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
 
-		// This is MV & EE - Drone Trailer
-		try {
-			Record r = parser.parseDiscogRelease(DISCOG_NUMBER_2);
+   public final void testDiscogFormatTracks()
+   {
+      DiscogParser parser = new DiscogParser();
 
-			// Check that the format tracks are correct
-			assert (r.getTracks().iterator().next().getFormTrackNumber() != -1);
+      // This is MV & EE - Drone Trailer
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_NUMBER_2);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			assert (false);
-		}
-	}
+         // Check that the format tracks are correct
+         assert (r.getTracks().iterator().next().getFormTrackNumber() != -1);
 
-	public final void testDiscogLabels() {
-		DiscogParser parser = new DiscogParser();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
 
-		// This is MV & EE - Drone Trailer
-		try {
-			Record r = parser.parseDiscogRelease(DISCOG_NUMBER);
+   public final void testDiscogLabels()
+   {
+      DiscogParser parser = new DiscogParser();
 
-			// Check that the format tracks are correct
-			assert (r.getLabels().size() == 1);
-			assert (r.getLabels().iterator().next().getName()
-					.equals("Dicristina Stair Builders"));
+      // This is MV & EE - Drone Trailer
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_NUMBER);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			assert (false);
-		}
-	}
+         // Check that the format tracks are correct
+         assert (r.getLabels().size() == 1);
+         assert (r.getLabels().iterator().next().getName().equals("Dicristina Stair Builders"));
 
-	public final void testDiscogTurkish() {
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
 
-		DiscogParser parser = new DiscogParser();
+   public final void testDiscogPersonnel()
+   {
+      DiscogParser parser = new DiscogParser();
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_NUMBER_PERS);
 
-		// This is the turkish record
-		try {
-			Record r = parser.parseDiscogRelease(DISCOG_TURKISH);
+         // Get the first track
+         Track t = r.getTrack(1);
+         Collection<Artist> pers = t.getPersonnel();
 
-			// Check that the format tracks are correct
-			assert (r.getTracks().size() == 18);
-			System.err.println("GOT " + r.getTitle());
+         // Should be 2
+         assert (pers.size() == 2);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			assert (false);
-		}
-	}
+         for (Artist art : pers)
+            assert ((art.getShowName().equals("Paul Blakesley")) || (art.getShowName()
+                  .equals("Chris Walmsley")));
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
 
-	/**
-	 * Fall Test
-	 */
-	public final void testFall() {
-		DiscogParser parser = new DiscogParser();
+   public final void testDiscogTurkish()
+   {
 
-		try {
-			Record r = parser.parseDiscogRelease(DISCOG_FALL);
-			System.err.println("TRACKS = " + r.getTracks().size());
-			assert (r.getTracks().size() == 50);
+      DiscogParser parser = new DiscogParser();
 
-			// Check the last track has a correct title
-			for (Track t : r.getTracks()) {
-				if (t.getTrackNumber() == 50)
-					assert (t.getTitle().equals("Middle Mass (Live)"));
-			}
+      // This is the turkish record
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_TURKISH);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			assert (false);
-		}
-	}
+         // Check that the format tracks are correct
+         assert (r.getTracks().size() == 18);
+         System.err.println("GOT " + r.getTitle());
+
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
+
+   /**
+    * Fall Test
+    */
+   public final void testFall()
+   {
+      DiscogParser parser = new DiscogParser();
+
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_FALL);
+         System.err.println("TRACKS = " + r.getTracks().size());
+         assert (r.getTracks().size() == 50);
+
+         // Check the last track has a correct title
+         for (Track t : r.getTracks())
+         {
+            if (t.getTrackNumber() == 50)
+               assert (t.getTitle().equals("Middle Mass (Live)"));
+         }
+
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
 
 }
