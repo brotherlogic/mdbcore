@@ -49,9 +49,9 @@ public class GetRecords
 
    public static void main(String[] args) throws Exception
    {
-      Collection<Record> records = GetRecords.create().getRecords(UNSHELVED, "CD");
-      for (Record rec : records)
-         System.err.println(rec);
+      Record r = GetRecords.create().getRecord(1618);
+      r.setRiploc("donkey");
+      r.save();
    }
 
    PreparedStatement addRecord;
