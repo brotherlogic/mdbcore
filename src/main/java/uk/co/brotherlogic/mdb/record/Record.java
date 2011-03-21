@@ -356,6 +356,11 @@ public class Record implements Comparable<Record>
          grpset.addAll(tck.getGroops());
 
       List<Groop> grps = new LinkedList<Groop>(grpset);
+
+      // Check here that we have some groups - otherwise return "EMPTY"
+      if (grps.size() == 0)
+         return "EMPTY";
+
       StringBuffer grpString = new StringBuffer(grps.get(0).getShowName());
       for (Groop grp : grps.subList(1, grps.size()))
          grpString.append(", " + grp.getShowName());
@@ -371,11 +376,18 @@ public class Record implements Comparable<Record>
             trackRepTracks.add(t);
 
       if (trackRepTracks.size() == 1)
-         return trackRepTracks.get(0).getTitle();
+         if (trackRepTracks.get(0).getTitle().trim().length() == 0)
+            return "EMPTY_TITLE";
+         else
+            return trackRepTracks.get(0).getTitle();
 
       StringBuffer title = new StringBuffer(trackRepTracks.get(0).getTitle());
       for (Track tck : trackRepTracks.subList(1, trackRepTracks.size()))
          title.append(" / " + tck.getTitle());
+
+      // Check on the track title here
+      if (title.toString().trim().length() == 0)
+         return "EMPTY_TITLE";
 
       return title.toString();
    }
