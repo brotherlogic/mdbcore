@@ -3,7 +3,7 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdbcore</artifactId>
   <packaging>jar</packaging>
-  <version>0.5.45-SNAPSHOT</version>
+  <version>0.5.46-SNAPSHOT</version>
   <name>mdbcore</name>
   <url>http://maven.apache.org</url>
   <dependencies>
@@ -21,8 +21,8 @@
   </dependencies>
 
   <scm>
-   <connection>scm:git:git://github.com/BrotherLogic/mdbcore.git</connection>
-   <url>scm:git:git://github.com/BrotherLogic/mdbcore.git</url>
+   <connection>scm:git:git@github.com:BrotherLogic/mdbcore.git</connection>
+   <url>scm:git:git@github.com:BrotherLogic/mdbcore.git</url>
   </scm>
 
   
