@@ -263,6 +263,8 @@ public class Record implements Comparable<Record>
 
    public String getAuthor()
    {
+      if (author == null || author.trim().length() == 0)
+         return "Unknown";
       return author;
    }
 
