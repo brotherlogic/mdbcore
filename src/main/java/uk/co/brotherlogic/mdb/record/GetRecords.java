@@ -47,16 +47,6 @@ public class GetRecords
       return singleton;
    }
 
-   public static void main(String[] args) throws Exception
-   {
-      Record r = GetRecords.create().getRecord(9889);
-      for (int i = 1; i <= r.getNumberOfFormatTracks(); i++)
-      {
-         System.err.println(i);
-         System.err.println(r.getTrackRep(i));
-      }
-   }
-
    PreparedStatement addRecord;
 
    PreparedStatement getChildren;
