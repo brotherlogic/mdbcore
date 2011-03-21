@@ -2,10 +2,11 @@ package uk.co.brotherlogic.mdb;
 
 import java.sql.SQLException;
 
+import junit.framework.TestCase;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 
-public class UpdateTest
+public class UpdateTest extends TestCase
 {
    public void testUpdateScript()
    {
