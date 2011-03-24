@@ -7,3 +7,4 @@ releaseBackup
 .settings
 .checkstyle
 .project
+.classpath
