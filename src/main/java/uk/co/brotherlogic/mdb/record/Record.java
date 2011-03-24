@@ -53,8 +53,8 @@ public class Record implements Comparable<Record>
 
    public static void main(String[] args) throws Exception
    {
-      Record r = GetRecords.create().getRecord(3373);
-      System.out.println(r.getFileAdd());
+      Record r = GetRecords.create().getRecord(10486);
+      System.out.println(r.getFormTrackTitle(1));
    }
 
    /** The author of the record */
@@ -370,10 +370,10 @@ public class Record implements Comparable<Record>
       return grpString.toString();
    }
 
-   public String getFormTrackTitle(int formTrackNumber)
+   public String getFormTrackTitle(int formTrackNumber) throws SQLException
    {
       List<Track> trackRepTracks = new LinkedList<Track>();
-      for (Track t : tracks)
+      for (Track t : getTracks())
          if (t.getFormTrackNumber() == formTrackNumber)
             trackRepTracks.add(t);
 
