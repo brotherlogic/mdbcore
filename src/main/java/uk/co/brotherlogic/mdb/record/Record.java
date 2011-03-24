@@ -376,7 +376,6 @@ public class Record implements Comparable<Record>
       for (Track t : getTracks())
          if (t.getFormTrackNumber() == formTrackNumber)
             trackRepTracks.add(t);
-
       if (trackRepTracks.size() == 1)
          if (trackRepTracks.get(0).getTitle().trim().length() == 0)
             return "EMPTY_TITLE";
