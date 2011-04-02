@@ -10,12 +10,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.1</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>postgresql</groupId>
-      <version>8.4-702.jdbc3</version>
+      <version>9.0-801.jdbc4</version>
       <artifactId>postgresql</artifactId>
     </dependency>
   </dependencies>
