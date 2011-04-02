@@ -32,6 +32,9 @@ public class DiscogTest extends TestCase
    /** Turkish Freakout */
    private static final int DISCOG_TURKISH = 2376631;
 
+   /** Turkish Freakout */
+   private static final int DISCOG_VOSW = 2391525;
+
    /**
     * Constructor
     */
@@ -145,6 +148,26 @@ public class DiscogTest extends TestCase
          assert (r.getTracks().size() == 18);
          System.err.println("GOT " + r.getTitle());
 
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
+
+   public final void testDiscogVots()
+   {
+
+      DiscogParser parser = new DiscogParser();
+
+      // This is the turkish record
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_VOSW);
+
+         // Check that the format tracks are correct
+         assert (r.getTracks().size() == 5);
       }
       catch (Exception e)
       {
