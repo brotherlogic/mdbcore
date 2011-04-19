@@ -47,6 +47,13 @@ public class GetRecords
       return singleton;
    }
 
+   public static void main(String[] args) throws Exception
+   {
+      Collection<Record> records = GetRecords.create().getRecords(UNSHELVED, "12");
+      for (Record record : records)
+         System.out.println(record.getAuthor() + " - " + record.getTitle());
+   }
+
    PreparedStatement addRecord;
 
    PreparedStatement getChildren;
@@ -427,12 +434,14 @@ public class GetRecords
          PreparedStatement s = Connect
                .getConnection()
                .getPreparedStatement(
-                     "SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos <= 0 AND salepricepence < 0");
+                     "SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND (shelfpos <= 0 OR shelfpos IS NULL) AND salepricepence < 0");
          s.setString(1, format);
          ResultSet rs = s.executeQuery();
          while (rs.next())
          {
             Record rec = getRecord(rs.getInt(1));
+            System.out.println("pre: " + rec.getAuthor() + " - " + rec.getTitle());
+
             if (rec.getParent() <= 0)
                records.add(rec);
          }
