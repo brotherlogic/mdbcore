@@ -267,6 +267,8 @@ public class GetRecords
       {
          Record r = new Record();
          r.setTitle(rs.getString("title"));
+         r.setNumber(rs.getInt("recordnumber"));
+         r.setDiscogsNum(rs.getInt("discog_id"));
          records.add(r);
       }
 
