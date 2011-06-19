@@ -27,6 +27,7 @@ import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
 import uk.co.brotherlogic.mdb.categories.Category;
 import uk.co.brotherlogic.mdb.format.Format;
+import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.Label;
@@ -79,7 +80,8 @@ public class Record implements Comparable<Record>
    private int discogsNum = -1;
 
    /** The format of the record */
-   private Format format;
+   private Format format = null;
+   private int formatNumber = -1;
 
    /** Labels which released the record */
    private Collection<Label> labels;
@@ -340,8 +342,10 @@ public class Record implements Comparable<Record>
       return null;
    }
 
-   public Format getFormat()
+   public Format getFormat() throws SQLException
    {
+      if (format == null && formatNumber > 0)
+         format = GetFormats.create().getFormat(formatNumber);
       return format;
    }
 
@@ -756,6 +760,11 @@ public class Record implements Comparable<Record>
       format = form;
    }
 
+   public void setFormat(int form)
+   {
+      formatNumber = form;
+   }
+
    public void setGroops(int trackNumber, Collection<LineUp> lineups)
    {
       Track intTrack = getTrack(trackNumber);
@@ -830,6 +839,11 @@ public class Record implements Comparable<Record>
    {
       this.riploc = riploc;
       updated = true;
+   }
+
+   public void setShelfPos(int pos)
+   {
+      shelfpos = pos;
    }
 
    public void setSoldPrice(double soldPrice)
