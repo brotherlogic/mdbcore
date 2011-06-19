@@ -269,6 +269,9 @@ public class GetRecords
          r.setTitle(rs.getString("title"));
          r.setNumber(rs.getInt("recordnumber"));
          r.setDiscogsNum(rs.getInt("discog_id"));
+         r.setFormat(rs.getInt("format"));
+         r.setShelfPos(rs.getInt("shelfpos"));
+         r.setSoldPrice(rs.getDouble("salepricepence"));
          records.add(r);
       }
 
