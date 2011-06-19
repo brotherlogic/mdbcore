@@ -56,7 +56,9 @@ public class GetRecords
 
    PreparedStatement addRecord;
 
+   PreparedStatement getAllRecords;
    PreparedStatement getChildren;
+
    PreparedStatement getPersonnel;
 
    PreparedStatement getRecord;
@@ -83,6 +85,8 @@ public class GetRecords
             .getConnection()
             .getPreparedStatement(
                   "SELECT RecordNumber FROM Records WHERE Title = ? AND BoughtDate = ? AND Format = ? AND Notes = ? ORDER BY RecordNumber DESC");
+
+      getAllRecords = Connect.getConnection().getPreparedStatement("SELECT * FROM Records");
 
       getChildren = Connect.getConnection().getPreparedStatement(
             "SELECT RecordNumber FROM Records WHERE Parent = ?");
@@ -252,6 +256,21 @@ public class GetRecords
       ps.setInt(2, rec.getNumber());
 
       ps.execute();
+   }
+
+   public Collection<Record> getAllRecords() throws SQLException
+   {
+      List<Record> records = new LinkedList<Record>();
+
+      ResultSet rs = getAllRecords.executeQuery();
+      while (rs.next())
+      {
+         Record r = new Record();
+         r.setTitle(rs.getString("title"));
+         records.add(r);
+      }
+
+      return records;
    }
 
    public Set<String> getCatNos(int recNumber) throws SQLException
