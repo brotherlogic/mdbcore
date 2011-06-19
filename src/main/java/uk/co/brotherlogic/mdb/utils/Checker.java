@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.parsers.DiscogParser;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
@@ -15,6 +16,7 @@ public class Checker
 {
    public static void main(String[] args) throws SQLException
    {
+      Connect.setForProdMode();
       Checker mine = new Checker();
       mine.runChecks();
    }

@@ -70,6 +70,11 @@ public final class Connect
       operationMode = mode.DEVELOPMENT;
    }
 
+   public static void setForProdMode()
+   {
+      operationMode = mode.PRODUCTION;
+   }
+
    /** The connection to the local DB */
    private Connection locDB;
 
