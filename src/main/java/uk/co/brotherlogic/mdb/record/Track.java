@@ -16,251 +16,283 @@ import uk.co.brotherlogic.mdb.groop.LineUp;
  * 
  * @author Simon Tucker
  */
-public class Track implements Comparable<Track>, Serializable {
-	/**
+public class Track implements Comparable<Track>, Serializable
+{
+   /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-	/** The format track number */
-	private int formTrackNumber = -1;
+   /** The format track number */
+   private int formTrackNumber = -1;
 
-	/** The LineUps associated with this track */
-	private final List<LineUp> groops;
+   /** The LineUps associated with this track */
+   private final List<LineUp> groops;
 
-	/** The length of the track in seconds */
-	private int lengthInSeconds;
+   /** The length of the track in seconds */
+   private int lengthInSeconds;
 
-	/** The personnel on the track */
-	private final Collection<Artist> personnel;
+   /** THe record from which the track is taken */
+   private int parentNumber;
 
-	/** THe track reference number */
-	private int refNumber = -1;
+   /** The personnel on the track */
+   private final Collection<Artist> personnel;
 
-	/** The track title */
-	private String title;
+   /** THe track reference number */
+   private int refNumber = -1;
 
-	/** The track number of this track */
-	private int trackNumber;
-	
-	/** THe record from which the track is taken */
-	private int parentNumber;
+   /** The track title */
+   private String title;
 
-	/**
-	 * Constructor
-	 */
-	public Track() {
-		groops = new LinkedList<LineUp>();
-		personnel = new LinkedList<Artist>();
-		title = "";
-		lengthInSeconds = -1;
-		trackNumber = -1;
-		refNumber = -1;
-		formTrackNumber = -1;
-	}
+   /** The track number of this track */
+   private int trackNumber;
 
-	public Track(int number) {
-		groops = new LinkedList<LineUp>();
-		personnel = new LinkedList<Artist>();
-		title = "";
-		lengthInSeconds = -1;
-		trackNumber = number;
-		refNumber = -1;
-		formTrackNumber = -1;
-	}
+   /**
+    * Constructor
+    */
+   public Track()
+   {
+      groops = new LinkedList<LineUp>();
+      personnel = new LinkedList<Artist>();
+      title = "";
+      lengthInSeconds = -1;
+      trackNumber = -1;
+      refNumber = -1;
+      formTrackNumber = -1;
+   }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param titleIn
-	 *            Track title
-	 * @param lengthIn
-	 *            Length in Seconds
-	 * @param groopsIn
-	 *            The groops
-	 * @param personnelIn
-	 *            The personnel
-	 * @param trackNumberIn
-	 *            The track number
-	 * @param trackRefNumber
-	 *            The track reference number
-	 */
-	public Track(final String titleIn, final int lengthIn,
-			final Collection<LineUp> groopsIn,
-			final Collection<Artist> personnelIn, final int trackNumberIn,
-			final int trackRefNumber, final int formTrackNumber, final int recordnumber) {
-		title = titleIn;
-		lengthInSeconds = lengthIn;
-		groops = new LinkedList<LineUp>();
-		groops.addAll(groopsIn);
-		personnel = new LinkedList<Artist>();
-		personnel.addAll(personnelIn);
-		trackNumber = trackNumberIn;
-		refNumber = trackRefNumber;
-		this.formTrackNumber = formTrackNumber;
-		parentNumber = recordnumber;
-	}
+   public Track(int number)
+   {
+      groops = new LinkedList<LineUp>();
+      personnel = new LinkedList<Artist>();
+      title = "";
+      lengthInSeconds = -1;
+      trackNumber = number;
+      refNumber = -1;
+      formTrackNumber = -1;
+   }
 
-	public void setParentNumber(int parentNumber) {
-		this.parentNumber = parentNumber;
-	}
+   /**
+    * Constructor
+    * 
+    * @param titleIn
+    *           Track title
+    * @param lengthIn
+    *           Length in Seconds
+    * @param groopsIn
+    *           The groops
+    * @param personnelIn
+    *           The personnel
+    * @param trackNumberIn
+    *           The track number
+    * @param trackRefNumber
+    *           The track reference number
+    */
+   public Track(final String titleIn, final int lengthIn, final Collection<LineUp> groopsIn,
+         final Collection<Artist> personnelIn, final int trackNumberIn, final int trackRefNumber,
+         final int formTrackNumber, final int recordnumber)
+   {
+      title = titleIn;
+      lengthInSeconds = lengthIn;
+      groops = new LinkedList<LineUp>();
+      groops.addAll(groopsIn);
+      personnel = new LinkedList<Artist>();
+      personnel.addAll(personnelIn);
+      trackNumber = trackNumberIn;
+      refNumber = trackRefNumber;
+      this.formTrackNumber = formTrackNumber;
+      parentNumber = recordnumber;
+   }
 
-	public final void addLineUp(final LineUp lineup) {
-		groops.add(lineup);
-	}
+   public final void addLineUp(final LineUp lineup)
+   {
+      groops.add(lineup);
+   }
 
-	public final void addLineUps(final Collection<LineUp> lineups) {
-		groops.addAll(lineups);
-	}
+   public final void addLineUps(final Collection<LineUp> lineups)
+   {
+      groops.addAll(lineups);
+   }
 
-	public final void addPersonnel(final Artist person) {
-		personnel.add(person);
-	}
+   public final void addPersonnel(final Artist person)
+   {
+      personnel.add(person);
+   }
 
-	/**
-	 * Adds the given personnel to the track
-	 * 
-	 * @param personnelIn
-	 *            A collection of Artists
-	 */
-	public final void addPersonnel(final Collection<Artist> personnelIn) {
-		personnel.addAll(personnelIn);
-	}
+   /**
+    * Adds the given personnel to the track
+    * 
+    * @param personnelIn
+    *           A collection of Artists
+    */
+   public final void addPersonnel(final Collection<Artist> personnelIn)
+   {
+      personnel.addAll(personnelIn);
+   }
 
-	@Override
-	public final int compareTo(final Track in) {
-		int otherNum = in.getTrackNumber();
-		return trackNumber - otherNum;
-	}
+   @Override
+   public final int compareTo(final Track in)
+   {
+      int otherNum = in.getTrackNumber();
+      return trackNumber - otherNum;
+   }
 
-	@Override
-	public final boolean equals(final Object o) {
-		if (o instanceof Track)
-			return this.compareTo((Track) o) == 0;
-		else
-			return false;
-	}
+   @Override
+   public final boolean equals(final Object o)
+   {
+      if (o instanceof Track)
+         return this.compareTo((Track) o) == 0;
+      else
+         return false;
+   }
 
-	public int getFormTrackNumber() {
-		return formTrackNumber;
-	}
+   public int getFormTrackNumber()
+   {
+      return formTrackNumber;
+   }
 
-	public Collection<Groop> getGroops() {
-		Collection<Groop> grps = new LinkedList<Groop>();
+   public Collection<Groop> getGroops()
+   {
+      Collection<Groop> grps = new LinkedList<Groop>();
 
-		for (LineUp lUp : groops)
-			grps.add(lUp.getGroop());
+      for (LineUp lUp : groops)
+         grps.add(lUp.getGroop());
 
-		return grps;
-	}
+      return grps;
+   }
 
-	/**
-	 * Get method for length
-	 * 
-	 * @return The length of the track in seconds
-	 */
-	public final int getLengthInSeconds() {
-		return lengthInSeconds;
-	}
+   /**
+    * Get method for length
+    * 
+    * @return The length of the track in seconds
+    */
+   public final int getLengthInSeconds()
+   {
+      return lengthInSeconds;
+   }
 
-	/**
-	 * Get method for the lineups
-	 * 
-	 * @return A Collection of LineUps
-	 */
-	public final Collection<LineUp> getLineUps() {
-		return groops;
-	}
+   /**
+    * Get method for the lineups
+    * 
+    * @return A Collection of LineUps
+    */
+   public final Collection<LineUp> getLineUps()
+   {
+      return groops;
+   }
 
-	/**
-	 * Get method for the personnel
-	 * 
-	 * @return A collection of artists
-	 */
-	public final Collection<Artist> getPersonnel() {
-		return personnel;
-	}
+   public Record getParent() throws SQLException
+   {
+      return GetRecords.create().getRecord(parentNumber);
+   }
 
-	/**
-	 * Get method for the title
-	 * 
-	 * @return The track title
-	 */
-	public final String getTitle() {
-		return title;
-	}
+   /**
+    * Get method for the personnel
+    * 
+    * @return A collection of artists
+    */
+   public final Collection<Artist> getPersonnel()
+   {
+      return personnel;
+   }
 
-	public String getTrackAuthor() {
-		StringBuffer author = new StringBuffer(groops.get(0).getGroop()
-				.getShowName());
-		for (LineUp lUp : groops.subList(1, groops.size()))
-			author.append(", " + lUp.getGroop().getShowName());
+   public String getSortedTrackAuthor()
+   {
+      StringBuffer author = new StringBuffer(groops.get(0).getGroop().getShowName());
+      for (LineUp lUp : groops.subList(1, groops.size()))
+         author.append(", " + lUp.getGroop().getShowName());
 
-		return author.toString();
-	}
+      return author.toString();
+   }
 
-	/**
-	 * Get method for the track number
-	 * 
-	 * @return the track number
-	 */
-	public final int getTrackNumber() {
-		return trackNumber;
-	}
-	
+   /**
+    * Get method for the title
+    * 
+    * @return The track title
+    */
+   public final String getTitle()
+   {
+      return title;
+   }
 
-	
-	public Record getParent() throws SQLException{
-		return GetRecords.create().getRecord(parentNumber);
-	}
+   public String getTrackAuthor()
+   {
+      StringBuffer author = new StringBuffer(groops.get(0).getGroop().getSortName());
+      for (LineUp lUp : groops.subList(1, groops.size()))
+         author.append(", " + lUp.getGroop().getSortName());
 
-	@Override
-	public int hashCode() {
-		return title.hashCode() + refNumber;
-	}
+      return author.toString();
+   }
 
-	public void save(int recordNumber) throws SQLException {
-		if (refNumber == -1)
-			GetRecords.create().addTrack(recordNumber, this);
-		else
-			GetRecords.create().updateTrack(recordNumber, this);
-	}
+   /**
+    * Get method for the track number
+    * 
+    * @return the track number
+    */
+   public final int getTrackNumber()
+   {
+      return trackNumber;
+   }
 
-	public void setFormTrackNumber(int formTrackNumber) {
-		this.formTrackNumber = formTrackNumber;
-	}
+   @Override
+   public int hashCode()
+   {
+      return title.hashCode() + refNumber;
+   }
 
-	public void setLengthInSeconds(int lengthInSeconds) {
-		this.lengthInSeconds = lengthInSeconds;
-	}
+   public void save(int recordNumber) throws SQLException
+   {
+      if (refNumber == -1)
+         GetRecords.create().addTrack(recordNumber, this);
+      else
+         GetRecords.create().updateTrack(recordNumber, this);
+   }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+   public void setFormTrackNumber(int formTrackNumber)
+   {
+      this.formTrackNumber = formTrackNumber;
+   }
 
-	public void setTrackNumber(int number) {
-		trackNumber = number;
-	}
+   public void setLengthInSeconds(int lengthInSeconds)
+   {
+      this.lengthInSeconds = lengthInSeconds;
+   }
 
-	@Override
-	public String toString() {
-		StringBuffer ret = new StringBuffer("");
+   public void setParentNumber(int parentNumber)
+   {
+      this.parentNumber = parentNumber;
+   }
 
-		// Do the static stuff
-		ret.append("#T#" + trackNumber + "~" + title + "~" + lengthInSeconds);
+   public void setTitle(String title)
+   {
+      this.title = title;
+   }
 
-		// Do the personnel
-		Iterator<Artist> pIt = personnel.iterator();
-		while (pIt.hasNext())
-			ret.append("~" + pIt.next());
-		ret.append("\n");
+   public void setTrackNumber(int number)
+   {
+      trackNumber = number;
+   }
 
-		// Do the groups
-		Iterator<LineUp> gIt = groops.iterator();
-		while (gIt.hasNext())
-			ret.append(gIt.next());
+   @Override
+   public String toString()
+   {
+      StringBuffer ret = new StringBuffer("");
 
-		return ret.toString();
+      // Do the static stuff
+      ret.append("#T#" + trackNumber + "~" + title + "~" + lengthInSeconds);
 
-	}
+      // Do the personnel
+      Iterator<Artist> pIt = personnel.iterator();
+      while (pIt.hasNext())
+         ret.append("~" + pIt.next());
+      ret.append("\n");
+
+      // Do the groups
+      Iterator<LineUp> gIt = groops.iterator();
+      while (gIt.hasNext())
+         ret.append(gIt.next());
+
+      return ret.toString();
+
+   }
 }

@@ -80,7 +80,7 @@
           </executions>
           <configuration>
             <executable>deploy.sh</executable>
-            <mainClass>uk.co.brotherlogic.mdb.Connect</mainClass>
+            <mainClass>uk.co.brotherlogic.mdb.utils.Checker</mainClass>
           </configuration>
           
         </plugin>
