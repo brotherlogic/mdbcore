@@ -25,6 +25,7 @@ public final class Connect
       DEVELOPMENT, PRODUCTION
    }
 
+   private static boolean forced = false;
    /** Current mode of operation */
    private static mode operationMode = mode.DEVELOPMENT;
    private static Connect singleton;
@@ -68,11 +69,13 @@ public final class Connect
    public static void setForDevMode()
    {
       operationMode = mode.DEVELOPMENT;
+      forced = true;
    }
 
    public static void setForProdMode()
    {
       operationMode = mode.PRODUCTION;
+      forced = true;
    }
 
    /** The connection to the local DB */
@@ -208,7 +211,7 @@ public final class Connect
          Class.forName("org.postgresql.Driver");
 
          // Check on the operation mode
-         if (getVersionString().contains("SNAPSHOT"))
+         if (getVersionString().contains("SNAPSHOT") && !forced)
             operationMode = mode.DEVELOPMENT;
          else
             operationMode = mode.PRODUCTION;
