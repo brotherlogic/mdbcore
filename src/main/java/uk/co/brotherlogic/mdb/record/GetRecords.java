@@ -819,7 +819,7 @@ public class GetRecords
    {
       List<Track> tracks = new LinkedList<Track>();
       PreparedStatement s = Connect.getConnection().getPreparedStatement(
-            "SELECT trackRefNumber FROM track WHERE lower(title) like ?");
+            "SELECT trackRefNumber FROM track WHERE lower(trackname) like ?");
       s.setString(1, "%" + query.toLowerCase() + "%");
 
       ResultSet rs = Connect.getConnection().executeQuery(s);

@@ -1,6 +1,7 @@
 package uk.co.brotherlogic.mdb;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
 
 import junit.framework.TestCase;
@@ -238,6 +239,20 @@ public class TrackTest extends TestCase
          assert (nrec.getTrackRep(1).length() > 0);
       }
       catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
+
+   public void testSearch()
+   {
+      try
+      {
+         Collection<Track> tracks = GetRecords.create().searchTracks("ook");
+         assert (tracks.size() > 0);
+      }
+      catch (SQLException e)
       {
          e.printStackTrace();
          assert (false);
