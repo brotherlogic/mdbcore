@@ -680,6 +680,42 @@ public class GetRecords
 
    }
 
+   public Track getTrack(final int trackRefNumber) throws SQLException
+   {
+      // First Build the bare track details
+      PreparedStatement s = Connect
+            .getConnection()
+            .getPreparedStatement(
+                  "SELECT RecordNumber, TrackName, Length, TrackNumber,formtrack FROM Track  WHERE TrackRefNumber = ? ORDER BY TrackNumber");
+      s.setInt(1, trackRefNumber);
+      ResultSet rs = s.executeQuery();
+
+      // Naive approach to check for speed
+      Track currTrack = null;
+      while (rs.next())
+      {
+         int trckNum = rs.getInt(4);
+
+         // Create new track
+         String name = rs.getString(2);
+         if (name == null)
+            name = "";
+         int len = rs.getInt(3);
+         int refNum = trackRefNumber;
+         int formtrack = rs.getInt(5);
+         int recNumber = rs.getInt(1);
+
+         // currTrack = new Track(name, len, getLineUps(refNum),
+         // getPersonnel(refNum), trckNum, refNum);
+         currTrack = new Track(name, len, getLineUps(refNum), getPersonnel(refNum), trckNum,
+               refNum, formtrack, recNumber);
+      }
+      rs.close();
+      s.close();
+
+      return currTrack;
+   }
+
    public Set<Track> getTracks(final int recNumber) throws SQLException
    {
       Set<Track> retSet = new TreeSet<Track>();
@@ -776,6 +812,21 @@ public class GetRecords
          records.add(getRecord(rs.getInt(1)));
 
       return records;
+
+   }
+
+   public Collection<Track> searchTracks(String query) throws SQLException
+   {
+      List<Track> tracks = new LinkedList<Track>();
+      PreparedStatement s = Connect.getConnection().getPreparedStatement(
+            "SELECT trackRefNumber FROM track WHERE lower(title) like ?");
+      s.setString(1, "%" + query.toLowerCase() + "%");
+
+      ResultSet rs = Connect.getConnection().executeQuery(s);
+      while (rs.next())
+         tracks.add(getTrack(rs.getInt(1)));
+
+      return tracks;
 
    }
 
