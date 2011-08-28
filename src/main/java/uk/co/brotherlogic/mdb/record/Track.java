@@ -224,6 +224,11 @@ public class Track implements Comparable<Track>, Serializable
       return author.toString();
    }
 
+   public int getTrackID()
+   {
+      return refNumber;
+   }
+
    /**
     * Get method for the track number
     * 
