@@ -272,10 +272,14 @@ public class GetRecords
             "DELETE FROM catnoset WHERE recordnumber = ?");
       PreparedStatement psRec = Connect.getConnection().getPreparedStatement(
             "DELETE FROM records WHERE recordnumber = ?");
+      PreparedStatement psHist = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM score_history WHERE record_id = ?");
       psLabel.setInt(1, r.getNumber());
       psLabel.execute();
       psCat.setInt(1, r.getNumber());
       psCat.execute();
+      psHist.setInt(1, r.getNumber());
+      psHist.execute();
       psRec.setInt(1, r.getNumber());
       psRec.execute();
    }
