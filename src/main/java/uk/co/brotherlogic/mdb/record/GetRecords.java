@@ -246,6 +246,40 @@ public class GetRecords
       addGroopsAndPersonnel(trackNumber, toAdd);
    }
 
+   public void deleteRecord(Record r) throws SQLException
+   {
+      // Delete all the tracks
+      PreparedStatement psPers = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM Personnel WHERE TrackNumber = ?");
+      PreparedStatement psGroop = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM LineUpSet WHERE TrackNumber = ?");
+      PreparedStatement psTrack = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM Track WHERE TrackRefNumber = ?");
+      for (Track t : r.getTracks())
+      {
+         psPers.setInt(1, t.getTrackID());
+         psPers.execute();
+         psGroop.setInt(1, t.getTrackID());
+         psGroop.execute();
+         psTrack.setInt(1, t.getTrackID());
+         psTrack.execute();
+      }
+
+      // Do the other deletes
+      PreparedStatement psLabel = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM LabelSet WHERE RecordNumber = ?");
+      PreparedStatement psCat = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM catnoset WHERE recordnumber = ?");
+      PreparedStatement psRec = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM records WHERE recordnumber = ?");
+      psLabel.setInt(1, r.getNumber());
+      psLabel.execute();
+      psCat.setInt(1, r.getNumber());
+      psCat.execute();
+      psRec.setInt(1, r.getNumber());
+      psRec.execute();
+   }
+
    public void fixVersion(Record rec) throws SQLException
    {
       rec.setVersion(Connect.getConnection().getVersionString());
@@ -819,7 +853,7 @@ public class GetRecords
    {
       List<Track> tracks = new LinkedList<Track>();
       PreparedStatement s = Connect.getConnection().getPreparedStatement(
-            "SELECT trackRefNumber FROM track WHERE lower(title) like ?");
+            "SELECT trackRefNumber FROM track WHERE lower(trackname) like ?");
       s.setString(1, "%" + query.toLowerCase() + "%");
 
       ResultSet rs = Connect.getConnection().executeQuery(s);
