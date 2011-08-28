@@ -465,6 +465,46 @@ public class Record implements Comparable<Record>
          if (((ent.getValue()).doubleValue() / tracks.size()) > GROOP_RATIO)
             mainGroops.add(ent.getKey());
 
+      System.err.println("GROOPS = " + mainGroops);
+      return mainGroops;
+
+   }
+
+   public Collection<String> getMainGroopsOrd()
+   {
+      // A Map of groopName --> Count
+      Map<String, Integer> mainGroopMap = new TreeMap<String, Integer>();
+      Collection<String> mainGroops = new Vector<String>();
+
+      Iterator<Track> tIt = tracks.iterator();
+      while (tIt.hasNext())
+      {
+         // Increment the count for each groop
+         Collection<LineUp> groops = (tIt.next()).getLineUps();
+         Iterator<LineUp> gIt = groops.iterator();
+         while (gIt.hasNext())
+         {
+            Groop grp = gIt.next().getGroop();
+            String groopName = grp.getSortName();
+
+            Integer intVal;
+            if (mainGroopMap.containsKey(groopName))
+            {
+               intVal = mainGroopMap.get(groopName);
+               intVal = intVal.intValue() + 1;
+            }
+            else
+               intVal = 1;
+
+            mainGroopMap.put(groopName, intVal);
+         }
+      }
+
+      // Select only groops who appear on the right number of tracks
+      for (Entry<String, Integer> ent : mainGroopMap.entrySet())
+         if (((ent.getValue()).doubleValue() / tracks.size()) > GROOP_RATIO)
+            mainGroops.add(ent.getKey());
+
       return mainGroops;
 
    }
@@ -485,6 +525,26 @@ public class Record implements Comparable<Record>
       for (Track trck : getTracks())
          tNumber = Math.max(trck.getFormTrackNumber(), tNumber);
       return tNumber;
+   }
+
+   public String getOrdGroopString()
+   {
+      // Construct the groop string
+      Collection<String> main = getMainGroops();
+      Iterator<String> gIt = main.iterator();
+      StringBuffer groop = new StringBuffer("");
+      while (gIt.hasNext())
+         groop.append(gIt.next() + " & ");
+
+      // Remove the trailing & or replace with various
+      String grp = null;
+      if (groop.length() > 0)
+         grp = groop.substring(0, groop.length() - 3);
+      else
+         grp = "Various";
+
+      return grp;
+
    }
 
    public int getOwner()

@@ -35,6 +35,9 @@ public class DiscogTest extends TestCase
    /** Turkish Freakout */
    private static final int DISCOG_VOSW = 2391525;
 
+   /** Marissa Nadler - Marissa Nadler */
+   private static final int MARISSA_NADLER = 2913124;
+
    /**
     * Constructor
     */
@@ -191,10 +194,8 @@ public class DiscogTest extends TestCase
 
          // Check the last track has a correct title
          for (Track t : r.getTracks())
-         {
             if (t.getTrackNumber() == 50)
                assert (t.getTitle().equals("Middle Mass (Live)"));
-         }
 
       }
       catch (Exception e)
@@ -204,4 +205,27 @@ public class DiscogTest extends TestCase
       }
    }
 
+   /**
+    * Check on the artist author retrieve
+    */
+   public final void testNadler()
+   {
+      DiscogParser parser = new DiscogParser();
+
+      // This is MV & EE - Drone Trailer
+      try
+      {
+         Record r = parser.parseDiscogRelease(MARISSA_NADLER);
+
+         System.err.println("NADLER = " + r.getAuthor());
+         // Check that the format tracks are correct
+         assert (r.getAuthor().equals("Nadler, Marissa"));
+
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
 }
