@@ -17,6 +17,9 @@ import uk.co.brotherlogic.mdb.record.Track;
 public class DiscogTest extends TestCase
 {
 
+   /** Double A Side */
+   private static final int DISCOG_DOUBLE = 2958490;
+
    /** The Fall - Wonderful and Frightening World Box Set */
    private static final int DISCOG_FALL = 2518468;
 
@@ -171,6 +174,28 @@ public class DiscogTest extends TestCase
 
          // Check that the format tracks are correct
          assert (r.getTracks().size() == 5);
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
+
+   /**
+    * Main test method
+    */
+   public final void testDoubleASide()
+   {
+      DiscogParser parser = new DiscogParser();
+
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_DOUBLE);
+
+         // Check that the format tracks are correct
+         assert (r.getTracks().size() == 2);
+
       }
       catch (Exception e)
       {

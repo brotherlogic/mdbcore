@@ -218,11 +218,16 @@ class DiscogXMLParser extends DefaultHandler
                if (text.length() > 0)
                {
                   int number;
+
                   if (text.contains("-"))
                   {
                      String[] elems = text.split("-");
                      int discNumber = Integer.parseInt(elems[0]);
-                     int trckNumber = Integer.parseInt(elems[1]);
+                     int trckNumber = 0;
+                     if (elems[1].equals("A"))
+                        trckNumber = 2;
+                     else
+                        trckNumber = Integer.parseInt(elems[1]);
 
                      if (contNum || highest.get(discNumber - 1) + 1 == trckNumber)
                      {
@@ -241,10 +246,9 @@ class DiscogXMLParser extends DefaultHandler
                      else
                         highest.put(discNumber, number);
                   }
+
                   else
-                  {
                      number = Integer.parseInt(text);
-                  }
 
                   currTrack.setTrackNumber(number);
                   currTrack.setFormTrackNumber(number);
