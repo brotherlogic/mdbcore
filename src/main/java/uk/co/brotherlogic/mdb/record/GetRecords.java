@@ -98,7 +98,7 @@ public class GetRecords
       updateRecord = Connect
             .getConnection()
             .getPreparedStatement(
-                  "UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ?, parent = ?, version = 'updated' WHERE RecordNumber = ?");
+                  "UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ?, parent = ?, salepricepence = ?, version = 'updated' WHERE RecordNumber = ?");
       getPersonnel = Connect
             .getConnection()
             .getPreparedStatement(
@@ -309,7 +309,7 @@ public class GetRecords
          r.setDiscogsNum(rs.getInt("discog_id"));
          r.setFormat(rs.getInt("format"));
          r.setShelfPos(rs.getInt("shelfpos"));
-         r.setSoldPrice(rs.getDouble("salepricepence"));
+         r.setSoldPrice(rs.getInt("salepricepence"));
          records.add(r);
       }
 
@@ -687,7 +687,7 @@ public class GetRecords
          String riploc = rs.getString(13);
          int discogid = rs.getInt(14);
          int parent = rs.getInt(15);
-         double salePrice = rs.getDouble(16);
+         int salePrice = rs.getInt(16);
          String version = rs.getString(17).trim();
 
          currRec = new Record(title, GetFormats.create().getFormat(format), boughtDate, shelfpos);
@@ -892,7 +892,8 @@ public class GetRecords
       updateRecord.setString(13, in.getRiploc());
       updateRecord.setInt(14, in.getDiscogsNum());
       updateRecord.setInt(15, in.getParent());
-      updateRecord.setInt(16, in.getNumber());
+      updateRecord.setInt(17, in.getNumber());
+      updateRecord.setDouble(16, in.getSoldPrice());
 
       updateRecord.execute();
       int recordNumber = in.getNumber();
