@@ -17,6 +17,9 @@ import uk.co.brotherlogic.mdb.record.Track;
 public class DiscogTest extends TestCase
 {
 
+   /** Double A Side */
+   private static final int DISCOG_DOUBLE = 2958490;
+
    /** The Fall - Wonderful and Frightening World Box Set */
    private static final int DISCOG_FALL = 2518468;
 
@@ -34,6 +37,9 @@ public class DiscogTest extends TestCase
 
    /** Turkish Freakout */
    private static final int DISCOG_VOSW = 2391525;
+
+   /** Marissa Nadler - Marissa Nadler */
+   private static final int MARISSA_NADLER = 2913124;
 
    /**
     * Constructor
@@ -177,6 +183,28 @@ public class DiscogTest extends TestCase
    }
 
    /**
+    * Main test method
+    */
+   public final void testDoubleASide()
+   {
+      DiscogParser parser = new DiscogParser();
+
+      try
+      {
+         Record r = parser.parseDiscogRelease(DISCOG_DOUBLE);
+
+         // Check that the format tracks are correct
+         assert (r.getTracks().size() == 2);
+
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
+
+   /**
     * Fall Test
     */
    public final void testFall()
@@ -191,10 +219,8 @@ public class DiscogTest extends TestCase
 
          // Check the last track has a correct title
          for (Track t : r.getTracks())
-         {
             if (t.getTrackNumber() == 50)
                assert (t.getTitle().equals("Middle Mass (Live)"));
-         }
 
       }
       catch (Exception e)
@@ -204,4 +230,27 @@ public class DiscogTest extends TestCase
       }
    }
 
+   /**
+    * Check on the artist author retrieve
+    */
+   public final void testNadler()
+   {
+      DiscogParser parser = new DiscogParser();
+
+      // This is MV & EE - Drone Trailer
+      try
+      {
+         Record r = parser.parseDiscogRelease(MARISSA_NADLER);
+
+         System.err.println("NADLER = " + r.getAuthor());
+         // Check that the format tracks are correct
+         assert (r.getAuthor().equals("Nadler, Marissa"));
+
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
 }

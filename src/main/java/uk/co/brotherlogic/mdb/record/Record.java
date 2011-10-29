@@ -27,6 +27,7 @@ import uk.co.brotherlogic.mdb.User;
 import uk.co.brotherlogic.mdb.artist.Artist;
 import uk.co.brotherlogic.mdb.categories.Category;
 import uk.co.brotherlogic.mdb.format.Format;
+import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.label.Label;
@@ -79,7 +80,8 @@ public class Record implements Comparable<Record>
    private int discogsNum = -1;
 
    /** The format of the record */
-   private Format format;
+   private Format format = null;
+   private int formatNumber = -1;
 
    /** Labels which released the record */
    private Collection<Label> labels;
@@ -111,8 +113,8 @@ public class Record implements Comparable<Record>
    /** The location of the record on it's respective shelf */
    private int shelfpos;
 
-   /** Price of sold record */
-   private double soldPrice;
+   /** Price of sold record in pence */
+   private int soldPrice;
 
    /** The name of the record */
    private String title;
@@ -340,8 +342,10 @@ public class Record implements Comparable<Record>
       return null;
    }
 
-   public Format getFormat()
+   public Format getFormat() throws SQLException
    {
+      if (format == null && formatNumber > 0)
+         format = GetFormats.create().getFormat(formatNumber);
       return format;
    }
 
@@ -461,6 +465,46 @@ public class Record implements Comparable<Record>
          if (((ent.getValue()).doubleValue() / tracks.size()) > GROOP_RATIO)
             mainGroops.add(ent.getKey());
 
+      System.err.println("GROOPS = " + mainGroops);
+      return mainGroops;
+
+   }
+
+   public Collection<String> getMainGroopsOrd()
+   {
+      // A Map of groopName --> Count
+      Map<String, Integer> mainGroopMap = new TreeMap<String, Integer>();
+      Collection<String> mainGroops = new Vector<String>();
+
+      Iterator<Track> tIt = tracks.iterator();
+      while (tIt.hasNext())
+      {
+         // Increment the count for each groop
+         Collection<LineUp> groops = (tIt.next()).getLineUps();
+         Iterator<LineUp> gIt = groops.iterator();
+         while (gIt.hasNext())
+         {
+            Groop grp = gIt.next().getGroop();
+            String groopName = grp.getSortName();
+
+            Integer intVal;
+            if (mainGroopMap.containsKey(groopName))
+            {
+               intVal = mainGroopMap.get(groopName);
+               intVal = intVal.intValue() + 1;
+            }
+            else
+               intVal = 1;
+
+            mainGroopMap.put(groopName, intVal);
+         }
+      }
+
+      // Select only groops who appear on the right number of tracks
+      for (Entry<String, Integer> ent : mainGroopMap.entrySet())
+         if (((ent.getValue()).doubleValue() / tracks.size()) > GROOP_RATIO)
+            mainGroops.add(ent.getKey());
+
       return mainGroops;
 
    }
@@ -481,6 +525,26 @@ public class Record implements Comparable<Record>
       for (Track trck : getTracks())
          tNumber = Math.max(trck.getFormTrackNumber(), tNumber);
       return tNumber;
+   }
+
+   public String getOrdGroopString()
+   {
+      // Construct the groop string
+      Collection<String> main = getMainGroops();
+      Iterator<String> gIt = main.iterator();
+      StringBuffer groop = new StringBuffer("");
+      while (gIt.hasNext())
+         groop.append(gIt.next() + " & ");
+
+      // Remove the trailing & or replace with various
+      String grp = null;
+      if (groop.length() > 0)
+         grp = groop.substring(0, groop.length() - 3);
+      else
+         grp = "Various";
+
+      return grp;
+
    }
 
    public int getOwner()
@@ -562,7 +626,7 @@ public class Record implements Comparable<Record>
       return shelfpos;
    }
 
-   public double getSoldPrice()
+   public int getSoldPrice()
    {
       return soldPrice;
    }
@@ -756,6 +820,11 @@ public class Record implements Comparable<Record>
       format = form;
    }
 
+   public void setFormat(int form)
+   {
+      formatNumber = form;
+   }
+
    public void setGroops(int trackNumber, Collection<LineUp> lineups)
    {
       Track intTrack = getTrack(trackNumber);
@@ -832,9 +901,15 @@ public class Record implements Comparable<Record>
       updated = true;
    }
 
-   public void setSoldPrice(double soldPrice)
+   public void setShelfPos(int pos)
+   {
+      shelfpos = pos;
+   }
+
+   public void setSoldPrice(int soldPrice)
    {
       this.soldPrice = soldPrice;
+      updated = true;
    }
 
    public void setTitle(String tit)

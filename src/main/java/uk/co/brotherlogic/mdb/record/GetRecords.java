@@ -47,9 +47,18 @@ public class GetRecords
       return singleton;
    }
 
+   public static void main(String[] args) throws Exception
+   {
+      Collection<Record> records = GetRecords.create().getRecords(UNSHELVED, "12");
+      for (Record record : records)
+         System.out.println(record.getAuthor() + " - " + record.getTitle());
+   }
+
    PreparedStatement addRecord;
 
+   PreparedStatement getAllRecords;
    PreparedStatement getChildren;
+
    PreparedStatement getPersonnel;
 
    PreparedStatement getRecord;
@@ -77,6 +86,8 @@ public class GetRecords
             .getPreparedStatement(
                   "SELECT RecordNumber FROM Records WHERE Title = ? AND BoughtDate = ? AND Format = ? AND Notes = ? ORDER BY RecordNumber DESC");
 
+      getAllRecords = Connect.getConnection().getPreparedStatement("SELECT * FROM Records");
+
       getChildren = Connect.getConnection().getPreparedStatement(
             "SELECT RecordNumber FROM Records WHERE Parent = ?");
 
@@ -87,7 +98,7 @@ public class GetRecords
       updateRecord = Connect
             .getConnection()
             .getPreparedStatement(
-                  "UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ?, parent = ?, version = 'updated' WHERE RecordNumber = ?");
+                  "UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ?, riploc = ?, discog_id = ?, parent = ?, salepricepence = ?, version = 'updated' WHERE RecordNumber = ?");
       getPersonnel = Connect
             .getConnection()
             .getPreparedStatement(
@@ -235,6 +246,44 @@ public class GetRecords
       addGroopsAndPersonnel(trackNumber, toAdd);
    }
 
+   public void deleteRecord(Record r) throws SQLException
+   {
+      // Delete all the tracks
+      PreparedStatement psPers = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM Personnel WHERE TrackNumber = ?");
+      PreparedStatement psGroop = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM LineUpSet WHERE TrackNumber = ?");
+      PreparedStatement psTrack = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM Track WHERE TrackRefNumber = ?");
+      for (Track t : r.getTracks())
+      {
+         psPers.setInt(1, t.getTrackID());
+         psPers.execute();
+         psGroop.setInt(1, t.getTrackID());
+         psGroop.execute();
+         psTrack.setInt(1, t.getTrackID());
+         psTrack.execute();
+      }
+
+      // Do the other deletes
+      PreparedStatement psLabel = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM LabelSet WHERE RecordNumber = ?");
+      PreparedStatement psCat = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM catnoset WHERE recordnumber = ?");
+      PreparedStatement psRec = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM records WHERE recordnumber = ?");
+      PreparedStatement psHist = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM score_history WHERE record_id = ?");
+      psLabel.setInt(1, r.getNumber());
+      psLabel.execute();
+      psCat.setInt(1, r.getNumber());
+      psCat.execute();
+      psHist.setInt(1, r.getNumber());
+      psHist.execute();
+      psRec.setInt(1, r.getNumber());
+      psRec.execute();
+   }
+
    public void fixVersion(Record rec) throws SQLException
    {
       rec.setVersion(Connect.getConnection().getVersionString());
@@ -245,6 +294,26 @@ public class GetRecords
       ps.setInt(2, rec.getNumber());
 
       ps.execute();
+   }
+
+   public Collection<Record> getAllRecords() throws SQLException
+   {
+      List<Record> records = new LinkedList<Record>();
+
+      ResultSet rs = getAllRecords.executeQuery();
+      while (rs.next())
+      {
+         Record r = new Record();
+         r.setTitle(rs.getString("title"));
+         r.setNumber(rs.getInt("recordnumber"));
+         r.setDiscogsNum(rs.getInt("discog_id"));
+         r.setFormat(rs.getInt("format"));
+         r.setShelfPos(rs.getInt("shelfpos"));
+         r.setSoldPrice(rs.getInt("salepricepence"));
+         records.add(r);
+      }
+
+      return records;
    }
 
    public Set<String> getCatNos(int recNumber) throws SQLException
@@ -427,12 +496,14 @@ public class GetRecords
          PreparedStatement s = Connect
                .getConnection()
                .getPreparedStatement(
-                     "SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos <= 0 AND salepricepence < 0");
+                     "SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND (shelfpos <= 0 OR shelfpos IS NULL) AND salepricepence < 0");
          s.setString(1, format);
          ResultSet rs = s.executeQuery();
          while (rs.next())
          {
             Record rec = getRecord(rs.getInt(1));
+            System.out.println("pre: " + rec.getAuthor() + " - " + rec.getTitle());
+
             if (rec.getParent() <= 0)
                records.add(rec);
          }
@@ -616,7 +687,7 @@ public class GetRecords
          String riploc = rs.getString(13);
          int discogid = rs.getInt(14);
          int parent = rs.getInt(15);
-         double salePrice = rs.getDouble(16);
+         int salePrice = rs.getInt(16);
          String version = rs.getString(17).trim();
 
          currRec = new Record(title, GetFormats.create().getFormat(format), boughtDate, shelfpos);
@@ -645,6 +716,42 @@ public class GetRecords
       else
          return null;
 
+   }
+
+   public Track getTrack(final int trackRefNumber) throws SQLException
+   {
+      // First Build the bare track details
+      PreparedStatement s = Connect
+            .getConnection()
+            .getPreparedStatement(
+                  "SELECT RecordNumber, TrackName, Length, TrackNumber,formtrack FROM Track  WHERE TrackRefNumber = ? ORDER BY TrackNumber");
+      s.setInt(1, trackRefNumber);
+      ResultSet rs = s.executeQuery();
+
+      // Naive approach to check for speed
+      Track currTrack = null;
+      while (rs.next())
+      {
+         int trckNum = rs.getInt(4);
+
+         // Create new track
+         String name = rs.getString(2);
+         if (name == null)
+            name = "";
+         int len = rs.getInt(3);
+         int refNum = trackRefNumber;
+         int formtrack = rs.getInt(5);
+         int recNumber = rs.getInt(1);
+
+         // currTrack = new Track(name, len, getLineUps(refNum),
+         // getPersonnel(refNum), trckNum, refNum);
+         currTrack = new Track(name, len, getLineUps(refNum), getPersonnel(refNum), trckNum,
+               refNum, formtrack, recNumber);
+      }
+      rs.close();
+      s.close();
+
+      return currTrack;
    }
 
    public Set<Track> getTracks(final int recNumber) throws SQLException
@@ -746,6 +853,21 @@ public class GetRecords
 
    }
 
+   public Collection<Track> searchTracks(String query) throws SQLException
+   {
+      List<Track> tracks = new LinkedList<Track>();
+      PreparedStatement s = Connect.getConnection().getPreparedStatement(
+            "SELECT trackRefNumber FROM track WHERE lower(trackname) like ?");
+      s.setString(1, "%" + query.toLowerCase() + "%");
+
+      ResultSet rs = Connect.getConnection().executeQuery(s);
+      while (rs.next())
+         tracks.add(getTrack(rs.getInt(1)));
+
+      return tracks;
+
+   }
+
    public void updateRecord(Record in) throws SQLException
    {
       // First get the format number
@@ -770,7 +892,8 @@ public class GetRecords
       updateRecord.setString(13, in.getRiploc());
       updateRecord.setInt(14, in.getDiscogsNum());
       updateRecord.setInt(15, in.getParent());
-      updateRecord.setInt(16, in.getNumber());
+      updateRecord.setInt(17, in.getNumber());
+      updateRecord.setDouble(16, in.getSoldPrice());
 
       updateRecord.execute();
       int recordNumber = in.getNumber();

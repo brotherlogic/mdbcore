@@ -79,6 +79,23 @@ public class RecordTest extends TestCase
       }
    }
 
+   public void testDeleteRecord()
+   {
+      buildRecord();
+      try
+      {
+         Record r = GetRecords.create().getRecords("fake-title").get(0);
+         GetRecords.create().deleteRecord(r);
+         assert (GetRecords.create().getRecords("fake-title").size() == 0);
+         built = false;
+      }
+      catch (SQLException e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
+
    public void testDiscog()
    {
       try
@@ -244,6 +261,25 @@ public class RecordTest extends TestCase
       {
          e.printStackTrace();
          assert (false);
+      }
+   }
+
+   public void testSalePrice()
+   {
+      try
+      {
+         buildRecord();
+         Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+         nrec.setSoldPrice(2254);
+         nrec.save();
+
+         Record nrec2 = GetRecords.create().getRecords("fake-title").get(0);
+         System.out.println("HERE = " + nrec2.getSoldPrice());
+         assert (nrec2.getSoldPrice() == 2254);
+      }
+      catch (SQLException e)
+      {
+         e.printStackTrace();
       }
    }
 
