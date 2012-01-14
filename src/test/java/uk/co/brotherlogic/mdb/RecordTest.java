@@ -264,6 +264,25 @@ public class RecordTest extends TestCase
       }
    }
 
+   public void testSalePrice()
+   {
+      try
+      {
+         buildRecord();
+         Record nrec = GetRecords.create().getRecords("fake-title").get(0);
+         nrec.setSoldPrice(2254);
+         nrec.save();
+
+         Record nrec2 = GetRecords.create().getRecords("fake-title").get(0);
+         System.out.println("HERE = " + nrec2.getSoldPrice());
+         assert (nrec2.getSoldPrice() == 2254);
+      }
+      catch (SQLException e)
+      {
+         e.printStackTrace();
+      }
+   }
+
    public void testScore()
    {
       try

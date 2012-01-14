@@ -113,8 +113,8 @@ public class Record implements Comparable<Record>
    /** The location of the record on it's respective shelf */
    private int shelfpos;
 
-   /** Price of sold record */
-   private double soldPrice;
+   /** Price of sold record in pence */
+   private int soldPrice;
 
    /** The name of the record */
    private String title;
@@ -626,7 +626,7 @@ public class Record implements Comparable<Record>
       return shelfpos;
    }
 
-   public double getSoldPrice()
+   public int getSoldPrice()
    {
       return soldPrice;
    }
@@ -906,9 +906,10 @@ public class Record implements Comparable<Record>
       shelfpos = pos;
    }
 
-   public void setSoldPrice(double soldPrice)
+   public void setSoldPrice(int soldPrice)
    {
       this.soldPrice = soldPrice;
+      updated = true;
    }
 
    public void setTitle(String tit)
