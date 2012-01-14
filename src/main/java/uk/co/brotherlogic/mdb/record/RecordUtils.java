@@ -93,6 +93,7 @@ public class RecordUtils
       List<Record> records = getRecords(baseformat, 1);
       if (records != null && records.size() > 0)
          return records.get(0);
+
       return null;
    }
 
@@ -108,6 +109,7 @@ public class RecordUtils
             + "ORDER BY owner, mean LIMIT " + num;
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setString(1, baseformat);
+      System.out.println(ps);
       ResultSet rs = Connect.getConnection().executeQuery(ps);
       List<Record> records = new LinkedList<Record>();
       while (rs.next())
@@ -135,6 +137,7 @@ public class RecordUtils
       {
          Record tempNew = getNewRecord(string);
          Record currRec = getRecordToListenTo(string);
+
          {
             if (tempNew != null
                   && (newRecord == null || tempNew.getDate().after(newRecord.getDate())))
@@ -173,7 +176,8 @@ public class RecordUtils
 
    public static void main(String[] args) throws Exception
    {
-      Record recs = getRecordToListenTo("12");
+      Record recs = getRecordToListenTo(new String[]
+      { "CD" });
       System.out.println(recs.getAuthor() + " - " + recs.getTitle());
    }
 }
