@@ -37,12 +37,12 @@ public class DiscogParser
    public static void main(String[] args) throws Exception
    {
       DiscogParser p = new DiscogParser();
-      Record r = p.parseDiscogRelease(2518468);
+      Record r = p.parseDiscogRelease(1743025);
       // System.out.println(r);
       // System.out.println(r.getTracks().size());
    }
 
-   String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
+   String base = "http://api.discogs.com/release/ID?f=xml";
 
    public Record parseDiscogRelease(int id) throws IOException
    {
