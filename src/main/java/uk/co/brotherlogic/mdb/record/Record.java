@@ -430,6 +430,11 @@ public class Record implements Comparable<Record>
       return labels;
    }
 
+   public long getLastScoreDate(User user) throws SQLException
+   {
+      return RecordScore.getLastScoreDate(this, user);
+   }
+
    public Collection<String> getMainGroops()
    {
       // A Map of groopName --> Count

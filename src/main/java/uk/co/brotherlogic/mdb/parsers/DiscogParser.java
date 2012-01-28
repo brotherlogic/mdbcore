@@ -38,11 +38,12 @@ public class DiscogParser
    {
       DiscogParser p = new DiscogParser();
       Record r = p.parseDiscogRelease(2518468);
-      // System.out.println(r);
-      // System.out.println(r.getTracks().size());
+      System.out.println(r.getTracks().size());
+      for (Track t : r.getTracks())
+         System.out.println(t.getTrackNumber() + ": " + t.getTitle());
    }
 
-   String base = "http://www.discogs.com/release/ID?f=xml&api_key=67668099b8";
+   String base = "http://api.discogs.com/release/ID?f=xml";
 
    public Record parseDiscogRelease(int id) throws IOException
    {
@@ -254,6 +255,8 @@ class DiscogXMLParser extends DefaultHandler
                   currTrack.setFormTrackNumber(number);
                }
             }
+            else if (qualName.equals("tracklist"))
+               inTracks = false;
             else if (qualName.equals("track"))
             {
                if (currTrack.getTrackNumber() > 0)
