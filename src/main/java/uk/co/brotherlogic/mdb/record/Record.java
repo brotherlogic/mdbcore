@@ -55,6 +55,7 @@ public class Record implements Comparable<Record>
    public static void main(String[] args) throws Exception
    {
       Record r = GetRecords.create().getRecord(10486);
+
       System.out.println(r.getFormTrackTitle(1));
    }
 
@@ -683,6 +684,9 @@ public class Record implements Comparable<Record>
    {
       try
       {
+         if (tracks.size() == 0)
+            getTracks();
+
          return numberize(formTrackNumber) + "~" + sanitize(getFormTrackArtist(formTrackNumber))
                + "~" + sanitize(getFormTrackTitle(formTrackNumber));
       }

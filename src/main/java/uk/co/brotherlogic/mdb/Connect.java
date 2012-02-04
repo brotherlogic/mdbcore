@@ -39,7 +39,6 @@ public final class Connect
     */
    public static Connect getConnection() throws SQLException
    {
-      System.out.println("IN: " + singleton.operationMode);
       if (singleton == null)
       {
          singleton = new Connect(operationMode);
@@ -48,7 +47,6 @@ public final class Connect
          DBUpgrade.upgradeDB();
       }
 
-      System.out.println("OUT: " + singleton.operationMode);
       return singleton;
    }
 
@@ -71,8 +69,6 @@ public final class Connect
 
    public static void setForDevMode()
    {
-      System.out.println("SET FOR DEV");
-      System.exit(1);
       operationMode = mode.DEVELOPMENT;
       forced = true;
    }
@@ -170,7 +166,6 @@ public final class Connect
    public PreparedStatement getPreparedStatement(final String sql) throws SQLException
    {
       // Thread.dumpStack();
-      System.out.println("HERE => " + operationMode);
       if (operationMode == mode.DEVELOPMENT)
          System.err.println("Qu: " + sql);
 
@@ -214,7 +209,6 @@ public final class Connect
    {
       try
       {
-         System.out.println(getVersionString() + " and " + forced);
 
          // Load all the drivers and initialise the database connection
          Class.forName("org.postgresql.Driver");
@@ -233,8 +227,6 @@ public final class Connect
             locDB = DriverManager
                   .getConnection("jdbc:postgresql://localhost/musicdev?user=musicdev");
          }
-
-         System.out.println(operationMode + " => " + mode.PRODUCTION);
 
          // Switch off auto commit
          locDB.setAutoCommit(false);

@@ -307,8 +307,8 @@ public class RecordTest extends TestCase
       try
       {
 
-         Record r = GetRecords.create().getRecord(12118);
-         for (int i = 1; i <= 6; i++)
+         Record r = GetRecords.create().getRecord(10272);
+         for (int i = 1; i <= 10; i++)
             r.getTrackRep(i);
       }
       catch (Exception e)
