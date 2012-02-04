@@ -49,10 +49,9 @@ public class GetRecords
 
    public static void main(String[] args) throws Exception
    {
-      long sTime = System.currentTimeMillis();
-      Collection<Record> records = GetRecords.create().getRecords(SHELVED, "CD");
-      RecordScore.scoreRecords(records);
-      System.out.println((System.currentTimeMillis() - sTime) / 1000.0);
+      Record r = GetRecords.create().getRecord(10486);
+      for (int i = 1; i <= 6; i++)
+         System.out.println("HERE = " + r.getTrackRep(i));
    }
 
    PreparedStatement addRecord;
