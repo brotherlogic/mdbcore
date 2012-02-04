@@ -301,6 +301,23 @@ public class RecordTest extends TestCase
       }
    }
 
+   public void testTrackRep()
+   {
+      // Gets les rallizes
+      try
+      {
+
+         Record r = GetRecords.create().getRecord(12118);
+         for (int i = 1; i <= 6; i++)
+            r.getTrackRep(i);
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         assert (false);
+      }
+   }
+
    public void testWeaver()
    {
       try
