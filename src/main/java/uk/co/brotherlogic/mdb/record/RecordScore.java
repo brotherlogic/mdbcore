@@ -3,6 +3,9 @@ package uk.co.brotherlogic.mdb.record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.User;
@@ -107,5 +110,38 @@ public class RecordScore
       Connect.setForProdMode();
       Record r = GetRecords.create().getRecord(6270);
       System.out.println(RecordScore.get(r));
+   }
+
+   public static void scoreRecords(Collection<Record> records) throws SQLException
+   {
+      Map<Integer, Integer> recordScoreSum = new TreeMap<Integer, Integer>();
+      Map<Integer, Integer> scoreCount = new TreeMap<Integer, Integer>();
+
+      String sql = "SELECT record_id,score_value from score_history where user_id = ?";
+      PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+      ps.setInt(1, User.getUser("simon").getID());
+
+      ResultSet rs = ps.executeQuery();
+      while (rs.next())
+      {
+         int recId = rs.getInt(1);
+         int score = rs.getInt(2);
+
+         if (!recordScoreSum.containsKey(recId))
+         {
+            recordScoreSum.put(recId, score);
+            scoreCount.put(recId, 1);
+         }
+         else
+         {
+            recordScoreSum.put(recId, recordScoreSum.get(recId) + score);
+            scoreCount.put(recId, scoreCount.get(recId) + 1);
+         }
+      }
+
+      for (Record r : records)
+         if (recordScoreSum.containsKey(r.getNumber()))
+            r.setScore((recordScoreSum.get(r.getNumber()) + 0.0) / scoreCount.get(r.getNumber()));
+
    }
 }

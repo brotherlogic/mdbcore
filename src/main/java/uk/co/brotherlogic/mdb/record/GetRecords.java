@@ -49,9 +49,9 @@ public class GetRecords
 
    public static void main(String[] args) throws Exception
    {
-      Collection<Record> records = GetRecords.create().getRecords(UNSHELVED, "12");
-      for (Record record : records)
-         System.out.println(record.getAuthor() + " - " + record.getTitle());
+      Record r = GetRecords.create().getRecord(10486);
+      for (int i = 1; i <= 6; i++)
+         System.out.println("HERE = " + r.getTrackRep(i));
    }
 
    PreparedStatement addRecord;
@@ -479,12 +479,12 @@ public class GetRecords
          PreparedStatement s = Connect
                .getConnection()
                .getPreparedStatement(
-                     "SELECT RecordNumber FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos > 0");
+                     "SELECT RecordNumber, author,title , riploc FROM Records,formats WHERE format = formatnumber and baseformat = ? AND shelfpos > 0");
          s.setString(1, format);
          ResultSet rs = s.executeQuery();
          while (rs.next())
          {
-            Record rec = getRecord(rs.getInt(1));
+            Record rec = new Record(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
             if (rec.getParent() <= 0)
                records.add(rec);
          }

@@ -46,6 +46,7 @@ public final class Connect
          // Upgrade the database ready for use
          DBUpgrade.upgradeDB();
       }
+
       return singleton;
    }
 
@@ -164,6 +165,7 @@ public final class Connect
     */
    public PreparedStatement getPreparedStatement(final String sql) throws SQLException
    {
+      // Thread.dumpStack();
       if (operationMode == mode.DEVELOPMENT)
          System.err.println("Qu: " + sql);
 
@@ -207,6 +209,7 @@ public final class Connect
    {
       try
       {
+
          // Load all the drivers and initialise the database connection
          Class.forName("org.postgresql.Driver");
 
