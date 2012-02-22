@@ -89,6 +89,22 @@ public class RecordScore
       return count;
    }
 
+   public static double getLastScore(Record rec, User user) throws SQLException
+   {
+      String sql = "SELECT score_value from score_history WHERE record_id = ? AND user_id = ? ORDER BY score_date DESC LIMIT 1";
+      PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+      ps.setInt(1, rec.getNumber());
+      ps.setInt(2, user.getID());
+      ResultSet rs = ps.executeQuery();
+      double count = 0.0;
+      if (rs.next())
+         count = rs.getDouble(1);
+      rs.close();
+      ps.close();
+
+      return count;
+   }
+
    public static long getLastScoreDate(Record rec, User user) throws SQLException
    {
       String sql = "SELECT score_date from score_history WHERE record_id = ? AND user_id = ? ORDER BY score_date DESC LIMIT 1";
