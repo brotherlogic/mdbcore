@@ -55,6 +55,7 @@ public class Record implements Comparable<Record>
    public static void main(String[] args) throws Exception
    {
       Record r = GetRecords.create().getRecord(10486);
+
       System.out.println(r.getFormTrackTitle(1));
    }
 
@@ -81,11 +82,11 @@ public class Record implements Comparable<Record>
 
    /** The format of the record */
    private Format format = null;
+
    private int formatNumber = -1;
 
    /** Labels which released the record */
    private Collection<Label> labels;
-
    /** Any notes applied to the record */
    private String notes;
 
@@ -109,6 +110,8 @@ public class Record implements Comparable<Record>
 
    /** The place where the record has been ripped to */
    private String riploc;
+
+   private double score = -1;
 
    /** The location of the record on it's respective shelf */
    private int shelfpos;
@@ -147,6 +150,15 @@ public class Record implements Comparable<Record>
       catnos = new LinkedList<String>();
 
       price = 0.0;
+   }
+
+   public Record(int recNumber, String title, String author, String riploc)
+   {
+      this();
+      number = recNumber;
+      this.author = author;
+      this.title = title;
+      this.riploc = riploc;
    }
 
    public Record(String title, Format format, Calendar boughtDate, int shelfpos)
@@ -613,7 +625,10 @@ public class Record implements Comparable<Record>
 
    public double getScore() throws SQLException
    {
-      return RecordScore.get(this);
+      if (score == -1)
+         return RecordScore.get(this);
+      else
+         return score;
    }
 
    public double getScore(User user) throws SQLException
@@ -669,6 +684,9 @@ public class Record implements Comparable<Record>
    {
       try
       {
+         if (tracks.size() == 0)
+            getTracks();
+
          return numberize(formTrackNumber) + "~" + sanitize(getFormTrackArtist(formTrackNumber))
                + "~" + sanitize(getFormTrackTitle(formTrackNumber));
       }
@@ -904,6 +922,11 @@ public class Record implements Comparable<Record>
    {
       this.riploc = riploc;
       updated = true;
+   }
+
+   public void setScore(double val)
+   {
+      score = val;
    }
 
    public void setShelfPos(int pos)
