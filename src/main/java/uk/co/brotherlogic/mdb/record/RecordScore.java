@@ -38,7 +38,7 @@ public class RecordScore
          double score = get(rec, user);
          if (score >= 0)
          {
-            scoreVal += get(rec, user);
+            scoreVal += score;
             count++;
          }
       }
@@ -58,7 +58,7 @@ public class RecordScore
       ResultSet rs = ps.executeQuery();
       int count = 0;
       double sum = 0;
-      if (rs.next())
+      while (rs.next())
       {
          count++;
          sum += rs.getInt(1);
@@ -100,5 +100,12 @@ public class RecordScore
       ps.close();
 
       return count;
+   }
+
+   public static void main(String[] args) throws Exception
+   {
+      Connect.setForProdMode();
+      Record r = GetRecords.create().getRecord(6270);
+      System.out.println(RecordScore.get(r));
    }
 }
