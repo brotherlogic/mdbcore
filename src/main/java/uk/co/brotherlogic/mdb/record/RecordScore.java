@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -121,11 +123,25 @@ public class RecordScore
       return count;
    }
 
+   public static Integer[] getScores(Record rec) throws SQLException
+   {
+      List<Integer> scores = new LinkedList<Integer>();
+      String sql = "SELECT score_value from score_history WHERE record_id = ?";
+      PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
+      ps.setInt(1, rec.getNumber());
+      ResultSet rs = ps.executeQuery();
+
+      while (rs.next())
+         scores.add(rs.getInt(1));
+
+      return scores.toArray(new Integer[0]);
+   }
+
    public static void main(String[] args) throws Exception
    {
       Connect.setForProdMode();
       Record r = GetRecords.create().getRecord(6270);
-      System.out.println(RecordScore.get(r));
+      System.out.println(RecordScore.getScores(r));
    }
 
    public static void scoreRecords(Collection<Record> records) throws SQLException
