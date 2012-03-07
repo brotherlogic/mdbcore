@@ -126,7 +126,7 @@ public class RecordScore
    public static Integer[] getScores(Record rec) throws SQLException
    {
       List<Integer> scores = new LinkedList<Integer>();
-      String sql = "SELECT score_value from score_history WHERE record_id = ?";
+      String sql = "SELECT score_value from score_history WHERE record_id = ? ORDER BY score_date DESC";
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setInt(1, rec.getNumber());
       ResultSet rs = ps.executeQuery();
