@@ -85,6 +85,10 @@ public class RecordTest extends TestCase
       try
       {
          Record r = GetRecords.create().getRecords("fake-title").get(0);
+
+         // Score the record and save the score
+         r.addScore(User.getUser("simon"), 6);
+
          GetRecords.create().deleteRecord(r);
          assert (GetRecords.create().getRecords("fake-title").size() == 0);
          built = false;

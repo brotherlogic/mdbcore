@@ -69,6 +69,7 @@ public final class Connect
 
    public static void setForDevMode()
    {
+      System.out.println("Setting for dev mode");
       operationMode = mode.DEVELOPMENT;
       forced = true;
    }
@@ -207,6 +208,8 @@ public final class Connect
     */
    private void makeConnection(mode operationMode) throws SQLException
    {
+      System.out.println("Mode = " + operationMode);
+      Thread.dumpStack();
       try
       {
 
@@ -214,11 +217,12 @@ public final class Connect
          Class.forName("org.postgresql.Driver");
 
          // Check on the operation mode
-         if (getVersionString().contains("SNAPSHOT") && !forced)
+         if (getVersionString().contains("SNAPSHOT") || !forced)
             operationMode = mode.DEVELOPMENT;
          else
             operationMode = mode.PRODUCTION;
 
+         System.out.println("Mode = " + operationMode);
          if (operationMode == mode.PRODUCTION)
             locDB = DriverManager.getConnection("jdbc:postgresql://192.168.1.100/music?user=music");
          else
