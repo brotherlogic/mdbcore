@@ -9,20 +9,26 @@ import java.util.List;
 
 import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.User;
+import uk.co.brotherlogic.mdb.artist.Artist;
+import uk.co.brotherlogic.mdb.artist.GetArtists;
 
 public class DatabaseTidier
 {
    public static void main(String[] args) throws SQLException
    {
+      // Make sure we don't break anything
+      Connect.setForDevMode();
       DatabaseTidier tidier = new DatabaseTidier();
       tidier.tidy();
    }
 
    public void tidy() throws SQLException
    {
-      // Make sure we don't break anything
-      Connect.setForDevMode();
       removeNonUserRecords();
+      removeIrrelevantArtists();
+
+      // Commit all the changes
+      Connect.getConnection().commitTrans();
    }
 
    public void removeIrrelevantArtists() throws SQLException
@@ -39,8 +45,36 @@ public class DatabaseTidier
       rs.close();
       ps.close();
 
+      System.out.println("Found " + nonPersonnel.size() + " non personnel artists");
+
       List<Integer> nonGroups = new LinkedList<Integer>();
-      String sql2 = "select * from artist LEFT JOIN lineupdetails ON artist_id = artistnumber WHERE artistnumber IS NULL LIMIT 5;";
+      String sql2 = "select * from artist LEFT JOIN lineupdetails ON artist_id = artistnumber WHERE artistnumber IS NULL";
+      PreparedStatement ps2 = Connect.getConnection().getPreparedStatement(sql2);
+      ResultSet rs2 = ps2.executeQuery();
+      while (rs2.next())
+         nonGroups.add(rs2.getInt(1));
+      rs.close();
+      ps.close();
+
+      System.out.println("Found " + nonGroups.size() + " non group artists");
+
+      List<Integer> overall = new LinkedList<Integer>();
+      for (Integer intV : nonPersonnel)
+         if (nonGroups.contains(intV))
+            overall.add(intV);
+
+      System.out.println("Found " + overall.size() + " artists to be deleted");
+      for (Integer value : overall)
+      {
+         Artist art = GetArtists.create().getArtist(value);
+         System.out.println("Deleting " + art.getShowName());
+         GetArtists.create().deleteArtist(art);
+      }
+   }
+
+   public void removeIrrelevantGroops() throws SQLException
+   {
+      // Doesn't really seem to be any irrelevant groops?
    }
 
    public void removeNonUserRecords() throws SQLException
@@ -63,6 +97,7 @@ public class DatabaseTidier
       for (Integer rec : toBeDeleted)
       {
          Record r = GetRecords.create().getRecord(rec);
+         System.out.println("Deleting " + r.getAuthor() + " - " + r.getTitle());
          GetRecords.create().deleteRecord(r);
       }
    }
