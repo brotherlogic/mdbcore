@@ -322,18 +322,11 @@ public class RecordTest extends TestCase
       }
    }
 
-   public void testWeaver()
-   {
-      try
-      {
-         Record weaver = GetRecords.create().getRecords("The Fallen By Watch Bird").get(0);
-         assert (!weaver.getTrackRep(1).contains(Record.REPLACE));
-      }
-      catch (SQLException e)
-      {
-         e.printStackTrace();
-         assert (false);
-      }
-   }
+   /*
+    * public void testWeaver() { try { Record weaver =
+    * GetRecords.create().getRecords("The Fallen By Watch Bird").get(0); assert
+    * (!weaver.getTrackRep(1).contains(Record.REPLACE)); } catch (SQLException
+    * e) { e.printStackTrace(); assert (false); } }
+    */
 
 }
