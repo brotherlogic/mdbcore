@@ -105,8 +105,8 @@ public class RecordUtils
 
       String sql = "select recordnumber,count(score_value) as cnt,avg(score_value) AS mean from records,score_history,formats WHERE format = formatnumber "
             + cd_extra
-            + " AND baseformat = ? AND owner = 1 AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND salepricepence < 0 AND user_id =1 GROUP BY records.owner, recrand,recordnumber HAVING count(score_value) = 1 AND MAX(score_date) < (now() - interval '3 months') "
-            + "ORDER BY owner, mean LIMIT " + num;
+            + " AND baseformat = ? AND owner = 1 AND boughtdate < (now() - interval '3 months') AND recordnumber = record_id AND salepricepence < 0 AND user_id =1 AND category != 48 GROUP BY records.owner, recrand,recordnumber HAVING count(score_value) = 1 AND MAX(score_date) < (now() - interval '3 months') "
+            + "  ORDER BY owner, mean LIMIT " + num;
       PreparedStatement ps = Connect.getConnection().getPreparedStatement(sql);
       ps.setString(1, baseformat);
       System.out.println(ps);
