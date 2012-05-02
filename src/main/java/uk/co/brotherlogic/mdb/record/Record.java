@@ -345,8 +345,7 @@ public class Record implements Comparable<Record>
    {
       try
       {
-         return getOwner() + File.separator + addD(sanitize(getAuthor())) + File.separator
-               + sanitize(getRepTitle());
+         return addD(sanitize(getAuthor())) + File.separator + sanitize(getRepTitle());
       }
       catch (UnsupportedEncodingException e)
       {
