@@ -85,6 +85,10 @@ public class RecordTest extends TestCase
       try
       {
          Record r = GetRecords.create().getRecords("fake-title").get(0);
+
+         // Score the record and save the score
+         r.addScore(User.getUser("simon"), 6);
+
          GetRecords.create().deleteRecord(r);
          assert (GetRecords.create().getRecords("fake-title").size() == 0);
          built = false;
@@ -318,18 +322,11 @@ public class RecordTest extends TestCase
       }
    }
 
-   public void testWeaver()
-   {
-      try
-      {
-         Record weaver = GetRecords.create().getRecords("The Fallen By Watch Bird").get(0);
-         assert (!weaver.getTrackRep(1).contains(Record.REPLACE));
-      }
-      catch (SQLException e)
-      {
-         e.printStackTrace();
-         assert (false);
-      }
-   }
+   /*
+    * public void testWeaver() { try { Record weaver =
+    * GetRecords.create().getRecords("The Fallen By Watch Bird").get(0); assert
+    * (!weaver.getTrackRep(1).contains(Record.REPLACE)); } catch (SQLException
+    * e) { e.printStackTrace(); assert (false); } }
+    */
 
 }

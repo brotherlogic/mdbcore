@@ -19,232 +19,267 @@ import uk.co.brotherlogic.mdb.Cache;
 import uk.co.brotherlogic.mdb.Connect;
 import uk.co.brotherlogic.mdb.Utils;
 
-public class GetArtists {
-	private static GetArtists singleton;
+public class GetArtists
+{
+   private static GetArtists singleton;
 
-	public static GetArtists create() throws SQLException {
-		if (singleton == null)
-			singleton = new GetArtists();
+   public static GetArtists create() throws SQLException
+   {
+      if (singleton == null)
+         singleton = new GetArtists();
 
-		return singleton;
-	}
+      return singleton;
+   }
 
-	private final Cache<Artist> artistCache = new Cache<Artist>();
+   public void deleteArtist(Artist art) throws SQLException
+   {
+      // Delete all the tracks
+      PreparedStatement psArt = Connect.getConnection().getPreparedStatement(
+            "DELETE FROM artist WHERE artist_id = ?");
+      psArt.setInt(1, art.getId());
+      psArt.execute();
+      psArt.close();
+   }
 
-	// Map of name --> artist
-	private final Map<String, Artist> artists;
-	private final PreparedStatement collectQuery;
+   private final Cache<Artist> artistCache = new Cache<Artist>();
 
-	private final PreparedStatement collectQueryShowName;
-	private boolean executed = false;
+   // Map of name --> artist
+   private final Map<String, Artist> artists;
+   private final PreparedStatement collectQuery;
 
-	// Prepared Statements to use
-	private final PreparedStatement insertQuery;
+   private final PreparedStatement collectQueryShowName;
+   private boolean executed = false;
 
-	private final Map<String, Artist> tempStore;
+   // Prepared Statements to use
+   private final PreparedStatement insertQuery;
 
-	private GetArtists() throws SQLException {
-		// Set the required parameters
-		tempStore = new TreeMap<String, Artist>();
+   private final Map<String, Artist> tempStore;
 
-		// Initialise the Set
-		artists = new TreeMap<String, Artist>();
+   private GetArtists() throws SQLException
+   {
+      // Set the required parameters
+      tempStore = new TreeMap<String, Artist>();
 
-		// Build the set
-		insertQuery = Connect.getConnection().getPreparedStatement(
-				"INSERT INTO Artist (sort_name, show_name) VALUES (?,?)");
-		collectQuery = Connect.getConnection().getPreparedStatement(
-				"SELECT artist_id,show_name FROM Artist WHERE sort_name = ?");
-		collectQueryShowName = Connect.getConnection().getPreparedStatement(
-				"SELECT artist_id,sort_name FROM Artist WHERE show_name = ?");
-	}
+      // Initialise the Set
+      artists = new TreeMap<String, Artist>();
 
-	public int[] addArtists(Collection<Artist> art) throws SQLException {
-		// Prepare the array
-		int[] ret = new int[art.size()];
+      // Build the set
+      insertQuery = Connect.getConnection().getPreparedStatement(
+            "INSERT INTO Artist (sort_name, show_name) VALUES (?,?)");
+      collectQuery = Connect.getConnection().getPreparedStatement(
+            "SELECT artist_id,show_name FROM Artist WHERE sort_name = ?");
+      collectQueryShowName = Connect.getConnection().getPreparedStatement(
+            "SELECT artist_id,sort_name FROM Artist WHERE show_name = ?");
+   }
 
-		// Iterate through the array
-		int count = 0;
-		for (Artist tempArt : art) {
-			// Save the artist
-			ret[count] = saveArtist(tempArt);
+   public int[] addArtists(Collection<Artist> art) throws SQLException
+   {
+      // Prepare the array
+      int[] ret = new int[art.size()];
 
-			// Increment the count
-			count++;
-		}
+      // Iterate through the array
+      int count = 0;
+      for (Artist tempArt : art)
+      {
+         // Save the artist
+         ret[count] = saveArtist(tempArt);
 
-		// Return the constructed array
-		return ret;
-	}
+         // Increment the count
+         count++;
+      }
 
-	public void cancel() {
-		// Necessary for this to finish, so just leave in background
-	}
+      // Return the constructed array
+      return ret;
+   }
 
-	public void commitArtists() {
-		artists.putAll(tempStore);
-		tempStore.clear();
-	}
+   public void cancel()
+   {
+      // Necessary for this to finish, so just leave in background
+   }
 
-	public void execute() throws SQLException {
-		// Get a statement and run the query
-		PreparedStatement s = Connect.getConnection().getPreparedStatement(
-				"SELECT sort_name,artist_id,show_name FROM Artist");
-		ResultSet rs = s.executeQuery();
+   public void commitArtists()
+   {
+      artists.putAll(tempStore);
+      tempStore.clear();
+   }
 
-		// Fill the set
-		while (rs.next()) {
-			String art = rs.getString(1);
-			int num = rs.getInt(2);
-			String show = rs.getString(3);
+   public void execute() throws SQLException
+   {
+      // Get a statement and run the query
+      PreparedStatement s = Connect.getConnection().getPreparedStatement(
+            "SELECT sort_name,artist_id,show_name FROM Artist");
+      ResultSet rs = s.executeQuery();
 
-			artists.put(art, new Artist(art, show, num));
-		}
+      // Fill the set
+      while (rs.next())
+      {
+         String art = rs.getString(1);
+         int num = rs.getInt(2);
+         String show = rs.getString(3);
 
-		// Close the database objects
-		rs.close();
-		s.close();
+         artists.put(art, new Artist(art, show, num));
+      }
 
-		executed = true;
-	}
+      // Close the database objects
+      rs.close();
+      s.close();
 
-	public boolean exist(String name) {
-		return artists.keySet().contains(name);
-	}
+      executed = true;
+   }
 
-	public Artist getArtist(int num) throws SQLException {
+   public boolean exist(String name)
+   {
+      return artists.keySet().contains(name);
+   }
 
-		Artist artist = artistCache.get(num);
+   public Artist getArtist(int num) throws SQLException
+   {
 
-		if (artist == null) {
-			PreparedStatement s = Connect
-					.getConnection()
-					.getPreparedStatement(
-							"SELECT sort_name, show_name FROM Artist WHERE artist_id = ?");
-			s.setInt(1, num);
-			ResultSet rs = Connect.getConnection().executeQuery(s);
+      Artist artist = artistCache.get(num);
 
-			// Move on and return the relevant artust
-			rs.next();
-			String sort = rs.getString(1);
-			String show = rs.getString(2);
+      if (artist == null)
+      {
+         PreparedStatement s = Connect.getConnection().getPreparedStatement(
+               "SELECT sort_name, show_name FROM Artist WHERE artist_id = ?");
+         s.setInt(1, num);
+         ResultSet rs = Connect.getConnection().executeQuery(s);
 
-			rs.close();
-			s.close();
+         // Move on and return the relevant artust
+         rs.next();
+         String sort = rs.getString(1);
+         String show = rs.getString(2);
 
-			// Add this new artist
-			artist = new Artist(sort, show, num);
-			artistCache.add(num, artist);
-		}
+         rs.close();
+         s.close();
 
-		return artist;
-	}
+         // Add this new artist
+         artist = new Artist(sort, show, num);
+         artistCache.add(num, artist);
+      }
 
-	public Artist getArtist(String name) throws SQLException {
-		if (exist(name))
-			return artists.get(name);
-		else if (tempStore.containsKey(name))
-			return tempStore.get(name);
-		else {
-			collectQuery.setString(1, name);
-			ResultSet rs = collectQuery.executeQuery();
+      return artist;
+   }
 
-			// Move on and return the relevant artust
-			if (rs.next()) {
-				int num = rs.getInt(1);
-				String showName = rs.getString(2);
+   public Artist getArtist(String name) throws SQLException
+   {
+      if (exist(name))
+         return artists.get(name);
+      else if (tempStore.containsKey(name))
+         return tempStore.get(name);
+      else
+      {
+         collectQuery.setString(1, name);
+         ResultSet rs = collectQuery.executeQuery();
 
-				rs.close();
+         // Move on and return the relevant artust
+         if (rs.next())
+         {
+            int num = rs.getInt(1);
+            String showName = rs.getString(2);
 
-				// Add this new artist
-				artists.put(name, new Artist(name, showName, num));
+            rs.close();
 
-				return artists.get(name);
-			} else {
-				rs.close();
-				return new Artist(name, Utils.flipString(name), -1);
-			}
-		}
-	}
+            // Add this new artist
+            artists.put(name, new Artist(name, showName, num));
 
-	public Artist getArtistFromShowName(String name) throws SQLException {
-		if (exist(name))
-			return artists.get(name);
-		else if (tempStore.containsKey(name))
-			return tempStore.get(name);
-		else {
-			collectQueryShowName.setString(1, name);
-			ResultSet rs = collectQueryShowName.executeQuery();
+            return artists.get(name);
+         }
+         else
+         {
+            rs.close();
+            return new Artist(name, Utils.flipString(name), -1);
+         }
+      }
+   }
 
-			// Move on and return the relevant artust
-			if (rs.next()) {
-				int num = rs.getInt(1);
-				String sortName = rs.getString(2);
+   public Artist getArtistFromShowName(String name) throws SQLException
+   {
+      if (exist(name))
+         return artists.get(name);
+      else if (tempStore.containsKey(name))
+         return tempStore.get(name);
+      else
+      {
+         collectQueryShowName.setString(1, name);
+         ResultSet rs = collectQueryShowName.executeQuery();
 
-				rs.close();
+         // Move on and return the relevant artust
+         if (rs.next())
+         {
+            int num = rs.getInt(1);
+            String sortName = rs.getString(2);
 
-				// Add this new artist
-				artists.put(name, new Artist(sortName, name, num));
+            rs.close();
 
-				return artists.get(name);
-			} else {
-				rs.close();
-				return new Artist(name, Utils.flipString(name), -1);
-			}
-		}
-	}
+            // Add this new artist
+            artists.put(name, new Artist(sortName, name, num));
 
-	public Collection<Artist> getArtists() {
-		try {
-			if (!executed)
-				execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            return artists.get(name);
+         }
+         else
+         {
+            rs.close();
+            return new Artist(name, Utils.flipString(name), -1);
+         }
+      }
+   }
 
-		return artists.values();
-	}
+   public Collection<Artist> getArtists()
+   {
+      try
+      {
+         if (!executed)
+            execute();
+      }
+      catch (SQLException e)
+      {
+         e.printStackTrace();
+      }
 
-	public int saveArtist(Artist art) throws SQLException {
-		int newID = -1;
+      return artists.values();
+   }
 
-		// Check this artist doesn't already exist
-		collectQuery.setString(1, art.getSortName());
-		ResultSet rs = collectQuery.executeQuery();
-		if (!rs.next()) {
-			// Add this new artist
-			insertQuery.setString(1, art.getSortName());
-			insertQuery.setString(2, art.getShowName());
-			insertQuery.execute();
+   public int saveArtist(Artist art) throws SQLException
+   {
+      int newID = -1;
 
-			// Get the new number
-			collectQuery.setString(1, art.getSortName());
-			rs = collectQuery.executeQuery();
-			rs.next();
-		}
+      // Check this artist doesn't already exist
+      collectQuery.setString(1, art.getSortName());
+      ResultSet rs = collectQuery.executeQuery();
+      if (!rs.next())
+      {
+         // Add this new artist
+         insertQuery.setString(1, art.getSortName());
+         insertQuery.setString(2, art.getShowName());
+         insertQuery.execute();
 
-		newID = rs.getInt(1);
-		rs.close();
+         // Get the new number
+         collectQuery.setString(1, art.getSortName());
+         rs = collectQuery.executeQuery();
+         rs.next();
+      }
 
-		return newID;
-	}
+      newID = rs.getInt(1);
+      rs.close();
 
-	public List<Artist> search(String query) throws SQLException {
-		List<Artist> artists = new LinkedList<Artist>();
-		PreparedStatement s = Connect
-				.getConnection()
-				.getPreparedStatement(
-						"SELECT sort_name,artist_id,show_name FROM artist WHERE lower(show_name) like ?");
-		s.setString(1, "%" + query.toLowerCase() + "%");
+      return newID;
+   }
 
-		ResultSet rs = Connect.getConnection().executeQuery(s);
-		while (rs.next()) {
-			Artist art = new Artist(rs.getString(1), rs.getString(3),
-					rs.getInt(2));
-			artists.add(art);
-		}
+   public List<Artist> search(String query) throws SQLException
+   {
+      List<Artist> artists = new LinkedList<Artist>();
+      PreparedStatement s = Connect.getConnection().getPreparedStatement(
+            "SELECT sort_name,artist_id,show_name FROM artist WHERE lower(show_name) like ?");
+      s.setString(1, "%" + query.toLowerCase() + "%");
 
-		return artists;
+      ResultSet rs = Connect.getConnection().executeQuery(s);
+      while (rs.next())
+      {
+         Artist art = new Artist(rs.getString(1), rs.getString(3), rs.getInt(2));
+         artists.add(art);
+      }
 
-	}
+      return artists;
+
+   }
 }

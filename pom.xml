@@ -3,7 +3,7 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdbcore</artifactId>
   <packaging>jar</packaging>
-  <version>0.5.77</version>
+  <version>0.5.80-SNAPSHOT</version>
   <name>mdbcore</name>
   <url>http://maven.apache.org</url>
   <dependencies>
@@ -80,7 +80,7 @@
           </executions>
           <configuration>
             <executable>deploy.sh</executable>
-            <mainClass>uk.co.brotherlogic.mdb.Connect</mainClass>
+            <mainClass>uk.co.brotherlogic.mdb.record.DatabaseTidier</mainClass>
           </configuration>
           
         </plugin>
