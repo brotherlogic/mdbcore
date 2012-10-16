@@ -310,6 +310,7 @@ public class GetRecords
          r.setFormat(rs.getInt("format"));
          r.setShelfPos(rs.getInt("shelfpos"));
          r.setSoldPrice(rs.getInt("salepricepence"));
+         r.setAuthor(rs.getString("author"));
          records.add(r);
       }
 
